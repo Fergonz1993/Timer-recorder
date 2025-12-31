@@ -1,0 +1,38 @@
+{
+  "name": "timer-record",
+  "version": "1.0.0",
+  "description": "CLI work time tracker with auto-detection",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "tt": "./dist/bin/tt.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/bin/tt.js",
+    "tt": "node dist/bin/tt.js",
+    "lint": "eslint src --ext .ts",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "time-tracker",
+    "cli",
+    "productivity"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^11.6.0",
+    "chalk": "^5.3.0",
+    "cli-table3": "^0.6.5",
+    "commander": "^12.1.0",
+    "dayjs": "^1.11.13",
+    "asciichart": "^1.5.25"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  }
+}

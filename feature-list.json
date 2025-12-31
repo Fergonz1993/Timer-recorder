@@ -1,0 +1,2685 @@
+[
+  {
+    "id": 1,
+    "category": "functional",
+    "area": "build",
+    "description": "Project builds successfully with TypeScript",
+    "steps": [
+      "Step 1: Run npm run clean to remove dist folder",
+      "Step 2: Run npm run build",
+      "Step 3: Verify dist/ folder is created with compiled JS files",
+      "Step 4: Verify no TypeScript errors in output"
+    ],
+    "passes": true
+  },
+  {
+    "id": 2,
+    "category": "functional",
+    "area": "build",
+    "description": "CLI entry point is executable",
+    "steps": [
+      "Step 1: Run npm run build",
+      "Step 2: Run node dist/bin/tt.js --version",
+      "Step 3: Verify version 1.0.0 is displayed"
+    ],
+    "passes": true
+  },
+  {
+    "id": 3,
+    "category": "functional",
+    "area": "build",
+    "description": "ESM modules resolve correctly",
+    "steps": [
+      "Step 1: Run node dist/bin/tt.js status",
+      "Step 2: Verify no module resolution errors",
+      "Step 3: Verify command executes successfully"
+    ],
+    "passes": true
+  },
+  {
+    "id": 4,
+    "category": "functional",
+    "area": "database",
+    "description": "Database is created on first run",
+    "steps": [
+      "Step 1: Remove any existing database file",
+      "Step 2: Run tt status",
+      "Step 3: Verify database file is created in data directory",
+      "Step 4: Verify migrations table exists"
+    ],
+    "passes": true
+  },
+  {
+    "id": 5,
+    "category": "functional",
+    "area": "database",
+    "description": "Database migrations run successfully",
+    "steps": [
+      "Step 1: Run tt status on fresh database",
+      "Step 2: Verify 001_initial migration applied",
+      "Step 3: Verify 002_default_categories migration applied",
+      "Step 4: Verify categories table has default categories"
+    ],
+    "passes": true
+  },
+  {
+    "id": 6,
+    "category": "functional",
+    "area": "database",
+    "description": "Database uses WAL mode",
+    "steps": [
+      "Step 1: Run tt status",
+      "Step 2: Query pragma journal_mode",
+      "Step 3: Verify result is 'wal'"
+    ],
+    "passes": true
+  },
+  {
+    "id": 7,
+    "category": "functional",
+    "area": "start",
+    "description": "tt start without category shows available categories",
+    "steps": [
+      "Step 1: Run tt start without arguments",
+      "Step 2: Verify 'Available categories:' is displayed",
+      "Step 3: Verify at least 10 categories are listed",
+      "Step 4: Verify usage hint is shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 8,
+    "category": "functional",
+    "area": "start",
+    "description": "tt start programming starts a timer",
+    "steps": [
+      "Step 1: Run tt stop to ensure no active timer",
+      "Step 2: Run tt start programming",
+      "Step 3: Verify success message is displayed",
+      "Step 4: Run tt status to confirm timer is running"
+    ],
+    "passes": true
+  },
+  {
+    "id": 9,
+    "category": "functional",
+    "area": "start",
+    "description": "tt start with notes adds notes to entry",
+    "steps": [
+      "Step 1: Run tt start programming -n 'Working on feature X'",
+      "Step 2: Verify success message shows notes",
+      "Step 3: Run tt status to confirm timer is running",
+      "Step 4: Verify notes are stored in database"
+    ],
+    "passes": true
+  },
+  {
+    "id": 10,
+    "category": "functional",
+    "area": "start",
+    "description": "tt start with invalid category shows error",
+    "steps": [
+      "Step 1: Run tt start invalid-category-xyz",
+      "Step 2: Verify error message 'Category not found'",
+      "Step 3: Verify available categories are listed",
+      "Step 4: Verify exit code is 1"
+    ],
+    "passes": true
+  },
+  {
+    "id": 11,
+    "category": "functional",
+    "area": "start",
+    "description": "Starting new timer stops active timer",
+    "steps": [
+      "Step 1: Run tt start programming",
+      "Step 2: Wait 2 seconds",
+      "Step 3: Run tt start debugging",
+      "Step 4: Verify only one timer is active",
+      "Step 5: Verify previous entry has end_time set"
+    ],
+    "passes": true
+  },
+  {
+    "id": 12,
+    "category": "functional",
+    "area": "stop",
+    "description": "tt stop stops active timer",
+    "steps": [
+      "Step 1: Run tt start programming",
+      "Step 2: Wait 2 seconds",
+      "Step 3: Run tt stop",
+      "Step 4: Verify success message is displayed",
+      "Step 5: Verify duration is shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 13,
+    "category": "functional",
+    "area": "stop",
+    "description": "tt stop with no active timer shows warning",
+    "steps": [
+      "Step 1: Run tt stop to ensure no active timer",
+      "Step 2: Run tt stop again",
+      "Step 3: Verify warning 'No active timer running'"
+    ],
+    "passes": true
+  },
+  {
+    "id": 14,
+    "category": "functional",
+    "area": "stop",
+    "description": "tt stop calculates duration correctly",
+    "steps": [
+      "Step 1: Run tt start programming",
+      "Step 2: Wait 5 seconds",
+      "Step 3: Run tt stop",
+      "Step 4: Verify duration is approximately 5 seconds",
+      "Step 5: Verify duration_seconds is set in database"
+    ],
+    "passes": true
+  },
+  {
+    "id": 15,
+    "category": "functional",
+    "area": "stop",
+    "description": "tt stop shows category name and color",
+    "steps": [
+      "Step 1: Run tt start programming",
+      "Step 2: Run tt stop",
+      "Step 3: Verify category name is shown",
+      "Step 4: Verify output has color formatting"
+    ],
+    "passes": true
+  },
+  {
+    "id": 16,
+    "category": "functional",
+    "area": "status",
+    "description": "tt status shows running timer",
+    "steps": [
+      "Step 1: Run tt start programming",
+      "Step 2: Run tt status",
+      "Step 3: Verify 'Timer running' indicator",
+      "Step 4: Verify category, start time, and duration shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 17,
+    "category": "functional",
+    "area": "status",
+    "description": "tt status shows no active timer message",
+    "steps": [
+      "Step 1: Run tt stop to ensure no active timer",
+      "Step 2: Run tt status",
+      "Step 3: Verify 'No active timer' message",
+      "Step 4: Verify usage hint is shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 18,
+    "category": "functional",
+    "area": "status",
+    "description": "tt status shows today's total time",
+    "steps": [
+      "Step 1: Run tt start programming",
+      "Step 2: Wait 2 seconds",
+      "Step 3: Run tt stop",
+      "Step 4: Run tt status",
+      "Step 5: Verify today's total includes the entry"
+    ],
+    "passes": true
+  },
+  {
+    "id": 19,
+    "category": "functional",
+    "area": "status",
+    "description": "tt status duration updates in real-time",
+    "steps": [
+      "Step 1: Run tt start programming",
+      "Step 2: Wait 3 seconds",
+      "Step 3: Run tt status and note duration",
+      "Step 4: Wait 3 more seconds",
+      "Step 5: Run tt status and verify duration increased"
+    ],
+    "passes": true
+  },
+  {
+    "id": 20,
+    "category": "functional",
+    "area": "status",
+    "description": "Default tt command shows status",
+    "steps": [
+      "Step 1: Run tt (no subcommand)",
+      "Step 2: Verify status output is shown",
+      "Step 3: Compare output with tt status"
+    ],
+    "passes": true
+  },
+  {
+    "id": 21,
+    "category": "functional",
+    "area": "log",
+    "description": "tt log creates manual entry with duration",
+    "steps": [
+      "Step 1: Run tt log -c programming -d 1h",
+      "Step 2: Verify success message",
+      "Step 3: Verify entry is created in database",
+      "Step 4: Verify is_manual flag is true"
+    ],
+    "passes": true
+  },
+  {
+    "id": 22,
+    "category": "functional",
+    "area": "log",
+    "description": "tt log parses various duration formats",
+    "steps": [
+      "Step 1: Run tt log -c programming -d 2h",
+      "Step 2: Verify 7200 seconds stored",
+      "Step 3: Run tt log -c programming -d 30m",
+      "Step 4: Verify 1800 seconds stored",
+      "Step 5: Run tt log -c programming -d 1h30m",
+      "Step 6: Verify 5400 seconds stored"
+    ],
+    "passes": true
+  },
+  {
+    "id": 23,
+    "category": "functional",
+    "area": "log",
+    "description": "tt log with --at sets correct start time",
+    "steps": [
+      "Step 1: Run tt log -c programming -d 1h -a '2pm'",
+      "Step 2: Verify start_time is 14:00",
+      "Step 3: Verify end_time is 15:00",
+      "Step 4: Run tt log -c programming -d 1h -a 'yesterday 10am'",
+      "Step 5: Verify date is yesterday"
+    ],
+    "passes": true
+  },
+  {
+    "id": 24,
+    "category": "functional",
+    "area": "log",
+    "description": "tt log with notes stores notes",
+    "steps": [
+      "Step 1: Run tt log -c programming -d 1h -n 'Client meeting'",
+      "Step 2: Verify notes are displayed",
+      "Step 3: Verify notes are stored in database"
+    ],
+    "passes": true
+  },
+  {
+    "id": 25,
+    "category": "functional",
+    "area": "log",
+    "description": "tt log without required options shows error",
+    "steps": [
+      "Step 1: Run tt log (no options)",
+      "Step 2: Verify error about required options",
+      "Step 3: Run tt log -c programming (no duration)",
+      "Step 4: Verify duration required error"
+    ],
+    "passes": true
+  },
+  {
+    "id": 26,
+    "category": "functional",
+    "area": "log",
+    "description": "tt log with invalid category shows error",
+    "steps": [
+      "Step 1: Run tt log -c invalid-xyz -d 1h",
+      "Step 2: Verify 'Category not found' error",
+      "Step 3: Verify available categories listed"
+    ],
+    "passes": true
+  },
+  {
+    "id": 27,
+    "category": "functional",
+    "area": "log",
+    "description": "tt log with invalid duration shows error",
+    "steps": [
+      "Step 1: Run tt log -c programming -d 'invalid'",
+      "Step 2: Verify 'Invalid duration' error",
+      "Step 3: Verify valid formats are shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 28,
+    "category": "functional",
+    "area": "today",
+    "description": "tt today shows today's breakdown",
+    "steps": [
+      "Step 1: Create some entries for today",
+      "Step 2: Run tt today",
+      "Step 3: Verify date header is shown",
+      "Step 4: Verify total time is shown",
+      "Step 5: Verify category table is displayed"
+    ],
+    "passes": true
+  },
+  {
+    "id": 29,
+    "category": "functional",
+    "area": "today",
+    "description": "tt today shows category percentages",
+    "steps": [
+      "Step 1: Log 1h of programming",
+      "Step 2: Log 1h of debugging",
+      "Step 3: Run tt today",
+      "Step 4: Verify 50% shown for each category",
+      "Step 5: Verify percentage adds up to 100%"
+    ],
+    "passes": true
+  },
+  {
+    "id": 30,
+    "category": "functional",
+    "area": "today",
+    "description": "tt today shows visual progress bars",
+    "steps": [
+      "Step 1: Create entries with varying durations",
+      "Step 2: Run tt today",
+      "Step 3: Verify bar column has visual bars",
+      "Step 4: Verify bar lengths are proportional"
+    ],
+    "passes": true
+  },
+  {
+    "id": 31,
+    "category": "functional",
+    "area": "today",
+    "description": "tt today includes active timer",
+    "steps": [
+      "Step 1: Run tt start programming",
+      "Step 2: Run tt today",
+      "Step 3: Verify active timer indicator (green dot)",
+      "Step 4: Verify active time is included in total"
+    ],
+    "passes": true
+  },
+  {
+    "id": 32,
+    "category": "functional",
+    "area": "today",
+    "description": "tt today with no entries shows message",
+    "steps": [
+      "Step 1: Ensure no entries for today",
+      "Step 2: Run tt today",
+      "Step 3: Verify 'No time tracked today' message",
+      "Step 4: Verify usage hint is shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 33,
+    "category": "functional",
+    "area": "week",
+    "description": "tt week shows weekly summary",
+    "steps": [
+      "Step 1: Create entries for this week",
+      "Step 2: Run tt week",
+      "Step 3: Verify date range header is shown",
+      "Step 4: Verify total time is displayed"
+    ],
+    "passes": true
+  },
+  {
+    "id": 34,
+    "category": "functional",
+    "area": "week",
+    "description": "tt week shows daily activity chart",
+    "steps": [
+      "Step 1: Create entries for multiple days",
+      "Step 2: Run tt week",
+      "Step 3: Verify ASCII chart is displayed",
+      "Step 4: Verify day labels (Mon-Sun) are shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 35,
+    "category": "functional",
+    "area": "week",
+    "description": "tt week shows category breakdown",
+    "steps": [
+      "Step 1: Create entries with different categories",
+      "Step 2: Run tt week",
+      "Step 3: Verify 'By Category' section exists",
+      "Step 4: Verify table with categories, time, percentages"
+    ],
+    "passes": true
+  },
+  {
+    "id": 36,
+    "category": "functional",
+    "area": "week",
+    "description": "tt week shows hourly heatmap",
+    "steps": [
+      "Step 1: Create entries at different hours",
+      "Step 2: Run tt week",
+      "Step 3: Verify 'Activity by Hour' section",
+      "Step 4: Verify 0-23 hours displayed",
+      "Step 5: Verify intensity blocks are shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 37,
+    "category": "functional",
+    "area": "week",
+    "description": "tt week -p 1 shows previous week",
+    "steps": [
+      "Step 1: Run tt week -p 1",
+      "Step 2: Verify date range is last week",
+      "Step 3: Verify data is from previous week"
+    ],
+    "passes": true
+  },
+  {
+    "id": 38,
+    "category": "functional",
+    "area": "week",
+    "description": "tt week with no entries shows message",
+    "steps": [
+      "Step 1: Ensure no entries for the week",
+      "Step 2: Run tt week",
+      "Step 3: Verify 'No time tracked this week' message"
+    ],
+    "passes": true
+  },
+  {
+    "id": 39,
+    "category": "functional",
+    "area": "export",
+    "description": "tt export csv outputs valid CSV",
+    "steps": [
+      "Step 1: Create some time entries",
+      "Step 2: Run tt export csv",
+      "Step 3: Verify CSV header row",
+      "Step 4: Verify data rows match entries",
+      "Step 5: Verify proper CSV escaping"
+    ],
+    "passes": true
+  },
+  {
+    "id": 40,
+    "category": "functional",
+    "area": "export",
+    "description": "tt export csv -o file.csv writes to file",
+    "steps": [
+      "Step 1: Run tt export csv -o test-export.csv",
+      "Step 2: Verify file is created",
+      "Step 3: Verify success message",
+      "Step 4: Verify file contains valid CSV"
+    ],
+    "passes": true
+  },
+  {
+    "id": 41,
+    "category": "functional",
+    "area": "export",
+    "description": "tt export json outputs valid JSON",
+    "steps": [
+      "Step 1: Create some time entries",
+      "Step 2: Run tt export json",
+      "Step 3: Verify valid JSON output",
+      "Step 4: Verify exported_at, date_range, entries fields"
+    ],
+    "passes": true
+  },
+  {
+    "id": 42,
+    "category": "functional",
+    "area": "export",
+    "description": "tt export csv --today exports today only",
+    "steps": [
+      "Step 1: Create entries for today and yesterday",
+      "Step 2: Run tt export csv --today",
+      "Step 3: Verify only today's entries exported"
+    ],
+    "passes": true
+  },
+  {
+    "id": 43,
+    "category": "functional",
+    "area": "export",
+    "description": "tt export csv --week exports current week",
+    "steps": [
+      "Step 1: Create entries for this week and last week",
+      "Step 2: Run tt export csv --week",
+      "Step 3: Verify only this week's entries exported"
+    ],
+    "passes": true
+  },
+  {
+    "id": 44,
+    "category": "functional",
+    "area": "export",
+    "description": "tt export csv --from --to exports date range",
+    "steps": [
+      "Step 1: Create entries for various dates",
+      "Step 2: Run tt export csv --from 2024-01-01 --to 2024-01-31",
+      "Step 3: Verify only entries in range exported"
+    ],
+    "passes": true
+  },
+  {
+    "id": 45,
+    "category": "functional",
+    "area": "export",
+    "description": "tt export with no entries shows message",
+    "steps": [
+      "Step 1: Ensure no entries exist",
+      "Step 2: Run tt export csv",
+      "Step 3: Verify 'No entries found' message"
+    ],
+    "passes": true
+  },
+  {
+    "id": 46,
+    "category": "functional",
+    "area": "categories",
+    "description": "tt categories lists all categories",
+    "steps": [
+      "Step 1: Run tt categories",
+      "Step 2: Verify table with Name, Color, Productive, Description",
+      "Step 3: Verify all default categories present",
+      "Step 4: Verify colors are displayed"
+    ],
+    "passes": true
+  },
+  {
+    "id": 47,
+    "category": "functional",
+    "area": "categories",
+    "description": "tt categories list works same as tt categories",
+    "steps": [
+      "Step 1: Run tt categories list",
+      "Step 2: Run tt categories",
+      "Step 3: Verify outputs are identical"
+    ],
+    "passes": true
+  },
+  {
+    "id": 48,
+    "category": "functional",
+    "area": "categories",
+    "description": "tt categories add creates new category",
+    "steps": [
+      "Step 1: Run tt categories add test-category",
+      "Step 2: Verify success message",
+      "Step 3: Run tt categories list",
+      "Step 4: Verify test-category appears in list"
+    ],
+    "passes": true
+  },
+  {
+    "id": 49,
+    "category": "functional",
+    "area": "categories",
+    "description": "tt categories add with color sets color",
+    "steps": [
+      "Step 1: Run tt categories add color-test -c '#FF5733'",
+      "Step 2: Verify success message with colored output",
+      "Step 3: Run tt categories list",
+      "Step 4: Verify color is displayed"
+    ],
+    "passes": true
+  },
+  {
+    "id": 50,
+    "category": "functional",
+    "area": "categories",
+    "description": "tt categories add with description sets description",
+    "steps": [
+      "Step 1: Run tt categories add desc-test -d 'Test description'",
+      "Step 2: Run tt categories list",
+      "Step 3: Verify description column shows 'Test description'"
+    ],
+    "passes": true
+  },
+  {
+    "id": 51,
+    "category": "functional",
+    "area": "categories",
+    "description": "tt categories add --unproductive marks as unproductive",
+    "steps": [
+      "Step 1: Run tt categories add break-time -u",
+      "Step 2: Run tt categories list",
+      "Step 3: Verify Productive column shows 'no'"
+    ],
+    "passes": true
+  },
+  {
+    "id": 52,
+    "category": "functional",
+    "area": "categories",
+    "description": "tt categories add duplicate shows error",
+    "steps": [
+      "Step 1: Run tt categories add programming",
+      "Step 2: Verify error 'already exists'"
+    ],
+    "passes": true
+  },
+  {
+    "id": 53,
+    "category": "functional",
+    "area": "categories",
+    "description": "tt categories remove removes custom category",
+    "steps": [
+      "Step 1: Run tt categories add temp-category",
+      "Step 2: Run tt categories remove temp-category",
+      "Step 3: Verify success message",
+      "Step 4: Run tt categories list",
+      "Step 5: Verify temp-category is gone"
+    ],
+    "passes": true
+  },
+  {
+    "id": 54,
+    "category": "functional",
+    "area": "categories",
+    "description": "tt categories remove built-in shows warning",
+    "steps": [
+      "Step 1: Run tt categories remove programming",
+      "Step 2: Verify warning 'Cannot remove built-in category'"
+    ],
+    "passes": true
+  },
+  {
+    "id": 55,
+    "category": "functional",
+    "area": "categories",
+    "description": "tt categories remove non-existent shows error",
+    "steps": [
+      "Step 1: Run tt categories remove non-existent-xyz",
+      "Step 2: Verify error 'not found'"
+    ],
+    "passes": true
+  },
+  {
+    "id": 56,
+    "category": "functional",
+    "area": "rules",
+    "description": "tt rules lists all rules",
+    "steps": [
+      "Step 1: Run tt rules",
+      "Step 2: Verify rules table header",
+      "Step 3: Verify ID, App Pattern, Window Pattern, Category columns"
+    ],
+    "passes": true
+  },
+  {
+    "id": 57,
+    "category": "functional",
+    "area": "rules",
+    "description": "tt rules with no custom rules shows message",
+    "steps": [
+      "Step 1: Ensure no custom rules exist",
+      "Step 2: Run tt rules",
+      "Step 3: Verify 'No custom rules defined' message",
+      "Step 4: Verify add hint is shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 58,
+    "category": "functional",
+    "area": "rules",
+    "description": "tt rules add with --app creates app rule",
+    "steps": [
+      "Step 1: Run tt rules add --app 'Figma' --category programming",
+      "Step 2: Verify success message",
+      "Step 3: Run tt rules list",
+      "Step 4: Verify rule appears with Figma pattern"
+    ],
+    "passes": true
+  },
+  {
+    "id": 59,
+    "category": "functional",
+    "area": "rules",
+    "description": "tt rules add with --window creates window rule",
+    "steps": [
+      "Step 1: Run tt rules add --app Chrome --window 'GitHub' -c programming",
+      "Step 2: Verify success message",
+      "Step 3: Run tt rules list",
+      "Step 4: Verify rule shows window pattern"
+    ],
+    "passes": true
+  },
+  {
+    "id": 60,
+    "category": "functional",
+    "area": "rules",
+    "description": "tt rules add with --bundle creates bundle rule",
+    "steps": [
+      "Step 1: Run tt rules add --bundle 'com.spotify.client' -c communication",
+      "Step 2: Verify success message",
+      "Step 3: Run tt rules list"
+    ],
+    "passes": true
+  },
+  {
+    "id": 61,
+    "category": "functional",
+    "area": "rules",
+    "description": "tt rules add without pattern shows error",
+    "steps": [
+      "Step 1: Run tt rules add -c programming",
+      "Step 2: Verify error 'At least one pattern is required'",
+      "Step 3: Verify examples are shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 62,
+    "category": "functional",
+    "area": "rules",
+    "description": "tt rules add with invalid category shows error",
+    "steps": [
+      "Step 1: Run tt rules add --app 'Test' -c invalid-xyz",
+      "Step 2: Verify 'Category not found' error",
+      "Step 3: Verify available categories listed"
+    ],
+    "passes": true
+  },
+  {
+    "id": 63,
+    "category": "functional",
+    "area": "rules",
+    "description": "tt rules remove removes rule by ID",
+    "steps": [
+      "Step 1: Add a test rule",
+      "Step 2: Get the rule ID from tt rules list",
+      "Step 3: Run tt rules remove <id>",
+      "Step 4: Verify success message",
+      "Step 5: Verify rule is gone"
+    ],
+    "passes": true
+  },
+  {
+    "id": 64,
+    "category": "functional",
+    "area": "rules",
+    "description": "tt rules remove invalid ID shows error",
+    "steps": [
+      "Step 1: Run tt rules remove 99999",
+      "Step 2: Verify 'not found' error"
+    ],
+    "passes": true
+  },
+  {
+    "id": 65,
+    "category": "functional",
+    "area": "rules",
+    "description": "tt rules examples shows example commands",
+    "steps": [
+      "Step 1: Run tt rules examples",
+      "Step 2: Verify at least 3 examples shown",
+      "Step 3: Verify examples include explanations"
+    ],
+    "passes": true
+  },
+  {
+    "id": 66,
+    "category": "functional",
+    "area": "daemon",
+    "description": "tt daemon shows full status",
+    "steps": [
+      "Step 1: Run tt daemon",
+      "Step 2: Verify 'Daemon Status' header",
+      "Step 3: Verify Process status section",
+      "Step 4: Verify Auto-start section"
+    ],
+    "passes": true
+  },
+  {
+    "id": 67,
+    "category": "functional",
+    "area": "daemon",
+    "description": "tt daemon status shows running status",
+    "steps": [
+      "Step 1: Run tt daemon start",
+      "Step 2: Run tt daemon status",
+      "Step 3: Verify 'Daemon running' indicator",
+      "Step 4: Verify PID is shown",
+      "Step 5: Run tt daemon stop"
+    ],
+    "passes": true
+  },
+  {
+    "id": 68,
+    "category": "functional",
+    "area": "daemon",
+    "description": "tt daemon status shows not running",
+    "steps": [
+      "Step 1: Run tt daemon stop",
+      "Step 2: Run tt daemon status",
+      "Step 3: Verify 'Daemon not running' message",
+      "Step 4: Verify start hint is shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 69,
+    "category": "functional",
+    "area": "daemon",
+    "description": "tt daemon start starts background tracker",
+    "steps": [
+      "Step 1: Run tt daemon start",
+      "Step 2: Verify success message with PID",
+      "Step 3: Verify log file location shown",
+      "Step 4: Verify process is running",
+      "Step 5: Run tt daemon stop to cleanup"
+    ],
+    "passes": true
+  },
+  {
+    "id": 70,
+    "category": "functional",
+    "area": "daemon",
+    "description": "tt daemon start when already running shows warning",
+    "steps": [
+      "Step 1: Run tt daemon start",
+      "Step 2: Run tt daemon start again",
+      "Step 3: Verify 'already running' warning",
+      "Step 4: Run tt daemon stop to cleanup"
+    ],
+    "passes": true
+  },
+  {
+    "id": 71,
+    "category": "functional",
+    "area": "daemon",
+    "description": "tt daemon stop stops background tracker",
+    "steps": [
+      "Step 1: Run tt daemon start",
+      "Step 2: Run tt daemon stop",
+      "Step 3: Verify success message",
+      "Step 4: Verify process is not running"
+    ],
+    "passes": true
+  },
+  {
+    "id": 72,
+    "category": "functional",
+    "area": "daemon",
+    "description": "tt daemon stop when not running shows warning",
+    "steps": [
+      "Step 1: Ensure daemon is not running",
+      "Step 2: Run tt daemon stop",
+      "Step 3: Verify 'not running' warning"
+    ],
+    "passes": true
+  },
+  {
+    "id": 73,
+    "category": "functional",
+    "area": "daemon",
+    "description": "tt daemon logs shows recent logs",
+    "steps": [
+      "Step 1: Run tt daemon start",
+      "Step 2: Wait a few seconds",
+      "Step 3: Run tt daemon logs",
+      "Step 4: Verify log output is shown",
+      "Step 5: Run tt daemon stop"
+    ],
+    "passes": true
+  },
+  {
+    "id": 74,
+    "category": "functional",
+    "area": "daemon",
+    "description": "tt daemon logs -n 50 shows specified lines",
+    "steps": [
+      "Step 1: Ensure log file has content",
+      "Step 2: Run tt daemon logs -n 50",
+      "Step 3: Verify up to 50 lines shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 75,
+    "category": "functional",
+    "area": "daemon",
+    "description": "tt daemon logs with no log file shows warning",
+    "steps": [
+      "Step 1: Remove log file if exists",
+      "Step 2: Run tt daemon logs",
+      "Step 3: Verify 'No log file found' warning"
+    ],
+    "passes": true
+  },
+  {
+    "id": 76,
+    "category": "functional",
+    "area": "daemon",
+    "description": "tt daemon install creates launchd plist",
+    "steps": [
+      "Step 1: Run tt daemon install",
+      "Step 2: Verify success message",
+      "Step 3: Verify plist file created",
+      "Step 4: Verify launchd service loaded",
+      "Step 5: Run tt daemon uninstall to cleanup"
+    ],
+    "passes": true
+  },
+  {
+    "id": 77,
+    "category": "functional",
+    "area": "daemon",
+    "description": "tt daemon uninstall removes launchd plist",
+    "steps": [
+      "Step 1: Run tt daemon install",
+      "Step 2: Run tt daemon uninstall",
+      "Step 3: Verify success message",
+      "Step 4: Verify plist file removed"
+    ],
+    "passes": true
+  },
+  {
+    "id": 78,
+    "category": "functional",
+    "area": "detect",
+    "description": "tt detect shows current window info",
+    "steps": [
+      "Step 1: Run tt detect",
+      "Step 2: Verify app name shown",
+      "Step 3: Verify bundle ID shown",
+      "Step 4: Verify window title shown",
+      "Step 5: Verify category suggestion shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 79,
+    "category": "functional",
+    "area": "detect",
+    "description": "tt detect --watch monitors continuously",
+    "steps": [
+      "Step 1: Run tt detect --watch in background",
+      "Step 2: Switch to different app",
+      "Step 3: Verify output updates",
+      "Step 4: Ctrl+C to stop",
+      "Step 5: Verify clean exit"
+    ],
+    "passes": true
+  },
+  {
+    "id": 80,
+    "category": "functional",
+    "area": "help",
+    "description": "tt --help shows all commands",
+    "steps": [
+      "Step 1: Run tt --help",
+      "Step 2: Verify all main commands listed",
+      "Step 3: Verify descriptions present"
+    ],
+    "passes": true
+  },
+  {
+    "id": 81,
+    "category": "functional",
+    "area": "help",
+    "description": "tt start --help shows start options",
+    "steps": [
+      "Step 1: Run tt start --help",
+      "Step 2: Verify [category] argument documented",
+      "Step 3: Verify --notes option documented"
+    ],
+    "passes": true
+  },
+  {
+    "id": 82,
+    "category": "functional",
+    "area": "help",
+    "description": "tt log --help shows log options",
+    "steps": [
+      "Step 1: Run tt log --help",
+      "Step 2: Verify --category option documented",
+      "Step 3: Verify --duration option documented",
+      "Step 4: Verify --at and --notes options"
+    ],
+    "passes": true
+  },
+  {
+    "id": 83,
+    "category": "functional",
+    "area": "help",
+    "description": "tt --version shows version",
+    "steps": [
+      "Step 1: Run tt --version",
+      "Step 2: Verify 1.0.0 is shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 84,
+    "category": "functional",
+    "area": "graceful-shutdown",
+    "description": "SIGINT closes database connection",
+    "steps": [
+      "Step 1: Start a long-running command",
+      "Step 2: Send SIGINT (Ctrl+C)",
+      "Step 3: Verify clean exit",
+      "Step 4: Verify database is not locked"
+    ],
+    "passes": true
+  },
+  {
+    "id": 85,
+    "category": "functional",
+    "area": "graceful-shutdown",
+    "description": "Exit closes database connection",
+    "steps": [
+      "Step 1: Run any command",
+      "Step 2: Verify process exits cleanly",
+      "Step 3: Verify no database lock remains"
+    ],
+    "passes": true
+  },
+  {
+    "id": 86,
+    "category": "style",
+    "area": "colors",
+    "description": "Success messages use green color",
+    "steps": [
+      "Step 1: Run tt start programming",
+      "Step 2: Verify success message is green",
+      "Step 3: Take screenshot for verification"
+    ],
+    "passes": true
+  },
+  {
+    "id": 87,
+    "category": "style",
+    "area": "colors",
+    "description": "Warning messages use yellow color",
+    "steps": [
+      "Step 1: Run tt stop with no active timer",
+      "Step 2: Verify warning message is yellow",
+      "Step 3: Take screenshot for verification"
+    ],
+    "passes": true
+  },
+  {
+    "id": 88,
+    "category": "style",
+    "area": "colors",
+    "description": "Error messages use red color",
+    "steps": [
+      "Step 1: Run tt start invalid-category",
+      "Step 2: Verify error message is red",
+      "Step 3: Take screenshot for verification"
+    ],
+    "passes": true
+  },
+  {
+    "id": 89,
+    "category": "style",
+    "area": "colors",
+    "description": "Category names use their hex colors",
+    "steps": [
+      "Step 1: Run tt categories list",
+      "Step 2: Verify categories are colored",
+      "Step 3: Verify programming is blue (#61AFEF)",
+      "Step 4: Verify debugging is red (#E06C75)"
+    ],
+    "passes": true
+  },
+  {
+    "id": 90,
+    "category": "style",
+    "area": "colors",
+    "description": "Active timer indicator is green",
+    "steps": [
+      "Step 1: Run tt start programming",
+      "Step 2: Run tt status",
+      "Step 3: Verify green dot (●) indicator",
+      "Step 4: Run tt stop"
+    ],
+    "passes": true
+  },
+  {
+    "id": 91,
+    "category": "style",
+    "area": "colors",
+    "description": "Inactive timer indicator is dim",
+    "steps": [
+      "Step 1: Run tt stop",
+      "Step 2: Run tt status",
+      "Step 3: Verify dim circle (○) indicator"
+    ],
+    "passes": true
+  },
+  {
+    "id": 92,
+    "category": "style",
+    "area": "tables",
+    "description": "Categories table is properly aligned",
+    "steps": [
+      "Step 1: Run tt categories list",
+      "Step 2: Verify columns are aligned",
+      "Step 3: Verify headers are bold",
+      "Step 4: Take screenshot"
+    ],
+    "passes": true
+  },
+  {
+    "id": 93,
+    "category": "style",
+    "area": "tables",
+    "description": "Today summary table is properly aligned",
+    "steps": [
+      "Step 1: Create some entries",
+      "Step 2: Run tt today",
+      "Step 3: Verify table columns aligned",
+      "Step 4: Verify headers are bold"
+    ],
+    "passes": true
+  },
+  {
+    "id": 94,
+    "category": "style",
+    "area": "tables",
+    "description": "Week summary table is properly aligned",
+    "steps": [
+      "Step 1: Create some entries",
+      "Step 2: Run tt week",
+      "Step 3: Verify category table aligned",
+      "Step 4: Verify headers are bold"
+    ],
+    "passes": true
+  },
+  {
+    "id": 95,
+    "category": "style",
+    "area": "tables",
+    "description": "Rules table is properly aligned",
+    "steps": [
+      "Step 1: Add some rules",
+      "Step 2: Run tt rules list",
+      "Step 3: Verify columns are aligned",
+      "Step 4: Verify ID column is dim"
+    ],
+    "passes": true
+  },
+  {
+    "id": 96,
+    "category": "style",
+    "area": "charts",
+    "description": "Weekly ASCII chart displays correctly",
+    "steps": [
+      "Step 1: Create entries for multiple days",
+      "Step 2: Run tt week",
+      "Step 3: Verify chart renders without overflow",
+      "Step 4: Verify Y-axis shows hours",
+      "Step 5: Verify day labels shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 97,
+    "category": "style",
+    "area": "charts",
+    "description": "Hourly heatmap uses correct intensity blocks",
+    "steps": [
+      "Step 1: Create entries at different hours",
+      "Step 2: Run tt week",
+      "Step 3: Verify ░░ for none",
+      "Step 4: Verify ▒▒ for low",
+      "Step 5: Verify ▓▓ for medium",
+      "Step 6: Verify ██ for high"
+    ],
+    "passes": true
+  },
+  {
+    "id": 98,
+    "category": "style",
+    "area": "charts",
+    "description": "Progress bars in today summary render correctly",
+    "steps": [
+      "Step 1: Create entries with varying durations",
+      "Step 2: Run tt today",
+      "Step 3: Verify bar characters render properly",
+      "Step 4: Verify bars are proportional to time"
+    ],
+    "passes": true
+  },
+  {
+    "id": 99,
+    "category": "style",
+    "area": "formatting",
+    "description": "Duration formats as 'Xh Ym'",
+    "steps": [
+      "Step 1: Log 2h30m of programming",
+      "Step 2: Run tt today",
+      "Step 3: Verify duration shows '2h 30m' format"
+    ],
+    "passes": true
+  },
+  {
+    "id": 100,
+    "category": "style",
+    "area": "formatting",
+    "description": "Clock duration formats as 'HH:MM:SS'",
+    "steps": [
+      "Step 1: Run tt start programming",
+      "Step 2: Run tt status",
+      "Step 3: Verify duration shows 'HH:MM:SS' format"
+    ],
+    "passes": true
+  },
+  {
+    "id": 101,
+    "category": "style",
+    "area": "formatting",
+    "description": "Times format as '12:30 PM'",
+    "steps": [
+      "Step 1: Run tt start programming",
+      "Step 2: Run tt status",
+      "Step 3: Verify start time uses 12-hour format with AM/PM"
+    ],
+    "passes": true
+  },
+  {
+    "id": 102,
+    "category": "style",
+    "area": "formatting",
+    "description": "Dates format as 'Mon D, YYYY'",
+    "steps": [
+      "Step 1: Run tt today",
+      "Step 2: Verify date header format",
+      "Step 3: Verify weekday, month, day, year present"
+    ],
+    "passes": true
+  },
+  {
+    "id": 103,
+    "category": "style",
+    "area": "spacing",
+    "description": "Commands have proper whitespace",
+    "steps": [
+      "Step 1: Run tt status",
+      "Step 2: Verify blank lines before/after output",
+      "Step 3: Verify indentation is consistent"
+    ],
+    "passes": true
+  },
+  {
+    "id": 104,
+    "category": "style",
+    "area": "spacing",
+    "description": "Tables have proper borders",
+    "steps": [
+      "Step 1: Run tt today with entries",
+      "Step 2: Verify table has horizontal lines",
+      "Step 3: Verify no vertical lines (minimal style)"
+    ],
+    "passes": true
+  },
+  {
+    "id": 105,
+    "category": "style",
+    "area": "hints",
+    "description": "Helpful hints use dim text",
+    "steps": [
+      "Step 1: Run tt status with no timer",
+      "Step 2: Verify hint text is dim/gray",
+      "Step 3: Verify hint suggests next action"
+    ],
+    "passes": true
+  },
+  {
+    "id": 106,
+    "category": "style",
+    "area": "hints",
+    "description": "Usage hints shown when appropriate",
+    "steps": [
+      "Step 1: Run tt start without category",
+      "Step 2: Verify usage hint is shown",
+      "Step 3: Verify example command provided"
+    ],
+    "passes": true
+  },
+  {
+    "id": 107,
+    "category": "functional",
+    "area": "edge-cases",
+    "description": "Empty category name handled",
+    "steps": [
+      "Step 1: Run tt start ''",
+      "Step 2: Verify appropriate error or behavior"
+    ],
+    "passes": true
+  },
+  {
+    "id": 108,
+    "category": "functional",
+    "area": "edge-cases",
+    "description": "Very long category name handled",
+    "steps": [
+      "Step 1: Create category with 100+ character name",
+      "Step 2: Verify table display doesn't break",
+      "Step 3: Verify truncation if necessary"
+    ],
+    "passes": true
+  },
+  {
+    "id": 109,
+    "category": "functional",
+    "area": "edge-cases",
+    "description": "Unicode in category names works",
+    "steps": [
+      "Step 1: Run tt categories add '日本語-test'",
+      "Step 2: Verify success",
+      "Step 3: Run tt categories list",
+      "Step 4: Verify unicode displays correctly"
+    ],
+    "passes": true
+  },
+  {
+    "id": 110,
+    "category": "functional",
+    "area": "edge-cases",
+    "description": "Special characters in notes handled",
+    "steps": [
+      "Step 1: Run tt start programming -n 'Test \"quotes\" and 'apostrophes''",
+      "Step 2: Verify notes stored correctly",
+      "Step 3: Run tt export json",
+      "Step 4: Verify notes exported correctly"
+    ],
+    "passes": true
+  },
+  {
+    "id": 111,
+    "category": "functional",
+    "area": "edge-cases",
+    "description": "Zero duration entry handled",
+    "steps": [
+      "Step 1: Start and immediately stop timer",
+      "Step 2: Verify entry created with 0 seconds",
+      "Step 3: Verify displays as '0m' or '0s'"
+    ],
+    "passes": true
+  },
+  {
+    "id": 112,
+    "category": "functional",
+    "area": "edge-cases",
+    "description": "Very long duration handled",
+    "steps": [
+      "Step 1: Log 100 hours of programming",
+      "Step 2: Verify entry created correctly",
+      "Step 3: Verify displays correctly in reports"
+    ],
+    "passes": true
+  },
+  {
+    "id": 113,
+    "category": "functional",
+    "area": "edge-cases",
+    "description": "Future dates rejected for --at",
+    "steps": [
+      "Step 1: Run tt log -c programming -d 1h -a 'tomorrow 2pm'",
+      "Step 2: Verify appropriate error or behavior"
+    ],
+    "passes": true
+  },
+  {
+    "id": 114,
+    "category": "functional",
+    "area": "edge-cases",
+    "description": "Invalid color code handled",
+    "steps": [
+      "Step 1: Run tt categories add test -c 'invalid-color'",
+      "Step 2: Verify appropriate error or fallback"
+    ],
+    "passes": true
+  },
+  {
+    "id": 115,
+    "category": "functional",
+    "area": "edge-cases",
+    "description": "Concurrent timer starts handled",
+    "steps": [
+      "Step 1: Run tt start programming",
+      "Step 2: Immediately run tt start debugging",
+      "Step 3: Verify only one timer active",
+      "Step 4: Verify no race condition errors"
+    ],
+    "passes": true
+  },
+  {
+    "id": 116,
+    "category": "functional",
+    "area": "detection",
+    "description": "macOS window detection returns app name",
+    "steps": [
+      "Step 1: Focus on a known app",
+      "Step 2: Run tt detect",
+      "Step 3: Verify correct app name returned"
+    ],
+    "passes": true
+  },
+  {
+    "id": 117,
+    "category": "functional",
+    "area": "detection",
+    "description": "macOS window detection returns bundle ID",
+    "steps": [
+      "Step 1: Focus on a known app",
+      "Step 2: Run tt detect",
+      "Step 3: Verify bundle ID format (com.x.y)"
+    ],
+    "passes": true
+  },
+  {
+    "id": 118,
+    "category": "functional",
+    "area": "detection",
+    "description": "macOS window detection returns window title",
+    "steps": [
+      "Step 1: Focus on app with specific window",
+      "Step 2: Run tt detect",
+      "Step 3: Verify window title returned"
+    ],
+    "passes": true
+  },
+  {
+    "id": 119,
+    "category": "functional",
+    "area": "detection",
+    "description": "Detection handles unknown app gracefully",
+    "steps": [
+      "Step 1: Test with app that has no window title",
+      "Step 2: Run tt detect",
+      "Step 3: Verify no crash",
+      "Step 4: Verify 'Unknown' or empty handled"
+    ],
+    "passes": true
+  },
+  {
+    "id": 120,
+    "category": "functional",
+    "area": "categorization",
+    "description": "Built-in patterns categorize IDE as programming",
+    "steps": [
+      "Step 1: Focus on VS Code",
+      "Step 2: Run tt detect",
+      "Step 3: Verify suggested category is programming",
+      "Step 4: Test with other IDEs"
+    ],
+    "passes": true
+  },
+  {
+    "id": 121,
+    "category": "functional",
+    "area": "categorization",
+    "description": "Built-in patterns categorize browser correctly",
+    "steps": [
+      "Step 1: Focus on Chrome",
+      "Step 2: Run tt detect",
+      "Step 3: Verify category suggestion",
+      "Step 4: Test with Safari, Firefox"
+    ],
+    "passes": true
+  },
+  {
+    "id": 122,
+    "category": "functional",
+    "area": "categorization",
+    "description": "Custom rules override built-in patterns",
+    "steps": [
+      "Step 1: Add rule for Chrome -> programming",
+      "Step 2: Focus on Chrome",
+      "Step 3: Run tt detect",
+      "Step 4: Verify programming category",
+      "Step 5: Remove test rule"
+    ],
+    "passes": true
+  },
+  {
+    "id": 123,
+    "category": "functional",
+    "area": "categorization",
+    "description": "Rule priority is respected",
+    "steps": [
+      "Step 1: Add low priority rule for Chrome",
+      "Step 2: Add high priority rule for Chrome",
+      "Step 3: Focus on Chrome",
+      "Step 4: Run tt detect",
+      "Step 5: Verify high priority rule applied"
+    ],
+    "passes": true
+  },
+  {
+    "id": 124,
+    "category": "functional",
+    "area": "categorization",
+    "description": "Window pattern matching works",
+    "steps": [
+      "Step 1: Add rule with window pattern 'GitHub'",
+      "Step 2: Focus on Chrome with GitHub tab",
+      "Step 3: Run tt detect",
+      "Step 4: Verify rule matches"
+    ],
+    "passes": true
+  },
+  {
+    "id": 125,
+    "category": "functional",
+    "area": "categorization",
+    "description": "Uncategorized fallback works",
+    "steps": [
+      "Step 1: Focus on unknown app",
+      "Step 2: Run tt detect",
+      "Step 3: Verify 'uncategorized' suggested"
+    ],
+    "passes": true
+  },
+  {
+    "id": 126,
+    "category": "functional",
+    "area": "daemon-tracking",
+    "description": "Daemon creates entries automatically",
+    "steps": [
+      "Step 1: Run tt daemon start",
+      "Step 2: Switch between apps",
+      "Step 3: Wait 10 seconds",
+      "Step 4: Run tt today",
+      "Step 5: Verify entries created",
+      "Step 6: Run tt daemon stop"
+    ],
+    "passes": true
+  },
+  {
+    "id": 127,
+    "category": "functional",
+    "area": "daemon-tracking",
+    "description": "Daemon respects categorization rules",
+    "steps": [
+      "Step 1: Add specific rule",
+      "Step 2: Run tt daemon start",
+      "Step 3: Focus on matching app",
+      "Step 4: Wait 10 seconds",
+      "Step 5: Verify correct category assigned",
+      "Step 6: Run tt daemon stop"
+    ],
+    "passes": true
+  },
+  {
+    "id": 128,
+    "category": "functional",
+    "area": "daemon-tracking",
+    "description": "Daemon handles app switches",
+    "steps": [
+      "Step 1: Run tt daemon start",
+      "Step 2: Focus on App A",
+      "Step 3: Wait 5 seconds",
+      "Step 4: Switch to App B",
+      "Step 5: Wait 5 seconds",
+      "Step 6: Verify two entries created",
+      "Step 7: Run tt daemon stop"
+    ],
+    "passes": true
+  },
+  {
+    "id": 129,
+    "category": "functional",
+    "area": "daemon-tracking",
+    "description": "Daemon logs to file",
+    "steps": [
+      "Step 1: Run tt daemon start",
+      "Step 2: Wait 5 seconds",
+      "Step 3: Run tt daemon logs",
+      "Step 4: Verify log entries present",
+      "Step 5: Run tt daemon stop"
+    ],
+    "passes": true
+  },
+  {
+    "id": 130,
+    "category": "functional",
+    "area": "daemon-tracking",
+    "description": "Daemon persists PID file",
+    "steps": [
+      "Step 1: Run tt daemon start",
+      "Step 2: Verify /tmp/timer-record.pid exists",
+      "Step 3: Verify PID in file is running",
+      "Step 4: Run tt daemon stop",
+      "Step 5: Verify PID file removed"
+    ],
+    "passes": true
+  },
+  {
+    "id": 131,
+    "category": "functional",
+    "area": "launchd",
+    "description": "launchd plist is valid",
+    "steps": [
+      "Step 1: Run tt daemon install",
+      "Step 2: Validate plist syntax",
+      "Step 3: Verify all required keys present",
+      "Step 4: Run tt daemon uninstall"
+    ],
+    "passes": true
+  },
+  {
+    "id": 132,
+    "category": "functional",
+    "area": "launchd",
+    "description": "launchd service can be loaded",
+    "steps": [
+      "Step 1: Run tt daemon install",
+      "Step 2: Run launchctl list | grep timer-record",
+      "Step 3: Verify service appears",
+      "Step 4: Run tt daemon uninstall"
+    ],
+    "passes": true
+  },
+  {
+    "id": 133,
+    "category": "functional",
+    "area": "launchd",
+    "description": "launchd runs daemon on load",
+    "steps": [
+      "Step 1: Run tt daemon install",
+      "Step 2: Wait 5 seconds",
+      "Step 3: Run tt daemon status",
+      "Step 4: Verify daemon is running",
+      "Step 5: Run tt daemon uninstall"
+    ],
+    "passes": true
+  },
+  {
+    "id": 134,
+    "category": "functional",
+    "area": "permissions",
+    "description": "Accessibility permission check works",
+    "steps": [
+      "Step 1: Run tt detect",
+      "Step 2: Verify detection works or permission error",
+      "Step 3: If error, verify instructions shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 135,
+    "category": "functional",
+    "area": "permissions",
+    "description": "Permission instructions are clear",
+    "steps": [
+      "Step 1: Trigger permission check failure",
+      "Step 2: Verify step-by-step instructions",
+      "Step 3: Verify System Settings path mentioned"
+    ],
+    "passes": true
+  },
+  {
+    "id": 136,
+    "category": "functional",
+    "area": "reports",
+    "description": "Today summary excludes yesterday's entries",
+    "steps": [
+      "Step 1: Log entry for yesterday",
+      "Step 2: Log entry for today",
+      "Step 3: Run tt today",
+      "Step 4: Verify only today's entry shown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 137,
+    "category": "functional",
+    "area": "reports",
+    "description": "Week summary uses Monday-Sunday range",
+    "steps": [
+      "Step 1: Run tt week",
+      "Step 2: Verify date range starts Monday",
+      "Step 3: Verify date range ends Sunday"
+    ],
+    "passes": true
+  },
+  {
+    "id": 138,
+    "category": "functional",
+    "area": "reports",
+    "description": "Week totals are accurate",
+    "steps": [
+      "Step 1: Log known durations for week",
+      "Step 2: Run tt week",
+      "Step 3: Calculate expected total",
+      "Step 4: Verify displayed total matches"
+    ],
+    "passes": true
+  },
+  {
+    "id": 139,
+    "category": "functional",
+    "area": "reports",
+    "description": "Category percentages sum to 100%",
+    "steps": [
+      "Step 1: Create entries in multiple categories",
+      "Step 2: Run tt today",
+      "Step 3: Sum all percentages",
+      "Step 4: Verify total is ~100%"
+    ],
+    "passes": true
+  },
+  {
+    "id": 140,
+    "category": "functional",
+    "area": "reports",
+    "description": "Hourly breakdown covers all 24 hours",
+    "steps": [
+      "Step 1: Run tt week with entries",
+      "Step 2: Verify hours 0-23 displayed",
+      "Step 3: Verify two rows (0-11, 12-23)"
+    ],
+    "passes": true
+  },
+  {
+    "id": 141,
+    "category": "functional",
+    "area": "export",
+    "description": "CSV escapes commas in fields",
+    "steps": [
+      "Step 1: Create entry with comma in notes",
+      "Step 2: Run tt export csv",
+      "Step 3: Verify field is quoted",
+      "Step 4: Verify CSV is valid"
+    ],
+    "passes": true
+  },
+  {
+    "id": 142,
+    "category": "functional",
+    "area": "export",
+    "description": "CSV escapes quotes in fields",
+    "steps": [
+      "Step 1: Create entry with quotes in notes",
+      "Step 2: Run tt export csv",
+      "Step 3: Verify quotes are doubled",
+      "Step 4: Verify CSV is valid"
+    ],
+    "passes": true
+  },
+  {
+    "id": 143,
+    "category": "functional",
+    "area": "export",
+    "description": "CSV escapes newlines in fields",
+    "steps": [
+      "Step 1: Create entry with newline in notes",
+      "Step 2: Run tt export csv",
+      "Step 3: Verify field is quoted",
+      "Step 4: Verify CSV is valid"
+    ],
+    "passes": true
+  },
+  {
+    "id": 144,
+    "category": "functional",
+    "area": "export",
+    "description": "JSON includes all metadata",
+    "steps": [
+      "Step 1: Run tt export json",
+      "Step 2: Verify exported_at present",
+      "Step 3: Verify date_range present",
+      "Step 4: Verify entry_count present",
+      "Step 5: Verify total_seconds present"
+    ],
+    "passes": true
+  },
+  {
+    "id": 145,
+    "category": "functional",
+    "area": "export",
+    "description": "JSON entries have all fields",
+    "steps": [
+      "Step 1: Create entry with all fields populated",
+      "Step 2: Run tt export json",
+      "Step 3: Verify entry has id, times, duration",
+      "Step 4: Verify entry has category, app_name, window_title"
+    ],
+    "passes": true
+  },
+  {
+    "id": 146,
+    "category": "functional",
+    "area": "database",
+    "description": "Entries index on start_time works",
+    "steps": [
+      "Step 1: Create many entries",
+      "Step 2: Query by start_time",
+      "Step 3: Verify query uses index (explain query)"
+    ],
+    "passes": true
+  },
+  {
+    "id": 147,
+    "category": "functional",
+    "area": "database",
+    "description": "Entries index on category_id works",
+    "steps": [
+      "Step 1: Create many entries",
+      "Step 2: Query by category_id",
+      "Step 3: Verify query uses index"
+    ],
+    "passes": true
+  },
+  {
+    "id": 148,
+    "category": "functional",
+    "area": "database",
+    "description": "Entries index on date works",
+    "steps": [
+      "Step 1: Create many entries",
+      "Step 2: Query by date(start_time)",
+      "Step 3: Verify query uses index"
+    ],
+    "passes": true
+  },
+  {
+    "id": 149,
+    "category": "functional",
+    "area": "database",
+    "description": "Categories have unique names",
+    "steps": [
+      "Step 1: Add category 'test'",
+      "Step 2: Try to add another 'test'",
+      "Step 3: Verify uniqueness constraint error"
+    ],
+    "passes": true
+  },
+  {
+    "id": 150,
+    "category": "functional",
+    "area": "database",
+    "description": "Migrations are idempotent",
+    "steps": [
+      "Step 1: Run any command to trigger migrations",
+      "Step 2: Run any command again",
+      "Step 3: Verify no migration errors",
+      "Step 4: Verify data not duplicated"
+    ],
+    "passes": true
+  },
+  {
+    "id": 151,
+    "category": "performance",
+    "area": "commands",
+    "description": "tt status executes in < 500ms",
+    "steps": [
+      "Step 1: Time tt status command",
+      "Step 2: Verify execution < 500ms",
+      "Step 3: Repeat 5 times and average"
+    ],
+    "passes": true
+  },
+  {
+    "id": 152,
+    "category": "performance",
+    "area": "commands",
+    "description": "tt today executes in < 500ms",
+    "steps": [
+      "Step 1: Create 100 entries for today",
+      "Step 2: Time tt today command",
+      "Step 3: Verify execution < 500ms"
+    ],
+    "passes": true
+  },
+  {
+    "id": 153,
+    "category": "performance",
+    "area": "commands",
+    "description": "tt week executes in < 1000ms",
+    "steps": [
+      "Step 1: Create 500 entries for the week",
+      "Step 2: Time tt week command",
+      "Step 3: Verify execution < 1000ms"
+    ],
+    "passes": true
+  },
+  {
+    "id": 154,
+    "category": "performance",
+    "area": "commands",
+    "description": "tt categories list executes in < 200ms",
+    "steps": [
+      "Step 1: Time tt categories command",
+      "Step 2: Verify execution < 200ms"
+    ],
+    "passes": true
+  },
+  {
+    "id": 155,
+    "category": "performance",
+    "area": "commands",
+    "description": "tt export csv handles 10k entries",
+    "steps": [
+      "Step 1: Create 10,000 entries",
+      "Step 2: Run tt export csv",
+      "Step 3: Verify completes in < 5s"
+    ],
+    "passes": true
+  },
+  {
+    "id": 156,
+    "category": "performance",
+    "area": "daemon",
+    "description": "Daemon uses minimal CPU when idle",
+    "steps": [
+      "Step 1: Run tt daemon start",
+      "Step 2: Wait 30 seconds",
+      "Step 3: Check CPU usage",
+      "Step 4: Verify < 1% average",
+      "Step 5: Run tt daemon stop"
+    ],
+    "passes": true
+  },
+  {
+    "id": 157,
+    "category": "performance",
+    "area": "daemon",
+    "description": "Daemon polls every 5 seconds",
+    "steps": [
+      "Step 1: Run tt daemon start",
+      "Step 2: Check logs for poll frequency",
+      "Step 3: Verify ~5 second intervals",
+      "Step 4: Run tt daemon stop"
+    ],
+    "passes": true
+  },
+  {
+    "id": 158,
+    "category": "performance",
+    "area": "database",
+    "description": "Database stays under 50MB with 100k entries",
+    "steps": [
+      "Step 1: Create 100,000 entries",
+      "Step 2: Check database file size",
+      "Step 3: Verify < 50MB"
+    ],
+    "passes": true
+  },
+  {
+    "id": 159,
+    "category": "functional",
+    "area": "integration",
+    "description": "Full workflow: start, work, stop, report",
+    "steps": [
+      "Step 1: Run tt start programming",
+      "Step 2: Wait 5 seconds",
+      "Step 3: Run tt stop",
+      "Step 4: Run tt today",
+      "Step 5: Verify entry appears in report",
+      "Step 6: Verify duration is ~5 seconds",
+      "Step 7: Run tt export json",
+      "Step 8: Verify entry in export"
+    ],
+    "passes": true
+  },
+  {
+    "id": 160,
+    "category": "functional",
+    "area": "integration",
+    "description": "Full workflow: log, report, export",
+    "steps": [
+      "Step 1: Run tt log -c debugging -d 2h -n 'Bug fix'",
+      "Step 2: Run tt today",
+      "Step 3: Verify debugging category shows 2h",
+      "Step 4: Run tt export csv",
+      "Step 5: Verify entry with notes in export"
+    ],
+    "passes": true
+  },
+  {
+    "id": 161,
+    "category": "functional",
+    "area": "integration",
+    "description": "Full workflow: daemon auto-tracking",
+    "steps": [
+      "Step 1: Run tt daemon start",
+      "Step 2: Work in various apps for 1 minute",
+      "Step 3: Run tt daemon stop",
+      "Step 4: Run tt today",
+      "Step 5: Verify entries for different apps",
+      "Step 6: Verify categories assigned correctly"
+    ],
+    "passes": true
+  },
+  {
+    "id": 162,
+    "category": "functional",
+    "area": "integration",
+    "description": "Full workflow: custom category and rules",
+    "steps": [
+      "Step 1: Run tt categories add design -c '#FF5733'",
+      "Step 2: Run tt rules add --app 'Figma' -c design",
+      "Step 3: Focus on Figma",
+      "Step 4: Run tt detect",
+      "Step 5: Verify design category suggested",
+      "Step 6: Run tt start design",
+      "Step 7: Run tt stop",
+      "Step 8: Run tt today",
+      "Step 9: Verify design category in report"
+    ],
+    "passes": true
+  },
+  {
+    "id": 163,
+    "category": "functional",
+    "area": "integration",
+    "description": "Multiple categories in one day",
+    "steps": [
+      "Step 1: Log 2h of programming",
+      "Step 2: Log 1h of debugging",
+      "Step 3: Log 30m of code-review",
+      "Step 4: Run tt today",
+      "Step 5: Verify all three categories shown",
+      "Step 6: Verify total is 3h 30m",
+      "Step 7: Verify percentages are correct"
+    ],
+    "passes": true
+  },
+  {
+    "id": 164,
+    "category": "functional",
+    "area": "integration",
+    "description": "Week report with multiple days",
+    "steps": [
+      "Step 1: Log entries for Monday, Wednesday, Friday",
+      "Step 2: Run tt week",
+      "Step 3: Verify daily chart shows activity on those days",
+      "Step 4: Verify zeros on other days",
+      "Step 5: Verify total is sum of entries"
+    ],
+    "passes": true
+  },
+  {
+    "id": 165,
+    "category": "functional",
+    "area": "integration",
+    "description": "Export and reimport scenario",
+    "steps": [
+      "Step 1: Create several entries",
+      "Step 2: Run tt export json -o backup.json",
+      "Step 3: Verify backup.json is valid",
+      "Step 4: Verify backup contains all entries"
+    ],
+    "passes": true
+  },
+  {
+    "id": 166,
+    "category": "functional",
+    "area": "repositories",
+    "description": "createEntry creates entry with defaults",
+    "steps": [
+      "Step 1: Call createEntry with minimal options",
+      "Step 2: Verify entry has start_time set",
+      "Step 3: Verify entry has no end_time",
+      "Step 4: Verify is_manual defaults to false"
+    ],
+    "passes": true
+  },
+  {
+    "id": 167,
+    "category": "functional",
+    "area": "repositories",
+    "description": "getActiveEntry returns only active",
+    "steps": [
+      "Step 1: Create entry without end_time",
+      "Step 2: Create entry with end_time",
+      "Step 3: Call getActiveEntry",
+      "Step 4: Verify only active entry returned"
+    ],
+    "passes": true
+  },
+  {
+    "id": 168,
+    "category": "functional",
+    "area": "repositories",
+    "description": "stopActiveEntry sets end_time and duration",
+    "steps": [
+      "Step 1: Create active entry",
+      "Step 2: Wait 3 seconds",
+      "Step 3: Call stopActiveEntry",
+      "Step 4: Verify end_time is set",
+      "Step 5: Verify duration_seconds is ~3"
+    ],
+    "passes": true
+  },
+  {
+    "id": 169,
+    "category": "functional",
+    "area": "repositories",
+    "description": "getTodaySummary groups by category",
+    "steps": [
+      "Step 1: Create entries in multiple categories",
+      "Step 2: Call getTodaySummary",
+      "Step 3: Verify grouped by category",
+      "Step 4: Verify totals are correct"
+    ],
+    "passes": true
+  },
+  {
+    "id": 170,
+    "category": "functional",
+    "area": "repositories",
+    "description": "getTodayTotalSeconds sums correctly",
+    "steps": [
+      "Step 1: Create entries with known durations",
+      "Step 2: Call getTodayTotalSeconds",
+      "Step 3: Verify sum is correct"
+    ],
+    "passes": true
+  },
+  {
+    "id": 171,
+    "category": "functional",
+    "area": "repositories",
+    "description": "getCategorySummary filters by date range",
+    "steps": [
+      "Step 1: Create entries across multiple weeks",
+      "Step 2: Call getCategorySummary with this week's range",
+      "Step 3: Verify only this week's entries included"
+    ],
+    "passes": true
+  },
+  {
+    "id": 172,
+    "category": "functional",
+    "area": "repositories",
+    "description": "getDailyTotals returns all days in range",
+    "steps": [
+      "Step 1: Call getDailyTotals for this week",
+      "Step 2: Verify 7 day entries returned",
+      "Step 3: Verify each has date and total_seconds"
+    ],
+    "passes": true
+  },
+  {
+    "id": 173,
+    "category": "functional",
+    "area": "repositories",
+    "description": "getHourlyBreakdown groups by hour",
+    "steps": [
+      "Step 1: Create entries at different hours",
+      "Step 2: Call getHourlyBreakdown",
+      "Step 3: Verify grouped by hour",
+      "Step 4: Verify totals per hour correct"
+    ],
+    "passes": true
+  },
+  {
+    "id": 174,
+    "category": "functional",
+    "area": "repositories",
+    "description": "getWeekRange returns correct boundaries",
+    "steps": [
+      "Step 1: Call getWeekRange(0)",
+      "Step 2: Verify start is Monday",
+      "Step 3: Verify end is Sunday",
+      "Step 4: Call getWeekRange(1)",
+      "Step 5: Verify dates are previous week"
+    ],
+    "passes": true
+  },
+  {
+    "id": 175,
+    "category": "functional",
+    "area": "repositories",
+    "description": "getAllCategories returns all",
+    "steps": [
+      "Step 1: Call getAllCategories",
+      "Step 2: Verify at least 13 default categories",
+      "Step 3: Verify each has id, name, color, is_productive"
+    ],
+    "passes": true
+  },
+  {
+    "id": 176,
+    "category": "functional",
+    "area": "repositories",
+    "description": "getCategoryByName finds category",
+    "steps": [
+      "Step 1: Call getCategoryByName('programming')",
+      "Step 2: Verify category returned",
+      "Step 3: Verify id is positive integer",
+      "Step 4: Call getCategoryByName('nonexistent')",
+      "Step 5: Verify null returned"
+    ],
+    "passes": true
+  },
+  {
+    "id": 177,
+    "category": "functional",
+    "area": "repositories",
+    "description": "getCategoryById finds category",
+    "steps": [
+      "Step 1: Get category by name to find ID",
+      "Step 2: Call getCategoryById with that ID",
+      "Step 3: Verify same category returned",
+      "Step 4: Call getCategoryById(99999)",
+      "Step 5: Verify null returned"
+    ],
+    "passes": true
+  },
+  {
+    "id": 178,
+    "category": "functional",
+    "area": "repositories",
+    "description": "createCategory creates new category",
+    "steps": [
+      "Step 1: Call createCategory('test', '#FF0000', 'desc', true)",
+      "Step 2: Verify category returned with id",
+      "Step 3: Verify can find with getCategoryByName"
+    ],
+    "passes": true
+  },
+  {
+    "id": 179,
+    "category": "functional",
+    "area": "repositories",
+    "description": "deleteCategory removes category",
+    "steps": [
+      "Step 1: Create test category",
+      "Step 2: Call deleteCategory('test')",
+      "Step 3: Verify returns true",
+      "Step 4: Verify getCategoryByName returns null"
+    ],
+    "passes": true
+  },
+  {
+    "id": 180,
+    "category": "functional",
+    "area": "format",
+    "description": "formatDuration handles seconds",
+    "steps": [
+      "Step 1: Call formatDuration(30)",
+      "Step 2: Verify output is '30s' or similar"
+    ],
+    "passes": true
+  },
+  {
+    "id": 181,
+    "category": "functional",
+    "area": "format",
+    "description": "formatDuration handles minutes",
+    "steps": [
+      "Step 1: Call formatDuration(90)",
+      "Step 2: Verify output is '1m 30s' or '1m'"
+    ],
+    "passes": true
+  },
+  {
+    "id": 182,
+    "category": "functional",
+    "area": "format",
+    "description": "formatDuration handles hours",
+    "steps": [
+      "Step 1: Call formatDuration(3661)",
+      "Step 2: Verify output is '1h 1m' or similar"
+    ],
+    "passes": true
+  },
+  {
+    "id": 183,
+    "category": "functional",
+    "area": "format",
+    "description": "formatDurationClock shows HH:MM:SS",
+    "steps": [
+      "Step 1: Call formatDurationClock(3661)",
+      "Step 2: Verify output is '01:01:01'"
+    ],
+    "passes": true
+  },
+  {
+    "id": 184,
+    "category": "functional",
+    "area": "format",
+    "description": "formatTime shows 12-hour format",
+    "steps": [
+      "Step 1: Call formatTime with morning time",
+      "Step 2: Verify 'AM' in output",
+      "Step 3: Call formatTime with afternoon time",
+      "Step 4: Verify 'PM' in output"
+    ],
+    "passes": true
+  },
+  {
+    "id": 185,
+    "category": "functional",
+    "area": "format",
+    "description": "formatCategory applies color",
+    "steps": [
+      "Step 1: Call formatCategory('test', '#FF0000')",
+      "Step 2: Verify output contains color codes",
+      "Step 3: Call formatCategory('test', null)",
+      "Step 4: Verify default formatting applied"
+    ],
+    "passes": true
+  },
+  {
+    "id": 186,
+    "category": "functional",
+    "area": "format",
+    "description": "formatBar creates proportional bar",
+    "steps": [
+      "Step 1: Call formatBar(50, 20)",
+      "Step 2: Verify bar is ~10 characters",
+      "Step 3: Call formatBar(100, 20)",
+      "Step 4: Verify bar is 20 characters",
+      "Step 5: Call formatBar(0, 20)",
+      "Step 6: Verify bar is empty or minimal"
+    ],
+    "passes": true
+  },
+  {
+    "id": 187,
+    "category": "functional",
+    "area": "timer",
+    "description": "startTimer returns new entry",
+    "steps": [
+      "Step 1: Call startTimer with options",
+      "Step 2: Verify entry returned",
+      "Step 3: Verify entry has id",
+      "Step 4: Verify entry has start_time"
+    ],
+    "passes": true
+  },
+  {
+    "id": 188,
+    "category": "functional",
+    "area": "timer",
+    "description": "startTimer stops previous timer",
+    "steps": [
+      "Step 1: Call startTimer",
+      "Step 2: Call startTimer again",
+      "Step 3: Verify first timer has end_time",
+      "Step 4: Verify only one active timer"
+    ],
+    "passes": true
+  },
+  {
+    "id": 189,
+    "category": "functional",
+    "area": "timer",
+    "description": "stopTimer returns stopped entry",
+    "steps": [
+      "Step 1: Call startTimer",
+      "Step 2: Call stopTimer",
+      "Step 3: Verify entry returned",
+      "Step 4: Verify entry has duration_seconds"
+    ],
+    "passes": true
+  },
+  {
+    "id": 190,
+    "category": "functional",
+    "area": "timer",
+    "description": "stopTimer returns null when no timer",
+    "steps": [
+      "Step 1: Ensure no active timer",
+      "Step 2: Call stopTimer",
+      "Step 3: Verify null returned"
+    ],
+    "passes": true
+  },
+  {
+    "id": 191,
+    "category": "functional",
+    "area": "timer",
+    "description": "getTimerStatus returns active session",
+    "steps": [
+      "Step 1: Call startTimer",
+      "Step 2: Call getTimerStatus",
+      "Step 3: Verify session returned",
+      "Step 4: Verify has category_name, start_time"
+    ],
+    "passes": true
+  },
+  {
+    "id": 192,
+    "category": "functional",
+    "area": "timer",
+    "description": "getTimerStatus returns null when inactive",
+    "steps": [
+      "Step 1: Ensure no active timer",
+      "Step 2: Call getTimerStatus",
+      "Step 3: Verify null returned"
+    ],
+    "passes": true
+  },
+  {
+    "id": 193,
+    "category": "functional",
+    "area": "timer",
+    "description": "getActiveDuration calculates correctly",
+    "steps": [
+      "Step 1: Call startTimer",
+      "Step 2: Wait 3 seconds",
+      "Step 3: Call getActiveDuration",
+      "Step 4: Verify result is ~3"
+    ],
+    "passes": true
+  },
+  {
+    "id": 194,
+    "category": "functional",
+    "area": "timer",
+    "description": "getActiveDuration returns 0 when inactive",
+    "steps": [
+      "Step 1: Ensure no active timer",
+      "Step 2: Call getActiveDuration",
+      "Step 3: Verify returns 0"
+    ],
+    "passes": true
+  },
+  {
+    "id": 195,
+    "category": "functional",
+    "area": "paths",
+    "description": "getDatabasePath returns valid path",
+    "steps": [
+      "Step 1: Call getDatabasePath",
+      "Step 2: Verify path is absolute",
+      "Step 3: Verify path ends with .db",
+      "Step 4: Verify parent directory exists"
+    ],
+    "passes": true
+  },
+  {
+    "id": 196,
+    "category": "functional",
+    "area": "paths",
+    "description": "Database path is in user data directory",
+    "steps": [
+      "Step 1: Call getDatabasePath",
+      "Step 2: Verify path contains ~/.timer-record or similar",
+      "Step 3: Verify not in system directories"
+    ],
+    "passes": true
+  },
+  {
+    "id": 197,
+    "category": "style",
+    "area": "consistency",
+    "description": "All error messages start with 'Error:'",
+    "steps": [
+      "Step 1: Trigger various error conditions",
+      "Step 2: Verify error format is consistent",
+      "Step 3: Verify red color used"
+    ],
+    "passes": true
+  },
+  {
+    "id": 198,
+    "category": "style",
+    "area": "consistency",
+    "description": "All success messages use checkmark",
+    "steps": [
+      "Step 1: Run successful commands",
+      "Step 2: Verify checkmark or success indicator",
+      "Step 3: Verify green color used"
+    ],
+    "passes": true
+  },
+  {
+    "id": 199,
+    "category": "style",
+    "area": "consistency",
+    "description": "All warnings use warning color",
+    "steps": [
+      "Step 1: Trigger various warning conditions",
+      "Step 2: Verify yellow/amber color",
+      "Step 3: Verify format is consistent"
+    ],
+    "passes": true
+  },
+  {
+    "id": 200,
+    "category": "style",
+    "area": "consistency",
+    "description": "Header sections use bold text",
+    "steps": [
+      "Step 1: Run commands with section headers",
+      "Step 2: Verify headers are bold",
+      "Step 3: Examples: 'Today's Summary', 'Weekly Summary'"
+    ],
+    "passes": true
+  },
+  {
+    "id": 201,
+    "category": "style",
+    "area": "consistency",
+    "description": "Dim text used for secondary info",
+    "steps": [
+      "Step 1: Run various commands",
+      "Step 2: Verify hints are dim",
+      "Step 3: Verify file paths are dim",
+      "Step 4: Verify IDs are dim"
+    ],
+    "passes": true
+  },
+  {
+    "id": 202,
+    "category": "functional",
+    "area": "config",
+    "description": "Default poll interval is 5 seconds",
+    "steps": [
+      "Step 1: Check config or constants",
+      "Step 2: Verify poll interval is 5000ms or 5s"
+    ],
+    "passes": true
+  },
+  {
+    "id": 203,
+    "category": "functional",
+    "area": "config",
+    "description": "Data directory is created if missing",
+    "steps": [
+      "Step 1: Remove data directory",
+      "Step 2: Run any command",
+      "Step 3: Verify directory is created",
+      "Step 4: Verify database file exists"
+    ],
+    "passes": true
+  },
+  {
+    "id": 204,
+    "category": "functional",
+    "area": "error-handling",
+    "description": "Database connection errors are handled",
+    "steps": [
+      "Step 1: Make database file read-only",
+      "Step 2: Run a write command",
+      "Step 3: Verify graceful error message",
+      "Step 4: Restore permissions"
+    ],
+    "passes": true
+  },
+  {
+    "id": 205,
+    "category": "functional",
+    "area": "error-handling",
+    "description": "AppleScript timeout is handled",
+    "steps": [
+      "Step 1: Simulate AppleScript timeout",
+      "Step 2: Verify 'Unknown' app returned",
+      "Step 3: Verify no crash"
+    ],
+    "passes": true
+  },
+  {
+    "id": 206,
+    "category": "functional",
+    "area": "error-handling",
+    "description": "Invalid command shows help",
+    "steps": [
+      "Step 1: Run tt invalid-command",
+      "Step 2: Verify error message",
+      "Step 3: Verify help suggestion"
+    ],
+    "passes": true
+  },
+  {
+    "id": 207,
+    "category": "functional",
+    "area": "error-handling",
+    "description": "Missing required args show error",
+    "steps": [
+      "Step 1: Run tt rules add without category",
+      "Step 2: Verify required option error",
+      "Step 3: Verify which option is missing"
+    ],
+    "passes": true
+  },
+  {
+    "id": 208,
+    "category": "functional",
+    "area": "error-handling",
+    "description": "Exit code is non-zero on error",
+    "steps": [
+      "Step 1: Run tt start invalid-category",
+      "Step 2: Check exit code",
+      "Step 3: Verify exit code is 1"
+    ],
+    "passes": true
+  },
+  {
+    "id": 209,
+    "category": "functional",
+    "area": "error-handling",
+    "description": "Exit code is zero on success",
+    "steps": [
+      "Step 1: Run tt categories list",
+      "Step 2: Check exit code",
+      "Step 3: Verify exit code is 0"
+    ],
+    "passes": true
+  },
+  {
+    "id": 210,
+    "category": "functional",
+    "area": "cleanup",
+    "description": "Stale PID file is cleaned up",
+    "steps": [
+      "Step 1: Create fake PID file with dead PID",
+      "Step 2: Run tt daemon status",
+      "Step 3: Verify PID file is removed",
+      "Step 4: Verify 'not running' status"
+    ],
+    "passes": true
+  }
+]
