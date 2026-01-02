@@ -1,5 +1,6 @@
 import Table from 'cli-table3';
 import chalk from 'chalk';
+import { spawn } from 'child_process';
 import {
   loadConfig,
   resetConfig,
@@ -120,6 +121,22 @@ export function configEditCommand(): void {
 
   console.log(`Opening ${configPath} in ${editor}...`);
 
-  const { spawn } = require('child_process');
-  spawn(editor, [configPath], { stdio: 'inherit' });
+  try {
+    const child = spawn(editor, [configPath], { stdio: 'inherit' });
+    
+    child.on('error', (err) => {
+      error(`Failed to launch editor: ${err.message}`);
+      process.exit(1);
+    });
+
+    child.on('close', (code) => {
+      if (code !== 0) {
+        error(`Editor exited with code ${code}`);
+        process.exit(code || 1);
+      }
+    });
+  } catch (err) {
+    error(`Failed to start editor: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    process.exit(1);
+  }
 }

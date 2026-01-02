@@ -74,6 +74,34 @@ export function importJson(filePath: string, options?: { dryRun?: boolean }): vo
       }
 
       if (!options?.dryRun) {
+        // Validate and normalize datetime strings
+        let normalizedStartTime: string | null = null;
+        let normalizedEndTime: string | null = null;
+
+        // Validate start_time
+        if (entry.start_time) {
+          const startDate = new Date(entry.start_time);
+          if (isNaN(startDate.getTime())) {
+            skipped++;
+            continue;
+          }
+          normalizedStartTime = startDate.toISOString().replace('T', ' ').slice(0, 19);
+        } else {
+          skipped++;
+          continue;
+        }
+
+        // Validate end_time (optional)
+        if (entry.end_time) {
+          const endDate = new Date(entry.end_time);
+          if (isNaN(endDate.getTime())) {
+            // If end_time is invalid, set it to null
+            normalizedEndTime = null;
+          } else {
+            normalizedEndTime = endDate.toISOString().replace('T', ' ').slice(0, 19);
+          }
+        }
+
         db.prepare(`
           INSERT INTO time_entries (
             category_id, project_id, start_time, end_time,
@@ -83,8 +111,8 @@ export function importJson(filePath: string, options?: { dryRun?: boolean }): vo
         `).run(
           categoryId,
           projectId,
-          entry.start_time,
-          entry.end_time || null,
+          normalizedStartTime,
+          normalizedEndTime,
           entry.duration_seconds || null,
           entry.notes || null
         );
@@ -161,7 +189,12 @@ export function importCsv(filePath: string, options?: { dryRun?: boolean }): voi
       }
 
       const endTime = endTimeIdx >= 0 ? values[endTimeIdx] : null;
-      const duration = durationIdx >= 0 ? parseInt(values[durationIdx], 10) : null;
+      // Parse duration with proper null handling
+      let duration: number | null = null;
+      if (durationIdx >= 0 && values[durationIdx]) {
+        const parsedValue = parseInt(values[durationIdx], 10);
+        duration = Number.isNaN(parsedValue) ? null : parsedValue;
+      }
       const categoryName = categoryIdx >= 0 ? values[categoryIdx] : null;
       const projectName = projectIdx >= 0 ? values[projectIdx] : null;
       const notes = notesIdx >= 0 ? values[notesIdx] : null;
@@ -187,6 +220,33 @@ export function importCsv(filePath: string, options?: { dryRun?: boolean }): voi
       }
 
       if (!options?.dryRun) {
+        // Validate and normalize datetime strings
+        let normalizedStartTime: string | null = null;
+        let normalizedEndTime: string | null = null;
+
+        // Validate start_time
+        if (startTime) {
+          const startDate = new Date(startTime);
+          if (isNaN(startDate.getTime())) {
+            skipped++;
+            continue;
+          }
+          normalizedStartTime = startDate.toISOString().replace('T', ' ').slice(0, 19);
+        } else {
+          skipped++;
+          continue;
+        }
+
+        // Validate end_time (optional)
+        if (endTime) {
+          const endDate = new Date(endTime);
+          if (isNaN(endDate.getTime())) {
+            normalizedEndTime = null;
+          } else {
+            normalizedEndTime = endDate.toISOString().replace('T', ' ').slice(0, 19);
+          }
+        }
+
         db.prepare(`
           INSERT INTO time_entries (
             category_id, project_id, start_time, end_time,
@@ -196,9 +256,9 @@ export function importCsv(filePath: string, options?: { dryRun?: boolean }): voi
         `).run(
           categoryId,
           projectId,
-          startTime,
-          endTime || null,
-          isNaN(duration!) ? null : duration,
+          normalizedStartTime,
+          normalizedEndTime,
+          duration !== null && !Number.isNaN(duration) ? duration : null,
           notes || null
         );
       }

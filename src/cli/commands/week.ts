@@ -34,6 +34,9 @@ export function weekCommand(options?: WeekOptions): void {
     if (project) {
       filters.projectId = project.id;
       filterDescription += ` [project: ${project.name}]`;
+    } else {
+      console.warn(`Warning: Project "${options.project}" not found. Results will be unfiltered.`);
+      console.warn(`  Use 'tt project list' to see available projects.`);
     }
   }
 
@@ -41,13 +44,19 @@ export function weekCommand(options?: WeekOptions): void {
     const tagString = options.tag || options.tags || '';
     const tagNames = tagString.split(',').map(t => t.trim()).filter(t => t);
     const tagIds: number[] = [];
+    const resolvedTagNames: string[] = [];
+    
     for (const name of tagNames) {
       const tag = getTagByName(name);
-      if (tag) tagIds.push(tag.id);
+      if (tag) {
+        tagIds.push(tag.id);
+        resolvedTagNames.push(tag.name); // Use resolved name for description
+      }
     }
-    if (tagIds.length > 0) {
+    
+    if (resolvedTagNames.length > 0) {
       filters.tagIds = tagIds;
-      filterDescription += ` [tags: ${tagNames.join(', ')}]`;
+      filterDescription += ` [tags: ${resolvedTagNames.join(', ')}]`;
     }
   }
 

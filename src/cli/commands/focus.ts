@@ -43,6 +43,30 @@ function updateFocusSetting(key: string, value: string): void {
   `).run(fullKey, value);
 }
 
+// Parse duration string (e.g., "2h", "30m", "2.5h", "90") to minutes
+function parseDurationToMinutes(durationStr: string): number | null {
+  const trimmed = durationStr.trim();
+  
+  // Try "Xh" format (hours, supports decimals)
+  if (trimmed.toLowerCase().endsWith('h')) {
+    const hours = parseFloat(trimmed.slice(0, -1));
+    if (isNaN(hours) || hours <= 0) return null;
+    return Math.round(hours * 60); // Convert to minutes
+  }
+  
+  // Try "Xm" format (minutes, supports decimals)
+  if (trimmed.toLowerCase().endsWith('m')) {
+    const minutes = parseFloat(trimmed.slice(0, -1));
+    if (isNaN(minutes) || minutes <= 0) return null;
+    return Math.round(minutes);
+  }
+  
+  // Try plain number (assumed to be minutes)
+  const minutes = parseFloat(trimmed);
+  if (isNaN(minutes) || minutes <= 0) return null;
+  return Math.round(minutes);
+}
+
 // Focus mode state (in-memory for the session)
 let focusStartTime: number | null = null;
 let focusDurationMinutes: number | null = null;
@@ -66,17 +90,10 @@ export function focusStart(options?: {
   const durationStr = options?.duration || settings.defaultDuration.toString();
 
   // Parse duration
-  let durationMinutes: number;
-  if (durationStr.endsWith('h')) {
-    durationMinutes = parseInt(durationStr) * 60;
-  } else if (durationStr.endsWith('m')) {
-    durationMinutes = parseInt(durationStr);
-  } else {
-    durationMinutes = parseInt(durationStr);
-  }
-
-  if (isNaN(durationMinutes) || durationMinutes < 1 || durationMinutes > 480) {
+  const durationMinutes = parseDurationToMinutes(durationStr);
+  if (durationMinutes === null || durationMinutes < 1 || durationMinutes > 480) {
     error('Duration must be between 1-480 minutes');
+    console.log(chalk.dim('\nValid formats: "2h", "30m", "2.5h", "90"'));
     return;
   }
 
@@ -218,9 +235,10 @@ export function focusConfig(options: {
   }
 
   if (options.duration) {
-    const mins = parseInt(options.duration, 10);
-    if (isNaN(mins) || mins < 1 || mins > 480) {
+    const mins = parseDurationToMinutes(options.duration);
+    if (mins === null || mins < 1 || mins > 480) {
       error('Duration must be between 1-480 minutes');
+      console.log(chalk.dim('\nValid formats: "2h", "30m", "2.5h", "90"'));
       return;
     }
     updateFocusSetting('default_duration', mins.toString());

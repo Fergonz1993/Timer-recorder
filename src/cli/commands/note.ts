@@ -10,6 +10,11 @@ interface NoteOptions {
   entry?: string;
 }
 
+// Helper function to append note to existing notes
+function appendNote(existing: string | undefined, note: string): string {
+  return existing ? `${existing}\n${note}` : note;
+}
+
 // Add note to active timer or specific entry
 export function noteCommand(noteText: string, options?: NoteOptions): void {
   if (options?.entry) {
@@ -27,9 +32,7 @@ export function noteCommand(noteText: string, options?: NoteOptions): void {
     }
 
     // Append note to existing notes
-    const newNotes = entry.notes
-      ? `${entry.notes}\n${noteText}`
-      : noteText;
+    const newNotes = appendNote(entry.notes, noteText);
 
     updateEntry(entryId, { notes: newNotes });
     success(`Added note to entry #${entryId}`);
@@ -52,9 +55,7 @@ export function noteCommand(noteText: string, options?: NoteOptions): void {
     }
 
     // Append note to existing notes
-    const newNotes = entry.notes
-      ? `${entry.notes}\n${noteText}`
-      : noteText;
+    const newNotes = appendNote(entry.notes, noteText);
 
     updateEntry(active.id, { notes: newNotes });
     success('Added note to current timer');

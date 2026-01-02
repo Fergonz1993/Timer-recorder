@@ -13,11 +13,16 @@ interface SearchResult {
   notes: string | null;
 }
 
+// Notes column width constant (used for both display and truncation)
+const NOTES_COL_WIDTH = 60;
+
 // Search entries by note content
 export function searchCommand(query: string, options?: { limit?: string }): void {
   const db = getDatabase();
   const limit = options?.limit ? parseInt(options.limit, 10) : 20;
 
+  // Note: For large datasets, consider implementing FTS5 virtual table
+  // For now, using LIKE which works but may be slow on very large databases
   const results = db.prepare(`
     SELECT
       e.id,
@@ -56,7 +61,7 @@ export function searchCommand(query: string, options?: { limit?: string }): void
       chalk.bold('Duration'),
       chalk.bold('Notes'),
     ],
-    colWidths: [6, 12, 15, 10, 40],
+    colWidths: [6, 12, 15, 10, NOTES_COL_WIDTH],
     style: { head: [], border: [] },
     chars: {
       top: '', 'top-mid': '', 'top-left': '', 'top-right': '',
@@ -75,9 +80,9 @@ export function searchCommand(query: string, options?: { limit?: string }): void
       chalk.yellow('$1')
     );
 
-    // Truncate notes if too long
-    const truncatedNotes = highlightedNotes.length > 60
-      ? highlightedNotes.substring(0, 57) + '...'
+    // Truncate notes if too long (using same constant as colWidths)
+    const truncatedNotes = highlightedNotes.length > NOTES_COL_WIDTH
+      ? highlightedNotes.substring(0, NOTES_COL_WIDTH - 3) + '...'
       : highlightedNotes;
 
     table.push([

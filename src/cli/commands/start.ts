@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { startTimer } from '../../core/timer.js';
 import { getAllCategories } from '../../storage/repositories/categories.js';
-import { getProjectByName, getDefaultProject } from '../../storage/repositories/projects.js';
+import { getProjectById, getDefaultProject } from '../../storage/repositories/projects.js';
 import { success, error, formatCategory } from '../utils/format.js';
 
 export function startCommand(
@@ -30,13 +30,14 @@ export function startCommand(
     });
     success(`Timer started for ${chalk.bold(category)}`);
 
-    // Show project if set
-    if (options?.project) {
-      const proj = getProjectByName(options.project);
-      if (proj) {
-        console.log(`  Project: ${formatCategory(proj.name, proj.color)}`);
+    // Get project details from the created entry instead of redundant queries
+    if (entry.project_id) {
+      const project = getProjectById(entry.project_id);
+      if (project) {
+        console.log(`  Project: ${formatCategory(project.name, project.color)}`);
       }
     } else {
+      // Check if there's a default project that was applied
       const defaultProj = getDefaultProject();
       if (defaultProj) {
         console.log(`  Project: ${formatCategory(defaultProj.name, defaultProj.color)} ${chalk.dim('(default)')}`);

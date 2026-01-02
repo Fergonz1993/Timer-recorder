@@ -5,6 +5,7 @@ import {
   getTodayTotalSeconds,
   getCategorySummaryFiltered,
   getTotalSecondsFiltered,
+  getEntryById,
   type FilterOptions,
 } from '../../storage/repositories/entries.js';
 import { getTimerStatus, getActiveDuration } from '../../core/timer.js';
@@ -57,13 +58,38 @@ export function todayCommand(options?: TodayOptions): void {
   const active = getTimerStatus();
   const activeDuration = active ? getActiveDuration() : 0;
 
-  // Calculate total (including active timer if no filters)
+  // Helper function to check if active timer matches filters
+  const activeMatchesFilters = (): boolean => {
+    if (!active || activeDuration === 0) return false;
+    if (!hasFilters) return true;
+    
+    // Check project filter
+    if (filters.projectId) {
+      // Need to get full entry to check project_id
+      const fullEntry = getEntryById(active.id);
+      if (!fullEntry || fullEntry.project_id !== filters.projectId) {
+        return false;
+      }
+    }
+    
+    // Check tag filters - would need to fetch entry tags to check
+    // For now, if tags are filtered, we exclude active timer to be safe
+    // In production you might want to fetch and check tags
+    if (filters.tagIds && filters.tagIds.length > 0) {
+      return false;
+    }
+    
+    return true;
+  };
+
+  const shouldIncludeActive = activeMatchesFilters();
+
+  // Calculate total (including active timer only if it matches filters)
   let totalSeconds = hasFilters
     ? getTotalSecondsFiltered(today, today, filters)
     : getTodayTotalSeconds();
 
-  // Only include active timer in total if no filters applied
-  if (!hasFilters) {
+  if (shouldIncludeActive) {
     totalSeconds += activeDuration;
   }
 
@@ -96,13 +122,13 @@ export function todayCommand(options?: TodayOptions): void {
 
   console.log();
 
-  // Build summary including active timer
+  // Build summary including active timer (only if it matches filters)
   const summaryMap = new Map(
     summary.map((s) => [s.category, { ...s }])
   );
 
-  // Add active timer to summary
-  if (active && activeDuration > 0) {
+  // Add active timer to summary only if it matches filters
+  if (shouldIncludeActive) {
     const categoryName = active.category_name || 'uncategorized';
     if (summaryMap.has(categoryName)) {
       const existing = summaryMap.get(categoryName)!;

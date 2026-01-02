@@ -59,7 +59,10 @@ export function webhooksAddCommand(name: string, url: string, options: {
     console.log();
   } catch (err) {
     console.log();
-    error('Failed to create webhook');
+    error(`Failed to create webhook: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    if (err instanceof Error && err.stack) {
+      console.error(err.stack);
+    }
     console.log();
   }
 }

@@ -49,25 +49,46 @@ export function notificationsConfigure(options: {
   idleMinutes?: string;
 }): void {
   let updated = false;
+  let hasError = false;
 
-  if (options.sound !== undefined) {
-    updateNotificationSetting('sound', options.sound.toString());
-    updated = true;
+  try {
+    if (options.sound !== undefined) {
+      updateNotificationSetting('sound', options.sound.toString());
+      updated = true;
+    }
+  } catch (err) {
+    error(`Failed to update sound setting: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    hasError = true;
   }
 
-  if (options.goals !== undefined) {
-    updateNotificationSetting('goal_reminders', options.goals.toString());
-    updated = true;
+  try {
+    if (options.goals !== undefined) {
+      updateNotificationSetting('goal_reminders', options.goals.toString());
+      updated = true;
+    }
+  } catch (err) {
+    error(`Failed to update goal reminders setting: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    hasError = true;
   }
 
-  if (options.pomodoro !== undefined) {
-    updateNotificationSetting('pomodoro_alerts', options.pomodoro.toString());
-    updated = true;
+  try {
+    if (options.pomodoro !== undefined) {
+      updateNotificationSetting('pomodoro_alerts', options.pomodoro.toString());
+      updated = true;
+    }
+  } catch (err) {
+    error(`Failed to update pomodoro alerts setting: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    hasError = true;
   }
 
-  if (options.idle !== undefined) {
-    updateNotificationSetting('idle_reminders', options.idle.toString());
-    updated = true;
+  try {
+    if (options.idle !== undefined) {
+      updateNotificationSetting('idle_reminders', options.idle.toString());
+      updated = true;
+    }
+  } catch (err) {
+    error(`Failed to update idle reminders setting: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    hasError = true;
   }
 
   if (options.idleMinutes) {
@@ -76,8 +97,20 @@ export function notificationsConfigure(options: {
       error('Idle threshold must be between 1-120 minutes');
       return;
     }
-    updateNotificationSetting('idle_minutes', minutes.toString());
-    updated = true;
+    try {
+      updateNotificationSetting('idle_minutes', minutes.toString());
+      updated = true;
+    } catch (err) {
+      error(`Failed to update idle minutes setting: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      hasError = true;
+    }
+  }
+
+  if (hasError) {
+    console.log();
+    error('Some notification settings failed to update');
+    notificationsStatus();
+    return;
   }
 
   if (updated) {

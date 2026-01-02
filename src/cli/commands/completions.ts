@@ -2,10 +2,6 @@ import chalk from 'chalk';
 import { existsSync, appendFileSync, writeFileSync, mkdirSync, readFileSync } from 'fs';
 import { homedir } from 'os';
 import { join, dirname } from 'path';
-import { getAllCategories } from '../../storage/repositories/categories.js';
-import { getAllProjects } from '../../storage/repositories/projects.js';
-import { getAllTags } from '../../storage/repositories/tags.js';
-import { getAllTemplates } from '../../storage/repositories/templates.js';
 import { success, info } from '../utils/format.js';
 
 // Generate bash completion script

@@ -64,8 +64,15 @@ export function listProjects(options?: { all?: boolean; client?: string }): void
       ? formatCategory(proj.name, proj.color)
       : chalk.strikethrough(chalk.dim(proj.name));
 
-    const totalSeconds = 'total_seconds' in proj ? (proj as { total_seconds: number }).total_seconds : 0;
-    const entryCount = 'entry_count' in proj ? (proj as { entry_count: number }).entry_count : 0;
+    // Safe property access with runtime checks
+    let totalSeconds = 0;
+    let entryCount = 0;
+    if ('total_seconds' in proj && typeof (proj as { total_seconds: unknown }).total_seconds === 'number') {
+      totalSeconds = (proj as { total_seconds: number }).total_seconds;
+    }
+    if ('entry_count' in proj && typeof (proj as { entry_count: unknown }).entry_count === 'number') {
+      entryCount = (proj as { entry_count: number }).entry_count;
+    }
 
     table.push([
       name,
@@ -95,16 +102,27 @@ export function addProject(
   // Check if project already exists
   if (getProjectByName(name)) {
     error(`Project "${name}" already exists`);
-    process.exit(1);
+    throw new Error(`Project "${name}" already exists`);
   }
 
   try {
+    // Validate rate if provided
+    let hourlyRate: number | null = null;
+    if (options?.rate) {
+      const rate = parseFloat(options.rate);
+      if (!Number.isFinite(rate) || rate < 0) {
+        error('Invalid hourly rate: must be a non-negative number');
+        process.exit(1);
+      }
+      hourlyRate = rate;
+    }
+
     const project = createProject({
       name,
       client: options?.client,
       color: options?.color,
       description: options?.description,
-      hourlyRate: options?.rate ? parseFloat(options.rate) : null,
+      hourlyRate,
       isBillable: options?.billable || false,
     });
     success(`Created project: ${formatCategory(project.name, project.color)}`);

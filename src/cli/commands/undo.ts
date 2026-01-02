@@ -36,7 +36,16 @@ export function redoCommand(): void {
 
 // Show undo history
 export function undoHistoryCommand(options?: { limit?: string }): void {
-  const limit = options?.limit ? parseInt(options.limit, 10) : 10;
+  // Validate limit
+  let limit = 10;
+  if (options?.limit) {
+    const parsedLimit = parseInt(options.limit, 10);
+    if (Number.isFinite(parsedLimit) && !Number.isNaN(parsedLimit) && parsedLimit >= 1) {
+      limit = parsedLimit;
+    } else {
+      error(`Invalid limit: "${options.limit}". Using default: 10`);
+    }
+  }
   const history = getUndoHistory(limit);
 
   console.log();
@@ -61,7 +70,8 @@ export function undoHistoryCommand(options?: { limit?: string }): void {
   };
 
   const formatTime = (dateStr: string): string => {
-    const date = new Date(dateStr + 'Z');
+    // Don't append 'Z' - let Date parse according to the string's timezone
+    const date = new Date(dateStr);
     return date.toLocaleString();
   };
 

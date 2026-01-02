@@ -69,15 +69,21 @@ export function pomodoroStart(options?: {
   // Update settings if custom durations provided
   if (options?.work) {
     const mins = parseInt(options.work, 10);
-    if (!isNaN(mins) && mins >= 1 && mins <= 120) {
-      updatePomodoroSetting('work_duration', mins.toString());
+    if (isNaN(mins) || mins < 1 || mins > 120) {
+      error('Invalid work duration: must be an integer between 1-120 minutes');
+      return;
     }
+    updatePomodoroSetting('work_duration', mins.toString());
+    console.log(chalk.dim(`  Work duration set to ${mins} minutes`));
   }
   if (options?.break) {
     const mins = parseInt(options.break, 10);
-    if (!isNaN(mins) && mins >= 1 && mins <= 60) {
-      updatePomodoroSetting('break_duration', mins.toString());
+    if (isNaN(mins) || mins < 1 || mins > 60) {
+      error('Invalid break duration: must be an integer between 1-60 minutes');
+      return;
     }
+    updatePomodoroSetting('break_duration', mins.toString());
+    console.log(chalk.dim(`  Break duration set to ${mins} minutes`));
   }
 
   const settings = getPomodoroSettings();
@@ -301,44 +307,70 @@ export function pomodoroConfig(options: {
     return;
   }
 
-  let updated = false;
+  // Validate all inputs first before making any updates
+  const validationErrors: string[] = [];
 
   if (options.work) {
     const mins = parseInt(options.work, 10);
     if (isNaN(mins) || mins < 1 || mins > 120) {
-      error('Work duration must be between 1-120 minutes');
-      return;
+      validationErrors.push('Work duration must be between 1-120 minutes');
     }
+  }
+
+  if (options.break) {
+    const mins = parseInt(options.break, 10);
+    if (isNaN(mins) || mins < 1 || mins > 60) {
+      validationErrors.push('Break duration must be between 1-60 minutes');
+    }
+  }
+
+  if (options.longBreak) {
+    const mins = parseInt(options.longBreak, 10);
+    if (isNaN(mins) || mins < 1 || mins > 120) {
+      validationErrors.push('Long break duration must be between 1-120 minutes');
+    }
+  }
+
+  if (options.sessions) {
+    const count = parseInt(options.sessions, 10);
+    if (isNaN(count) || count < 1 || count > 10) {
+      validationErrors.push('Sessions count must be between 1-10');
+    }
+  }
+
+  // Report all validation errors at once
+  if (validationErrors.length > 0) {
+    console.log();
+    for (const err of validationErrors) {
+      error(err);
+    }
+    console.log();
+    return;
+  }
+
+  // Apply updates only if validation passed
+  let updated = false;
+
+  if (options.work) {
+    const mins = parseInt(options.work, 10);
     updatePomodoroSetting('work_duration', mins.toString());
     updated = true;
   }
 
   if (options.break) {
     const mins = parseInt(options.break, 10);
-    if (isNaN(mins) || mins < 1 || mins > 60) {
-      error('Break duration must be between 1-60 minutes');
-      return;
-    }
     updatePomodoroSetting('break_duration', mins.toString());
     updated = true;
   }
 
   if (options.longBreak) {
     const mins = parseInt(options.longBreak, 10);
-    if (isNaN(mins) || mins < 1 || mins > 120) {
-      error('Long break duration must be between 1-120 minutes');
-      return;
-    }
     updatePomodoroSetting('long_break_duration', mins.toString());
     updated = true;
   }
 
   if (options.sessions) {
     const count = parseInt(options.sessions, 10);
-    if (isNaN(count) || count < 1 || count > 10) {
-      error('Sessions count must be between 1-10');
-      return;
-    }
     updatePomodoroSetting('sessions_until_long_break', count.toString());
     updated = true;
   }

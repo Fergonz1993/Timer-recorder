@@ -137,9 +137,6 @@ export function useTemplate(name: string): void {
     return;
   }
 
-  // Increment use count
-  incrementTemplateUseCount(template.id);
-
   // Start timer with template settings
   try {
     startTimer({
@@ -148,6 +145,9 @@ export function useTemplate(name: string): void {
       tags: template.tags || undefined,
       notes: template.notes || undefined,
     });
+    
+    // Only increment use count after successful timer start
+    incrementTemplateUseCount(template.id);
 
     console.log();
     success(`Timer started from template "${name}"`);

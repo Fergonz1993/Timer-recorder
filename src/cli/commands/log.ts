@@ -4,6 +4,7 @@ import { getDatabase } from '../../storage/database.js';
 import { getCategoryByName, getAllCategories } from '../../storage/repositories/categories.js';
 import { getProjectByName, getDefaultProject } from '../../storage/repositories/projects.js';
 import { parseAndGetTags, attachTagsToEntry } from '../../storage/repositories/tags.js';
+import { getEntryById } from '../../storage/repositories/entries.js';
 import { pushUndoAction } from '../../core/undo.js';
 import { success, error, formatDuration, formatCategory } from '../utils/format.js';
 
@@ -196,20 +197,19 @@ export function logCommand(options: LogOptions): void {
 
   const entryId = result.lastInsertRowid as number;
 
-  // Push to undo stack
+  // Fetch the complete entry from DB to use as newData for undo
+  const completeEntry = getEntryById(entryId);
+  if (!completeEntry) {
+    error('Failed to retrieve created entry');
+    process.exit(1);
+  }
+
+  // Push to undo stack with complete entry data
   pushUndoAction({
     actionType: 'create_entry',
     entityType: 'time_entry',
     entityId: entryId,
-    newData: {
-      id: entryId,
-      category_id: category.id,
-      project_id: projectId,
-      start_time: formatDbTime(startTime),
-      end_time: formatDbTime(endTime),
-      duration_seconds: durationSeconds,
-      notes: options.notes || null,
-    },
+    newData: completeEntry,
   });
 
   // Attach tags if provided

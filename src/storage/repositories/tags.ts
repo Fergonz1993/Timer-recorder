@@ -12,7 +12,11 @@ export function createTag(options: {
     VALUES (?, ?)
   `);
   const result = stmt.run(options.name, options.color ?? null);
-  return getTagById(result.lastInsertRowid as number)!;
+  const tag = getTagById(result.lastInsertRowid as number);
+  if (!tag) {
+    throw new Error('Failed to retrieve tag after insert');
+  }
+  return tag;
 }
 
 // Get tag by ID
@@ -58,7 +62,7 @@ export function updateTag(
 ): Tag | undefined {
   const db = getDatabase();
   const fields: string[] = [];
-  const values: (string | null)[] = [];
+  const values: (string | number | null)[] = [];
 
   if (updates.name !== undefined) {
     fields.push('name = ?');
@@ -71,7 +75,7 @@ export function updateTag(
 
   if (fields.length === 0) return getTagById(id);
 
-  values.push(id.toString());
+  values.push(id); // Push numeric id directly
   db.prepare(`UPDATE tags SET ${fields.join(', ')} WHERE id = ?`).run(...values);
   return getTagById(id);
 }
@@ -85,12 +89,13 @@ export function deleteTag(id: number): boolean {
 }
 
 // Attach tag to entry
-export function attachTagToEntry(entryId: number, tagId: number): void {
+export function attachTagToEntry(entryId: number, tagId: number): { attached: boolean } {
   const db = getDatabase();
-  db.prepare(`
+  const result = db.prepare(`
     INSERT OR IGNORE INTO entry_tags (entry_id, tag_id)
     VALUES (?, ?)
   `).run(entryId, tagId);
+  return { attached: result.changes > 0 };
 }
 
 // Attach multiple tags to entry

@@ -45,11 +45,28 @@ function generateTeamExportData(options: {
 }): TeamExportData | null {
   const db = getDatabase();
 
-  // Get date range
+  // Get date range and validate
   let fromDate: string;
   let toDate: string;
 
   if (options.from && options.to) {
+    // Validate date format (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(options.from) || !dateRegex.test(options.to)) {
+      throw new Error('Invalid date format. Expected YYYY-MM-DD');
+    }
+    
+    const fromDateObj = new Date(options.from);
+    const toDateObj = new Date(options.to);
+    
+    if (isNaN(fromDateObj.getTime()) || isNaN(toDateObj.getTime())) {
+      throw new Error('Invalid date values');
+    }
+    
+    if (fromDateObj > toDateObj) {
+      throw new Error('Start date must be before or equal to end date');
+    }
+    
     fromDate = options.from;
     toDate = options.to;
   } else {
@@ -58,27 +75,40 @@ function generateTeamExportData(options: {
     toDate = weekRange.to;
   }
 
-  // Get entries
-  const entries = db.prepare(`
-    SELECT
-      date(e.start_time) as date,
-      COALESCE(c.name, 'uncategorized') as category,
-      p.name as project,
-      e.duration_seconds,
-      e.notes
-    FROM time_entries e
-    LEFT JOIN categories c ON e.category_id = c.id
-    LEFT JOIN projects p ON e.project_id = p.id
-    WHERE date(e.start_time) BETWEEN ? AND ?
-    AND e.duration_seconds IS NOT NULL
-    ORDER BY e.start_time
-  `).all(fromDate, toDate) as {
+  // Get entries with error handling
+  let entries: {
     date: string;
     category: string;
     project: string | null;
     duration_seconds: number;
     notes: string | null;
   }[];
+  
+  try {
+    entries = db.prepare(`
+    SELECT
+      date(e.start_time) as date,
+      COALESCE(c.name, 'uncategorized') as category,
+      p.name as project,
+      e.duration_seconds,
+      e.notes
+      FROM time_entries e
+      LEFT JOIN categories c ON e.category_id = c.id
+      LEFT JOIN projects p ON e.project_id = p.id
+      WHERE date(e.start_time) BETWEEN ? AND ?
+      AND e.duration_seconds IS NOT NULL
+      ORDER BY e.start_time
+    `).all(fromDate, toDate) as {
+      date: string;
+      category: string;
+      project: string | null;
+      duration_seconds: number;
+      notes: string | null;
+    }[];
+  } catch (err) {
+    console.error(`Database query failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    process.exit(1);
+  }
 
   if (entries.length === 0) {
     return null;
@@ -299,11 +329,19 @@ export function teamExportCommand(options: {
   output?: string;
   detailed?: boolean;
 }): void {
-  const data = generateTeamExportData({
-    from: options.from,
-    to: options.to,
-    detailed: options.detailed,
-  });
+  let data: TeamExportData | null;
+  
+  try {
+    data = generateTeamExportData({
+      from: options.from,
+      to: options.to,
+      detailed: options.detailed,
+    });
+  } catch (err) {
+    error(`Failed to generate team export data: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    console.log();
+    process.exit(1);
+  }
 
   if (!data) {
     console.log();

@@ -175,6 +175,13 @@ export function detachTag(entryId: string, tagName: string): void {
     process.exit(1);
   }
 
+  // Validate entry exists first
+  const entry = getEntryById(id);
+  if (!entry) {
+    error(`Entry #${id} not found`);
+    process.exit(1);
+  }
+
   const tag = getTagByName(tagName);
   if (!tag) {
     error(`Tag "${tagName}" not found`);

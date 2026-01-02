@@ -70,7 +70,23 @@ export function dashboardOpen(): void {
 
   if (!status.running) {
     // Auto-start if not running
-    startDashboard(3000);
+    try {
+      startDashboard(3000);
+      // Re-query status to get the actual port after startup
+      const newStatus = isDashboardRunning();
+      if (!newStatus.running) {
+        error('Failed to start dashboard server');
+        process.exit(1);
+      }
+      const port = newStatus.port || 3000;
+      console.log();
+      info(`Open in browser: http://localhost:${port}`);
+      console.log();
+      return;
+    } catch (err) {
+      error(`Failed to start dashboard: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      process.exit(1);
+    }
   }
 
   const port = status.port || 3000;
