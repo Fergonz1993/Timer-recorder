@@ -2,6 +2,7 @@
 export interface TimeEntry {
   id: number;
   category_id: number | null;
+  project_id: number | null;
   app_name: string | null;
   app_bundle_id: string | null;
   window_title: string | null;
@@ -97,4 +98,45 @@ export interface GoalWithProgress extends Goal {
   category_color: string | null;
   current_seconds: number;
   percentage: number;
+}
+
+// Project definition
+export interface Project {
+  id: number;
+  name: string;
+  client: string | null;
+  color: string | null;
+  description: string | null;
+  hourly_rate: number | null;
+  is_billable: boolean;
+  is_active: boolean;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Project with time summary
+export interface ProjectWithStats extends Project {
+  total_seconds: number;
+  entry_count: number;
+}
+
+// Tag definition
+export interface Tag {
+  id: number;
+  name: string;
+  color: string | null;
+  created_at: string;
+}
+
+// Tag with usage count
+export interface TagWithCount extends Tag {
+  usage_count: number;
+}
+
+// Entry-tag association
+export interface EntryTag {
+  entry_id: number;
+  tag_id: number;
+  created_at: string;
 }

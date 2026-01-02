@@ -4,10 +4,14 @@ import {
   stopActiveEntry,
 } from '../storage/repositories/entries.js';
 import { getCategoryByName } from '../storage/repositories/categories.js';
+import { getProjectByName, getDefaultProject } from '../storage/repositories/projects.js';
+import { parseAndGetTags, attachTagsToEntry } from '../storage/repositories/tags.js';
 import type { TimeEntry, ActiveSession } from '../types/index.js';
 
 export interface StartTimerOptions {
   category?: string;
+  project?: string;
+  tags?: string;
   notes?: string;
 }
 
@@ -29,12 +33,42 @@ export function startTimer(options: StartTimerOptions = {}): TimeEntry {
     categoryId = category.id;
   }
 
+  // Get project ID if provided, or use default
+  let projectId: number | null = null;
+  if (options.project) {
+    const project = getProjectByName(options.project);
+    if (!project) {
+      throw new Error(`Project not found: ${options.project}`);
+    }
+    if (!project.is_active) {
+      throw new Error(`Project is archived: ${options.project}`);
+    }
+    projectId = project.id;
+  } else {
+    // Check for default project
+    const defaultProject = getDefaultProject();
+    if (defaultProject) {
+      projectId = defaultProject.id;
+    }
+  }
+
   // Create new entry
-  return createEntry({
+  const entry = createEntry({
     categoryId,
+    projectId,
     isManual: true,
     notes: options.notes,
   });
+
+  // Attach tags if provided
+  if (options.tags) {
+    const tags = parseAndGetTags(options.tags);
+    if (tags.length > 0) {
+      attachTagsToEntry(entry.id, tags.map(t => t.id));
+    }
+  }
+
+  return entry;
 }
 
 // Stop current timer

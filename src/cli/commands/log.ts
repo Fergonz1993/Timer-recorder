@@ -2,6 +2,8 @@ import chalk from 'chalk';
 import dayjs from 'dayjs';
 import { getDatabase } from '../../storage/database.js';
 import { getCategoryByName, getAllCategories } from '../../storage/repositories/categories.js';
+import { getProjectByName, getDefaultProject } from '../../storage/repositories/projects.js';
+import { parseAndGetTags, attachTagsToEntry } from '../../storage/repositories/tags.js';
 import { success, error, formatDuration, formatCategory } from '../utils/format.js';
 
 interface LogOptions {
@@ -9,6 +11,8 @@ interface LogOptions {
   duration?: string;
   at?: string;
   notes?: string;
+  project?: string;
+  tags?: string;
 }
 
 // Parse duration string (e.g., "2h", "30m", "1h30m", "90")
@@ -143,31 +147,72 @@ export function logCommand(options: LogOptions): void {
 
   const endTime = new Date(startTime.getTime() + durationSeconds * 1000);
 
+  // Get project ID if provided, or use default
+  let projectId: number | null = null;
+  let projectName: string | null = null;
+  if (options.project) {
+    const project = getProjectByName(options.project);
+    if (!project) {
+      error(`Project not found: ${options.project}`);
+      process.exit(1);
+    }
+    if (!project.is_active) {
+      error(`Project is archived: ${options.project}`);
+      process.exit(1);
+    }
+    projectId = project.id;
+    projectName = project.name;
+  } else {
+    // Check for default project
+    const defaultProject = getDefaultProject();
+    if (defaultProject) {
+      projectId = defaultProject.id;
+      projectName = defaultProject.name;
+    }
+  }
+
   // Insert entry
   const db = getDatabase();
   const stmt = db.prepare(`
     INSERT INTO time_entries (
-      category_id, start_time, end_time, duration_seconds, is_manual, notes
+      category_id, project_id, start_time, end_time, duration_seconds, is_manual, notes
     )
-    VALUES (?, ?, ?, ?, 1, ?)
+    VALUES (?, ?, ?, ?, ?, 1, ?)
   `);
 
   const formatDbTime = (d: Date) => {
     return dayjs(d).format('YYYY-MM-DD HH:mm:ss');
   };
 
-  stmt.run(
+  const result = stmt.run(
     category.id,
+    projectId,
     formatDbTime(startTime),
     formatDbTime(endTime),
     durationSeconds,
     options.notes || null
   );
 
+  const entryId = result.lastInsertRowid as number;
+
+  // Attach tags if provided
+  if (options.tags) {
+    const tags = parseAndGetTags(options.tags);
+    if (tags.length > 0) {
+      attachTagsToEntry(entryId, tags.map(t => t.id));
+    }
+  }
+
   success(`Logged ${formatDuration(durationSeconds)} of ${formatCategory(category.name, category.color)}`);
   console.log();
   console.log(chalk.dim(`  From: ${dayjs(startTime).format('MMM D, h:mm A')}`));
   console.log(chalk.dim(`  To:   ${dayjs(endTime).format('MMM D, h:mm A')}`));
+  if (projectName) {
+    console.log(chalk.dim(`  Project: ${projectName}${!options.project ? ' (default)' : ''}`));
+  }
+  if (options.tags) {
+    console.log(chalk.dim(`  Tags: ${options.tags}`));
+  }
   if (options.notes) {
     console.log(chalk.dim(`  Note: ${options.notes}`));
   }

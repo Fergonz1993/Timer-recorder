@@ -132,6 +132,56 @@ function runMigrations(database: Database.Database): void {
         ON goals(category_id, period) WHERE is_active = 1;
       `,
     },
+    {
+      name: '004_projects',
+      sql: `
+        -- Projects table for organizing work
+        CREATE TABLE IF NOT EXISTS projects (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT UNIQUE NOT NULL,
+          client TEXT,
+          color TEXT,
+          description TEXT,
+          hourly_rate REAL,
+          is_billable INTEGER DEFAULT 0,
+          is_active INTEGER DEFAULT 1,
+          is_default INTEGER DEFAULT 0,
+          created_at TEXT DEFAULT (datetime('now')),
+          updated_at TEXT DEFAULT (datetime('now'))
+        );
+
+        -- Add project_id to time_entries
+        ALTER TABLE time_entries ADD COLUMN project_id INTEGER REFERENCES projects(id);
+
+        -- Index for project queries
+        CREATE INDEX IF NOT EXISTS idx_entries_project ON time_entries(project_id);
+        CREATE INDEX IF NOT EXISTS idx_projects_client ON projects(client);
+      `,
+    },
+    {
+      name: '005_tags',
+      sql: `
+        -- Tags table for flexible labeling
+        CREATE TABLE IF NOT EXISTS tags (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT UNIQUE NOT NULL,
+          color TEXT,
+          created_at TEXT DEFAULT (datetime('now'))
+        );
+
+        -- Junction table for many-to-many relationship
+        CREATE TABLE IF NOT EXISTS entry_tags (
+          entry_id INTEGER NOT NULL REFERENCES time_entries(id) ON DELETE CASCADE,
+          tag_id INTEGER NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
+          created_at TEXT DEFAULT (datetime('now')),
+          PRIMARY KEY (entry_id, tag_id)
+        );
+
+        -- Indexes for tag queries
+        CREATE INDEX IF NOT EXISTS idx_entry_tags_entry ON entry_tags(entry_id);
+        CREATE INDEX IF NOT EXISTS idx_entry_tags_tag ON entry_tags(tag_id);
+      `,
+    },
   ];
 
   // Check which migrations have been applied

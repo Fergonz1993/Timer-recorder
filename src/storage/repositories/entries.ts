@@ -4,6 +4,7 @@ import type { TimeEntry, ActiveSession, CategorySummary } from '../../types/inde
 // Create new time entry (start timer)
 export function createEntry(options: {
   categoryId?: number | null;
+  projectId?: number | null;
   appName?: string | null;
   appBundleId?: string | null;
   windowTitle?: string | null;
@@ -13,13 +14,14 @@ export function createEntry(options: {
   const db = getDatabase();
   const stmt = db.prepare(`
     INSERT INTO time_entries (
-      category_id, app_name, app_bundle_id, window_title,
+      category_id, project_id, app_name, app_bundle_id, window_title,
       start_time, is_manual, notes
     )
-    VALUES (?, ?, ?, ?, datetime('now', 'localtime'), ?, ?)
+    VALUES (?, ?, ?, ?, ?, datetime('now', 'localtime'), ?, ?)
   `);
   const result = stmt.run(
     options.categoryId ?? null,
+    options.projectId ?? null,
     options.appName ?? null,
     options.appBundleId ?? null,
     options.windowTitle ?? null,

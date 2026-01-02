@@ -41,6 +41,26 @@ import {
   goalsProgressCommand,
   goalsRemoveCommand,
 } from './commands/goals.js';
+import {
+  listProjects,
+  addProject,
+  removeProject,
+  setDefault,
+  clearDefault,
+  showProject,
+  editProject,
+  listClients,
+} from './commands/projects.js';
+import {
+  listTags,
+  addTag,
+  removeTag,
+  editTag,
+  attachTag,
+  detachTag,
+  showEntryTags,
+  showTagSummary,
+} from './commands/tags.js';
 
 export function createCLI(): Command {
   const program = new Command();
@@ -55,6 +75,8 @@ export function createCLI(): Command {
     .command('start [category]')
     .description('Start a timer for a category')
     .option('-n, --notes <notes>', 'Add notes to the entry')
+    .option('-p, --project <project>', 'Assign to a project')
+    .option('-t, --tags <tags>', 'Add tags (comma-separated)')
     .action((category, options) => {
       startCommand(category, options);
     });
@@ -75,6 +97,8 @@ export function createCLI(): Command {
     .requiredOption('-d, --duration <duration>', 'Duration (e.g., "2h", "30m", "1h30m")')
     .option('-a, --at <time>', 'Start time (e.g., "2pm", "yesterday 14:30")')
     .option('-n, --notes <notes>', 'Add notes')
+    .option('-p, --project <project>', 'Assign to a project')
+    .option('-t, --tags <tags>', 'Add tags (comma-separated)')
     .action((options) => {
       logCommand(options);
     });
@@ -199,6 +223,158 @@ export function createCLI(): Command {
   // Default: show progress if no subcommand
   goals.action(() => {
     goalsProgressCommand();
+  });
+
+  // Projects management
+  const projects = program
+    .command('project')
+    .alias('projects')
+    .description('Manage projects');
+
+  projects
+    .command('list')
+    .description('List all projects')
+    .option('-a, --all', 'Include archived projects')
+    .option('--client <client>', 'Filter by client')
+    .action((options) => {
+      listProjects(options);
+    });
+
+  projects
+    .command('add <name>')
+    .description('Add a new project')
+    .option('--client <client>', 'Client name')
+    .option('-c, --color <color>', 'Hex color code (e.g., #61AFEF)')
+    .option('-d, --description <description>', 'Project description')
+    .option('-r, --rate <rate>', 'Hourly rate')
+    .option('-b, --billable', 'Mark as billable')
+    .action((name, options) => {
+      addProject(name, options);
+    });
+
+  projects
+    .command('remove <name>')
+    .description('Archive or delete a project')
+    .option('-f, --force', 'Permanently delete')
+    .action((name, options) => {
+      removeProject(name, options);
+    });
+
+  projects
+    .command('show <name>')
+    .description('Show project details')
+    .action((name) => {
+      showProject(name);
+    });
+
+  projects
+    .command('edit <name>')
+    .description('Edit a project')
+    .option('--rename <name>', 'Rename project')
+    .option('--client <client>', 'Change client')
+    .option('-c, --color <color>', 'Change color')
+    .option('-d, --description <description>', 'Change description')
+    .option('-r, --rate <rate>', 'Change hourly rate')
+    .option('-b, --billable', 'Mark as billable')
+    .option('--not-billable', 'Mark as not billable')
+    .action((name, options) => {
+      editProject(name, options);
+    });
+
+  projects
+    .command('default [name]')
+    .description('Set or clear default project')
+    .action((name) => {
+      if (name) {
+        setDefault(name);
+      } else {
+        clearDefault();
+      }
+    });
+
+  projects
+    .command('clients')
+    .description('List all clients')
+    .action(() => {
+      listClients();
+    });
+
+  // Default: show projects list if no subcommand
+  projects.action(() => {
+    listProjects();
+  });
+
+  // Tags management
+  const tags = program
+    .command('tag')
+    .alias('tags')
+    .description('Manage tags');
+
+  tags
+    .command('list')
+    .description('List all tags')
+    .option('-u, --usage', 'Show usage counts')
+    .action((options) => {
+      listTags(options);
+    });
+
+  tags
+    .command('add <name>')
+    .description('Add a new tag')
+    .option('-c, --color <color>', 'Hex color code (e.g., #61AFEF)')
+    .action((name, options) => {
+      addTag(name, options);
+    });
+
+  tags
+    .command('remove <name>')
+    .description('Remove a tag')
+    .action((name) => {
+      removeTag(name);
+    });
+
+  tags
+    .command('edit <name>')
+    .description('Edit a tag')
+    .option('--rename <name>', 'Rename tag')
+    .option('-c, --color <color>', 'Change color')
+    .action((name, options) => {
+      editTag(name, options);
+    });
+
+  tags
+    .command('attach <entryId> <tagName>')
+    .description('Attach a tag to an entry')
+    .action((entryId, tagName) => {
+      attachTag(entryId, tagName);
+    });
+
+  tags
+    .command('detach <entryId> <tagName>')
+    .description('Detach a tag from an entry')
+    .action((entryId, tagName) => {
+      detachTag(entryId, tagName);
+    });
+
+  tags
+    .command('show <entryId>')
+    .description('Show tags for an entry')
+    .action((entryId) => {
+      showEntryTags(entryId);
+    });
+
+  tags
+    .command('summary')
+    .description('Show tag summary')
+    .option('--from <date>', 'Start date (YYYY-MM-DD)')
+    .option('--to <date>', 'End date (YYYY-MM-DD)')
+    .action((options) => {
+      showTagSummary(options);
+    });
+
+  // Default: show tags list if no subcommand
+  tags.action(() => {
+    listTags();
   });
 
   // Export commands
