@@ -2693,7 +2693,7 @@
       "Step 2: Verify table with Name, Client, Rate, Hours columns",
       "Step 3: Verify message if no projects exist"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 212,
@@ -2706,7 +2706,7 @@
       "Step 3: Run tt projects list",
       "Step 4: Verify project appears in list"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 213,
@@ -2719,7 +2719,7 @@
       "Step 3: Run tt projects list",
       "Step 4: Verify client column shows 'Acme Corp'"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 214,
@@ -2732,7 +2732,7 @@
       "Step 3: Run tt projects list",
       "Step 4: Verify rate column shows '$150/hr'"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 215,
@@ -2745,7 +2745,7 @@
       "Step 3: Run tt projects list",
       "Step 4: Verify project name is colored"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 216,
@@ -2757,7 +2757,7 @@
       "Step 2: Run tt projects add 'Test Project' again",
       "Step 3: Verify error 'Project already exists'"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 217,
@@ -2771,7 +2771,7 @@
       "Step 4: Verify total hours tracked",
       "Step 5: Verify total billable amount"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 218,
@@ -2785,7 +2785,7 @@
       "Step 4: Run tt projects show 'Project'",
       "Step 5: Verify rate is now 150"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 219,
@@ -2801,7 +2801,7 @@
       "Step 6: Run tt projects list --archived",
       "Step 7: Verify project in archived list"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 220,
@@ -2815,7 +2815,7 @@
       "Step 4: Run tt projects list",
       "Step 5: Verify project is back in active list"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 221,
@@ -2829,7 +2829,7 @@
       "Step 4: Confirm deletion",
       "Step 5: Verify project is gone"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 222,
@@ -2843,7 +2843,7 @@
       "Step 4: Run tt status",
       "Step 5: Verify project shown in status"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 223,
@@ -2857,7 +2857,7 @@
       "Step 4: Run tt projects show 'API Work'",
       "Step 5: Verify 2h logged to project"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 224,
@@ -2869,7 +2869,7 @@
       "Step 2: Run tt today --project 'Website'",
       "Step 3: Verify only Website entries shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 225,
@@ -2881,7 +2881,7 @@
       "Step 2: Run tt week --project 'API Work'",
       "Step 3: Verify only API Work entries in summary"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 226,
@@ -2893,7 +2893,7 @@
       "Step 2: Verify projects table exists",
       "Step 3: Verify time_entries has project_id column"
     ],
-    "passes": false
+    "passes": true
   },
 
   {
@@ -2906,7 +2906,7 @@
       "Step 2: Verify table with Name, Color, Usage columns",
       "Step 3: Verify message if no tags exist"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 228,
@@ -2919,7 +2919,7 @@
       "Step 3: Run tt tags list",
       "Step 4: Verify tag appears in list"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 229,

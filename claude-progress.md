@@ -2,20 +2,33 @@
 
 ## Session Log
 
-### Session 3 - v2.0 Harness Expansion
+### Session 3 - v2.0 Harness Expansion + Phase 1 Implementation
 **Date:** 2026-01-02
 **Agent:** Coding Agent
 
 **Accomplished:**
 - Expanded `app_spec.txt` with full v2.0 specification (19 new feature areas)
 - Added 200 new test cases to `feature-list.json` (IDs 211-410)
-- Total tests now: 410 (210 v1.0 passing + 200 v2.0 pending)
 - Defined 7 implementation phases for v2.0 features
 
-**Test Status:** 210/410 features passing (v1.0 complete, v2.0 pending)
+**Phase 1 Implementation Complete:**
+- Database migrations 004_projects and 005_tags
+- Projects table with client, billing rate, and default project support
+- Tags table with many-to-many entry relationship (entry_tags junction table)
+- Added project_id column to time_entries
+- Implemented `tt project` command (list, add, remove, show, edit, default, clients)
+- Implemented `tt tag` command (list, add, remove, edit, attach, detach, show, summary)
+- Added --project and --tags options to `tt start` and `tt log`
+- Auto-create tags when attaching
+- Default project auto-assignment
+
+**Test Status:** 228/410 features passing
+- v1.0: 210/210 complete
+- v2.0 Phase 1: 18/30 complete (projects + tags)
+- v2.0 remaining: 0/170 pending
 
 **v2.0 Feature Phases:**
-1. **Phase 1**: Projects, Tags, Notes (IDs 211-240)
+1. **Phase 1**: Projects, Tags, Notes (IDs 211-240) - **IN PROGRESS**
 2. **Phase 2**: Pomodoro, Notifications, Focus, Templates (IDs 241-280)
 3. **Phase 3**: Dashboard, Score, Predictions (IDs 281-315)
 4. **Phase 4**: Calendar, Jira/GitHub, Import, Webhooks (IDs 316-365)
@@ -23,17 +36,14 @@
 6. **Phase 6**: Invoicing, Team Export (IDs 381-400)
 7. **Phase 7**: Undo, Shell Completions (IDs 401-410)
 
-**New Database Tables Planned:**
-- projects, tags, entry_tags
-- pomodoro_sessions, focus_sessions
-- templates, webhooks, webhook_logs
-- invoices, undo_history, notifications
+**New Database Tables Created:**
+- projects (with client, color, hourly_rate, is_billable, is_default)
+- tags (with color)
+- entry_tags (junction table)
 
 **Next Session Should:**
-- Begin Phase 1: Projects/Tags/Notes implementation
-- Start with database migrations for new tables
-- Implement `tt project` commands
-- Implement `tt tag` commands
+- Complete Phase 1: Implement enhanced notes with search (IDs 229-240)
+- Begin Phase 2: Pomodoro timer mode
 
 ---
 
