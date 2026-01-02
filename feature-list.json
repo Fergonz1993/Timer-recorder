@@ -4633,7 +4633,7 @@
       "Step 2: Verify macOS uses AppleScript",
       "Step 3: Verify Linux uses xdotool"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 365,
@@ -5135,7 +5135,7 @@
       "Step 3: Verify consistent colors",
       "Step 4: Verify charts match CLI colors"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 406,
@@ -5159,7 +5159,7 @@
       "Step 2: Time tt projects list",
       "Step 3: Verify < 300ms"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 408,
@@ -5171,7 +5171,7 @@
       "Step 2: Time tt start programming --tags 'tag1,tag2,tag3'",
       "Step 3: Verify < 500ms"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 409,
@@ -5183,7 +5183,7 @@
       "Step 2: Time page load",
       "Step 3: Verify < 1s"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 410,
