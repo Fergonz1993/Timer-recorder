@@ -80,6 +80,15 @@ export interface Config {
   'pomodoro.break': number;    // pomodoro break duration in minutes
   'pomodoro.longBreak': number; // pomodoro long break duration in minutes
   'pomodoro.sessionsBeforeLongBreak': number; // sessions before long break
+  // Privacy settings (dynamic, not in CONFIG_KEYS for validation)
+  privacy_lockdown?: boolean;           // disable all network features
+  webhooks_enabled?: boolean;           // enable/disable webhooks globally
+  dashboard_enabled?: boolean;          // enable/disable dashboard
+  anonymous_mode?: boolean;             // don't store app/window names
+  data_retention_enabled?: boolean;     // auto-delete old data
+  data_retention_days?: number | null;  // days to keep data
+  database_encryption?: boolean;        // encryption status marker
+  [key: string]: unknown;               // allow dynamic keys for privacy
 }
 
 // Goal periods

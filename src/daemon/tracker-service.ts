@@ -4,6 +4,7 @@ import { categorize, getCategoryIdByName } from '../categorization/rules.js';
 import { createEntry, getActiveEntry, stopActiveEntry } from '../storage/repositories/entries.js';
 import { getDatabase } from '../storage/database.js';
 import { loadConfig, DEFAULT_CONFIG } from '../config/settings.js';
+import { isAnonymousModeEnabled, anonymizeEntry } from '../privacy/index.js';
 import type { WindowInfo, ActiveSession, Config } from '../types/index.js';
 
 export type TrackerConfig = Pick<Config, 'pollInterval' | 'idleThreshold' | 'minEntryDuration'>;
@@ -117,23 +118,36 @@ export class TrackerService {
 
   // Start a new tracking entry
   private startNewEntry(info: WindowInfo): void {
-    // Categorize the window
+    // Categorize the window (always use real info for categorization)
     const categoryName = categorize(info);
     const categoryId = categoryName ? getCategoryIdByName(categoryName) : null;
 
-    const entry = createEntry({
-      categoryId,
+    // Check if anonymous mode is enabled
+    let entryData = {
       appName: info.appName,
       appBundleId: info.appBundleId,
       windowTitle: info.windowTitle,
+    };
+
+    if (isAnonymousModeEnabled()) {
+      // Anonymize the stored data (but still categorize correctly)
+      entryData = anonymizeEntry(info);
+    }
+
+    const entry = createEntry({
+      categoryId,
+      appName: entryData.appName,
+      appBundleId: entryData.appBundleId,
+      windowTitle: entryData.windowTitle,
       isManual: false,
     });
 
     this.currentEntryId = entry.id;
     this.lastWindowInfo = info;
 
+    const displayName = isAnonymousModeEnabled() ? '[anonymous]' : info.appName;
     console.log(
-      `[${new Date().toLocaleTimeString()}] Tracking: ${info.appName} → ${categoryName || 'uncategorized'}`
+      `[${new Date().toLocaleTimeString()}] Tracking: ${displayName} → ${categoryName || 'uncategorized'}`
     );
   }
 

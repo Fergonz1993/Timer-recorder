@@ -284,4 +284,63 @@ describe('CLI E2E Tests', () => {
       expect(result.status).toBe(0);
     });
   });
+
+  describe('Privacy Commands', () => {
+    it('should show privacy status', () => {
+      const result = runCLI('privacy');
+      expect(result.stdout).toContain('Privacy Status');
+      expect(result.status).toBe(0);
+    });
+
+    it('should show privacy audit', () => {
+      const result = runCLI('privacy audit');
+      expect(result.stdout).toContain('Privacy Audit Report');
+      expect(result.stdout).toContain('Database');
+      expect(result.stdout).toContain('Network Exposure');
+      expect(result.status).toBe(0);
+    });
+
+    it('should check dashboard security', () => {
+      const result = runCLI('privacy dashboard');
+      expect(result.stdout).toContain('Dashboard Security Check');
+      expect(result.stdout).toContain('Localhost only');
+      expect(result.status).toBe(0);
+    });
+
+    it('should show retention settings', () => {
+      const result = runCLI('privacy retention');
+      expect(result.stdout).toContain('Data Retention');
+      expect(result.status).toBe(0);
+    });
+
+    it('should show lockdown status', () => {
+      const result = runCLI('privacy lockdown status');
+      expect(result.stdout.toLowerCase()).toContain('lockdown');
+      expect(result.status).toBe(0);
+    });
+
+    it('should show anonymous mode status', () => {
+      const result = runCLI('privacy anonymous status');
+      expect(result.stdout.toLowerCase()).toContain('anonymous');
+      expect(result.status).toBe(0);
+    });
+
+    it('should require confirmation for wipe', () => {
+      const result = runCLI('privacy wipe');
+      expect(result.stdout).toContain('--confirm');
+      expect(result.status).toBe(0);
+    });
+
+    it('should require confirmation for secure-delete', () => {
+      const result = runCLI('privacy secure-delete');
+      expect(result.stdout).toContain('--confirm');
+      expect(result.status).toBe(0);
+    });
+
+    it('should require password for backup', () => {
+      const result = runCLI('privacy backup');
+      expect(result.stdout).toContain('Password required');
+      expect(result.status).toBe(0);
+    });
+  });
 });

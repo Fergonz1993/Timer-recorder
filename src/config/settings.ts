@@ -76,9 +76,9 @@ export function getConfigValue<K extends ConfigKey>(key: K): Config[K] {
 /**
  * Set multiple configuration values in a single batch update
  */
-export function setConfigValues(updates: Partial<Config>): Config {
+export function setConfigValues(updates: Partial<Config> | Record<string, unknown>): Config {
   const config = loadConfig();
-  const updatedConfig = { ...config, ...updates };
+  const updatedConfig = { ...config, ...updates } as Config;
   saveConfig(updatedConfig);
   return updatedConfig;
 }
@@ -86,7 +86,9 @@ export function setConfigValues(updates: Partial<Config>): Config {
 /**
  * Set a specific configuration value
  */
-export function setConfigValue<K extends ConfigKey>(key: K, value: Config[K]): Config {
+export function setConfigValue<K extends ConfigKey>(key: K, value: Config[K]): Config;
+export function setConfigValue(key: string, value: unknown): Config;
+export function setConfigValue(key: string, value: unknown): Config {
   return setConfigValues({ [key]: value });
 }
 

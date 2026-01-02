@@ -509,6 +509,66 @@ tt search "meeting" --from 2025-01-01
 | Browsers + GitHub  | Chrome with "Pull Request"            | code-review   |
 | Browsers + Docs    | MDN, Stack Overflow                   | research      |
 
+## Privacy & Security
+
+Timer Record is designed to be **100% local and private**. No data is ever sent to external servers by default.
+
+### Privacy Audit
+
+```bash
+# See what data exists and where
+tt privacy audit
+
+# Check overall privacy status
+tt privacy
+```
+
+### Privacy Controls
+
+```bash
+# Enable privacy lockdown (disables all network features)
+tt privacy lockdown enable
+
+# Enable anonymous mode (don't store app/window names)
+tt privacy anonymous enable
+
+# Set data retention (auto-delete old entries)
+tt privacy retention --days 90
+tt privacy retention --cleanup  # Run cleanup now
+```
+
+### Data Export & Backup
+
+```bash
+# Export all your data (GDPR-style)
+tt privacy export
+
+# Create encrypted backup
+tt privacy backup --password "your-secret-password"
+
+# Restore from encrypted backup
+tt privacy restore backup.encrypted --password "your-secret-password"
+```
+
+### Secure Deletion
+
+```bash
+# Securely delete database (overwrites before deletion)
+tt privacy secure-delete --confirm
+
+# Complete data wipe (removes everything)
+tt privacy wipe --confirm
+tt privacy wipe --confirm --keep-config  # Preserve settings
+```
+
+### Security Features
+
+- **Localhost-only dashboard** - Web dashboard binds to 127.0.0.1
+- **No external resources** - Dashboard uses inline CSS, no external scripts/fonts
+- **No telemetry** - Zero tracking or analytics
+- **Encrypted backups** - AES-256-GCM encryption with scrypt key derivation
+- **Secure deletion** - Multi-pass overwrite before file deletion
+
 ## Data Storage
 
 All data is stored locally in SQLite:

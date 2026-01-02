@@ -128,6 +128,19 @@ import {
   webhooksDeleteCommand,
   webhooksLogsCommand,
 } from './commands/webhooks.js';
+import {
+  privacyStatusCommand,
+  privacyAuditCommand,
+  privacyExportCommand,
+  privacySecureDeleteCommand,
+  privacyWipeCommand,
+  privacyLockdownCommand,
+  privacyAnonymousCommand,
+  privacyRetentionCommand,
+  privacyBackupCommand,
+  privacyRestoreCommand,
+  privacyDashboardCommand,
+} from './commands/privacy.js';
 
 export function createCLI(): Command {
   const program = new Command();
@@ -1231,6 +1244,97 @@ export function createCLI(): Command {
   // Default: show webhook list
   webhook.action(() => {
     webhooksListCommand();
+  });
+
+  // Privacy commands
+  const privacy = program
+    .command('privacy')
+    .description('Privacy controls and data management');
+
+  privacy
+    .command('audit')
+    .description('Show what data exists and where')
+    .action(() => {
+      privacyAuditCommand();
+    });
+
+  privacy
+    .command('export')
+    .description('Export all your data (GDPR-style)')
+    .option('-o, --output <file>', 'Output file path')
+    .option('-f, --format <format>', 'Export format (json)', 'json')
+    .action((options) => {
+      privacyExportCommand(options);
+    });
+
+  privacy
+    .command('lockdown <action>')
+    .description('Privacy lockdown mode (enable/disable/status)')
+    .action((action) => {
+      privacyLockdownCommand(action);
+    });
+
+  privacy
+    .command('anonymous <action>')
+    .description('Anonymous tracking mode (enable/disable/status)')
+    .action((action) => {
+      privacyAnonymousCommand(action);
+    });
+
+  privacy
+    .command('retention')
+    .description('Configure data retention')
+    .option('-d, --days <days>', 'Set retention period in days')
+    .option('--disable', 'Disable data retention')
+    .option('--cleanup', 'Run cleanup now')
+    .action((options) => {
+      privacyRetentionCommand(options);
+    });
+
+  privacy
+    .command('backup')
+    .description('Create encrypted backup')
+    .option('-p, --password <password>', 'Encryption password')
+    .option('-o, --output <file>', 'Output file path')
+    .action(async (options) => {
+      await privacyBackupCommand(options);
+    });
+
+  privacy
+    .command('restore <file>')
+    .description('Restore from encrypted backup')
+    .option('-p, --password <password>', 'Decryption password')
+    .action(async (file, options) => {
+      await privacyRestoreCommand(file, options);
+    });
+
+  privacy
+    .command('secure-delete')
+    .description('Securely delete database (overwrites before deletion)')
+    .option('--confirm', 'Confirm deletion')
+    .action((options) => {
+      privacySecureDeleteCommand(options);
+    });
+
+  privacy
+    .command('wipe')
+    .description('Complete data wipe - delete ALL Timer Record data')
+    .option('--confirm', 'Confirm wipe')
+    .option('--keep-config', 'Keep configuration files')
+    .action((options) => {
+      privacyWipeCommand(options);
+    });
+
+  privacy
+    .command('dashboard')
+    .description('Check dashboard security')
+    .action(() => {
+      privacyDashboardCommand();
+    });
+
+  // Default: show privacy status
+  privacy.action(() => {
+    privacyStatusCommand();
   });
 
   // Default action: show status
