@@ -2681,5 +2681,2543 @@
       "Step 4: Verify 'not running' status"
     ],
     "passes": true
+  },
+
+  {
+    "id": 211,
+    "category": "functional",
+    "area": "projects",
+    "description": "tt projects lists all projects",
+    "steps": [
+      "Step 1: Run tt projects",
+      "Step 2: Verify table with Name, Client, Rate, Hours columns",
+      "Step 3: Verify message if no projects exist"
+    ],
+    "passes": false
+  },
+  {
+    "id": 212,
+    "category": "functional",
+    "area": "projects",
+    "description": "tt projects add creates new project",
+    "steps": [
+      "Step 1: Run tt projects add 'Website Redesign'",
+      "Step 2: Verify success message",
+      "Step 3: Run tt projects list",
+      "Step 4: Verify project appears in list"
+    ],
+    "passes": false
+  },
+  {
+    "id": 213,
+    "category": "functional",
+    "area": "projects",
+    "description": "tt projects add with --client sets client",
+    "steps": [
+      "Step 1: Run tt projects add 'API Work' --client 'Acme Corp'",
+      "Step 2: Verify success message",
+      "Step 3: Run tt projects list",
+      "Step 4: Verify client column shows 'Acme Corp'"
+    ],
+    "passes": false
+  },
+  {
+    "id": 214,
+    "category": "functional",
+    "area": "projects",
+    "description": "tt projects add with --rate sets hourly rate",
+    "steps": [
+      "Step 1: Run tt projects add 'Consulting' --rate 150",
+      "Step 2: Verify success message",
+      "Step 3: Run tt projects list",
+      "Step 4: Verify rate column shows '$150/hr'"
+    ],
+    "passes": false
+  },
+  {
+    "id": 215,
+    "category": "functional",
+    "area": "projects",
+    "description": "tt projects add with --color sets color",
+    "steps": [
+      "Step 1: Run tt projects add 'Design' --color '#FF5733'",
+      "Step 2: Verify success message with colored output",
+      "Step 3: Run tt projects list",
+      "Step 4: Verify project name is colored"
+    ],
+    "passes": false
+  },
+  {
+    "id": 216,
+    "category": "functional",
+    "area": "projects",
+    "description": "tt projects add duplicate shows error",
+    "steps": [
+      "Step 1: Run tt projects add 'Test Project'",
+      "Step 2: Run tt projects add 'Test Project' again",
+      "Step 3: Verify error 'Project already exists'"
+    ],
+    "passes": false
+  },
+  {
+    "id": 217,
+    "category": "functional",
+    "area": "projects",
+    "description": "tt projects show displays project details",
+    "steps": [
+      "Step 1: Create project with time entries",
+      "Step 2: Run tt projects show 'Website Redesign'",
+      "Step 3: Verify project name, client, rate shown",
+      "Step 4: Verify total hours tracked",
+      "Step 5: Verify total billable amount"
+    ],
+    "passes": false
+  },
+  {
+    "id": 218,
+    "category": "functional",
+    "area": "projects",
+    "description": "tt projects edit modifies project",
+    "steps": [
+      "Step 1: Create project with rate 100",
+      "Step 2: Run tt projects edit 'Project' --rate 150",
+      "Step 3: Verify success message",
+      "Step 4: Run tt projects show 'Project'",
+      "Step 5: Verify rate is now 150"
+    ],
+    "passes": false
+  },
+  {
+    "id": 219,
+    "category": "functional",
+    "area": "projects",
+    "description": "tt projects archive archives project",
+    "steps": [
+      "Step 1: Create project",
+      "Step 2: Run tt projects archive 'Project'",
+      "Step 3: Verify success message",
+      "Step 4: Run tt projects list",
+      "Step 5: Verify project not in active list",
+      "Step 6: Run tt projects list --archived",
+      "Step 7: Verify project in archived list"
+    ],
+    "passes": false
+  },
+  {
+    "id": 220,
+    "category": "functional",
+    "area": "projects",
+    "description": "tt projects unarchive restores project",
+    "steps": [
+      "Step 1: Archive a project",
+      "Step 2: Run tt projects unarchive 'Project'",
+      "Step 3: Verify success message",
+      "Step 4: Run tt projects list",
+      "Step 5: Verify project is back in active list"
+    ],
+    "passes": false
+  },
+  {
+    "id": 221,
+    "category": "functional",
+    "area": "projects",
+    "description": "tt projects delete removes project",
+    "steps": [
+      "Step 1: Create project",
+      "Step 2: Run tt projects delete 'Project'",
+      "Step 3: Verify confirmation prompt",
+      "Step 4: Confirm deletion",
+      "Step 5: Verify project is gone"
+    ],
+    "passes": false
+  },
+  {
+    "id": 222,
+    "category": "functional",
+    "area": "projects",
+    "description": "tt start --project associates timer with project",
+    "steps": [
+      "Step 1: Create project 'Website'",
+      "Step 2: Run tt start programming --project Website",
+      "Step 3: Verify success message mentions project",
+      "Step 4: Run tt status",
+      "Step 5: Verify project shown in status"
+    ],
+    "passes": false
+  },
+  {
+    "id": 223,
+    "category": "functional",
+    "area": "projects",
+    "description": "tt log --project associates entry with project",
+    "steps": [
+      "Step 1: Create project 'API Work'",
+      "Step 2: Run tt log -c programming -d 2h --project 'API Work'",
+      "Step 3: Verify success message",
+      "Step 4: Run tt projects show 'API Work'",
+      "Step 5: Verify 2h logged to project"
+    ],
+    "passes": false
+  },
+  {
+    "id": 224,
+    "category": "functional",
+    "area": "projects",
+    "description": "tt today --project filters by project",
+    "steps": [
+      "Step 1: Log time to different projects",
+      "Step 2: Run tt today --project 'Website'",
+      "Step 3: Verify only Website entries shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 225,
+    "category": "functional",
+    "area": "projects",
+    "description": "tt week --project filters by project",
+    "steps": [
+      "Step 1: Log time to different projects over week",
+      "Step 2: Run tt week --project 'API Work'",
+      "Step 3: Verify only API Work entries in summary"
+    ],
+    "passes": false
+  },
+  {
+    "id": 226,
+    "category": "functional",
+    "area": "projects",
+    "description": "Projects migration creates table",
+    "steps": [
+      "Step 1: Run any command on fresh database",
+      "Step 2: Verify projects table exists",
+      "Step 3: Verify time_entries has project_id column"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 227,
+    "category": "functional",
+    "area": "tags",
+    "description": "tt tags lists all tags",
+    "steps": [
+      "Step 1: Run tt tags",
+      "Step 2: Verify table with Name, Color, Usage columns",
+      "Step 3: Verify message if no tags exist"
+    ],
+    "passes": false
+  },
+  {
+    "id": 228,
+    "category": "functional",
+    "area": "tags",
+    "description": "tt tags add creates new tag",
+    "steps": [
+      "Step 1: Run tt tags add 'frontend'",
+      "Step 2: Verify success message",
+      "Step 3: Run tt tags list",
+      "Step 4: Verify tag appears in list"
+    ],
+    "passes": false
+  },
+  {
+    "id": 229,
+    "category": "functional",
+    "area": "tags",
+    "description": "tt tags add with --color sets color",
+    "steps": [
+      "Step 1: Run tt tags add 'urgent' --color '#FF0000'",
+      "Step 2: Verify success message",
+      "Step 3: Run tt tags list",
+      "Step 4: Verify tag is colored red"
+    ],
+    "passes": false
+  },
+  {
+    "id": 230,
+    "category": "functional",
+    "area": "tags",
+    "description": "tt tags add duplicate shows error",
+    "steps": [
+      "Step 1: Run tt tags add 'test'",
+      "Step 2: Run tt tags add 'test' again",
+      "Step 3: Verify error 'Tag already exists'"
+    ],
+    "passes": false
+  },
+  {
+    "id": 231,
+    "category": "functional",
+    "area": "tags",
+    "description": "tt tags edit modifies tag",
+    "steps": [
+      "Step 1: Create tag with blue color",
+      "Step 2: Run tt tags edit 'tag' --color '#00FF00'",
+      "Step 3: Verify success message",
+      "Step 4: Run tt tags list",
+      "Step 5: Verify tag is now green"
+    ],
+    "passes": false
+  },
+  {
+    "id": 232,
+    "category": "functional",
+    "area": "tags",
+    "description": "tt tags delete removes tag",
+    "steps": [
+      "Step 1: Create tag 'temp'",
+      "Step 2: Run tt tags delete 'temp'",
+      "Step 3: Verify success message",
+      "Step 4: Run tt tags list",
+      "Step 5: Verify tag is gone"
+    ],
+    "passes": false
+  },
+  {
+    "id": 233,
+    "category": "functional",
+    "area": "tags",
+    "description": "tt tags stats shows usage statistics",
+    "steps": [
+      "Step 1: Create tags and use them on entries",
+      "Step 2: Run tt tags stats",
+      "Step 3: Verify usage count per tag",
+      "Step 4: Verify total hours per tag"
+    ],
+    "passes": false
+  },
+  {
+    "id": 234,
+    "category": "functional",
+    "area": "tags",
+    "description": "tt start --tags adds tags to entry",
+    "steps": [
+      "Step 1: Create tags 'frontend' and 'urgent'",
+      "Step 2: Run tt start programming --tags 'frontend,urgent'",
+      "Step 3: Verify success message mentions tags",
+      "Step 4: Run tt status",
+      "Step 5: Verify tags shown in status"
+    ],
+    "passes": false
+  },
+  {
+    "id": 235,
+    "category": "functional",
+    "area": "tags",
+    "description": "tt log --tags adds tags to entry",
+    "steps": [
+      "Step 1: Create tag 'bug'",
+      "Step 2: Run tt log -c debugging -d 1h --tags 'bug'",
+      "Step 3: Verify success message",
+      "Step 4: Run tt entries list --search tags",
+      "Step 5: Verify entry has bug tag"
+    ],
+    "passes": false
+  },
+  {
+    "id": 236,
+    "category": "functional",
+    "area": "tags",
+    "description": "tt start --tags creates new tags automatically",
+    "steps": [
+      "Step 1: Run tt start programming --tags 'newtag'",
+      "Step 2: Verify tag is created",
+      "Step 3: Run tt tags list",
+      "Step 4: Verify 'newtag' exists"
+    ],
+    "passes": false
+  },
+  {
+    "id": 237,
+    "category": "functional",
+    "area": "tags",
+    "description": "tt today --tag filters by single tag",
+    "steps": [
+      "Step 1: Log entries with different tags",
+      "Step 2: Run tt today --tag 'urgent'",
+      "Step 3: Verify only urgent-tagged entries shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 238,
+    "category": "functional",
+    "area": "tags",
+    "description": "tt week --tags filters by multiple tags",
+    "steps": [
+      "Step 1: Log entries with different tags",
+      "Step 2: Run tt week --tags 'frontend,backend'",
+      "Step 3: Verify entries with either tag shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 239,
+    "category": "functional",
+    "area": "tags",
+    "description": "Tags migration creates tables",
+    "steps": [
+      "Step 1: Run any command on fresh database",
+      "Step 2: Verify tags table exists",
+      "Step 3: Verify entry_tags junction table exists"
+    ],
+    "passes": false
+  },
+  {
+    "id": 240,
+    "category": "functional",
+    "area": "tags",
+    "description": "Deleting entry removes tag associations",
+    "steps": [
+      "Step 1: Create entry with tags",
+      "Step 2: Delete the entry",
+      "Step 3: Verify entry_tags records removed (CASCADE)"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 241,
+    "category": "functional",
+    "area": "notes",
+    "description": "tt note appends to running timer",
+    "steps": [
+      "Step 1: Run tt start programming",
+      "Step 2: Run tt note 'Working on auth'",
+      "Step 3: Verify success message",
+      "Step 4: Run tt status",
+      "Step 5: Verify note is shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 242,
+    "category": "functional",
+    "area": "notes",
+    "description": "tt note with no timer shows error",
+    "steps": [
+      "Step 1: Ensure no active timer",
+      "Step 2: Run tt note 'Some note'",
+      "Step 3: Verify error 'No active timer'"
+    ],
+    "passes": false
+  },
+  {
+    "id": 243,
+    "category": "functional",
+    "area": "notes",
+    "description": "tt note appends to existing notes",
+    "steps": [
+      "Step 1: Run tt start programming --notes 'First note'",
+      "Step 2: Run tt note 'Second note'",
+      "Step 3: Run tt status",
+      "Step 4: Verify both notes present"
+    ],
+    "passes": false
+  },
+  {
+    "id": 244,
+    "category": "functional",
+    "area": "notes",
+    "description": "tt note --entry adds to specific entry",
+    "steps": [
+      "Step 1: Create an entry and get its ID",
+      "Step 2: Run tt note 'Updated note' --entry <id>",
+      "Step 3: Verify success message",
+      "Step 4: Verify entry has new note"
+    ],
+    "passes": false
+  },
+  {
+    "id": 245,
+    "category": "functional",
+    "area": "notes",
+    "description": "tt search finds entries by note content",
+    "steps": [
+      "Step 1: Create entries with various notes",
+      "Step 2: Run tt search 'authentication'",
+      "Step 3: Verify entries with 'authentication' in notes returned",
+      "Step 4: Verify search is case-insensitive"
+    ],
+    "passes": false
+  },
+  {
+    "id": 246,
+    "category": "functional",
+    "area": "notes",
+    "description": "tt search with no matches shows message",
+    "steps": [
+      "Step 1: Run tt search 'nonexistent-xyz-123'",
+      "Step 2: Verify 'No entries found' message"
+    ],
+    "passes": false
+  },
+  {
+    "id": 247,
+    "category": "functional",
+    "area": "notes",
+    "description": "tt entries --search filters by note content",
+    "steps": [
+      "Step 1: Create entries with various notes",
+      "Step 2: Run tt entries --search 'bug fix'",
+      "Step 3: Verify only matching entries shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 248,
+    "category": "functional",
+    "area": "notes",
+    "description": "Notes preserved in export",
+    "steps": [
+      "Step 1: Create entries with notes",
+      "Step 2: Run tt export json",
+      "Step 3: Verify notes field in exported entries"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 249,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "tt pomodoro start begins work session",
+    "steps": [
+      "Step 1: Run tt pomodoro start programming",
+      "Step 2: Verify countdown display starts",
+      "Step 3: Verify '25:00' or configured time shown",
+      "Step 4: Verify category is set"
+    ],
+    "passes": false
+  },
+  {
+    "id": 250,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "tt pomo is alias for pomodoro",
+    "steps": [
+      "Step 1: Run tt pomo start programming",
+      "Step 2: Verify same behavior as tt pomodoro start"
+    ],
+    "passes": false
+  },
+  {
+    "id": 251,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "tt pomodoro start --work sets work duration",
+    "steps": [
+      "Step 1: Run tt pomodoro start programming --work 45",
+      "Step 2: Verify countdown starts at 45:00",
+      "Step 3: Verify database records 45 minutes"
+    ],
+    "passes": false
+  },
+  {
+    "id": 252,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "tt pomodoro start --break sets break duration",
+    "steps": [
+      "Step 1: Run tt pomodoro start programming --break 10",
+      "Step 2: Complete the work session",
+      "Step 3: Verify break countdown is 10:00"
+    ],
+    "passes": false
+  },
+  {
+    "id": 253,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "tt pomodoro start --project sets project",
+    "steps": [
+      "Step 1: Create project 'Website'",
+      "Step 2: Run tt pomodoro start programming --project Website",
+      "Step 3: Verify session linked to project"
+    ],
+    "passes": false
+  },
+  {
+    "id": 254,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "tt pomodoro status shows countdown",
+    "steps": [
+      "Step 1: Start a pomodoro",
+      "Step 2: Run tt pomodoro status",
+      "Step 3: Verify remaining time shown",
+      "Step 4: Verify session type (work/break) shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 255,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "tt pomodoro status with no session shows message",
+    "steps": [
+      "Step 1: Ensure no pomodoro running",
+      "Step 2: Run tt pomodoro status",
+      "Step 3: Verify 'No active pomodoro' message"
+    ],
+    "passes": false
+  },
+  {
+    "id": 256,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "tt pomodoro stop ends session early",
+    "steps": [
+      "Step 1: Start a pomodoro",
+      "Step 2: Run tt pomodoro stop",
+      "Step 3: Verify session marked incomplete",
+      "Step 4: Verify partial time logged"
+    ],
+    "passes": false
+  },
+  {
+    "id": 257,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "tt pomodoro skip skips current break",
+    "steps": [
+      "Step 1: Start a pomodoro and complete work",
+      "Step 2: During break, run tt pomodoro skip",
+      "Step 3: Verify break ended",
+      "Step 4: Verify next work session ready"
+    ],
+    "passes": false
+  },
+  {
+    "id": 258,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "Work completion triggers break",
+    "steps": [
+      "Step 1: Start a 1-minute pomodoro for testing",
+      "Step 2: Wait for completion",
+      "Step 3: Verify notification sent",
+      "Step 4: Verify break countdown starts"
+    ],
+    "passes": false
+  },
+  {
+    "id": 259,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "Long break after N sessions",
+    "steps": [
+      "Step 1: Configure sessionsUntilLong to 2",
+      "Step 2: Complete 2 pomodoros",
+      "Step 3: Verify 3rd break is long break (15 min default)"
+    ],
+    "passes": false
+  },
+  {
+    "id": 260,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "tt pomodoro stats shows statistics",
+    "steps": [
+      "Step 1: Complete several pomodoros",
+      "Step 2: Run tt pomodoro stats",
+      "Step 3: Verify total sessions shown",
+      "Step 4: Verify completion rate shown",
+      "Step 5: Verify average focus time shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 261,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "tt pomodoro stats --week shows weekly stats",
+    "steps": [
+      "Step 1: Complete pomodoros over the week",
+      "Step 2: Run tt pomodoro stats --week",
+      "Step 3: Verify weekly breakdown shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 262,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "tt pomodoro history shows recent sessions",
+    "steps": [
+      "Step 1: Complete several pomodoros",
+      "Step 2: Run tt pomodoro history",
+      "Step 3: Verify list of recent sessions",
+      "Step 4: Verify completed/incomplete status shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 263,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "Pomodoro creates time entry on completion",
+    "steps": [
+      "Step 1: Start and complete a pomodoro",
+      "Step 2: Run tt today",
+      "Step 3: Verify time entry created for the session"
+    ],
+    "passes": false
+  },
+  {
+    "id": 264,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "Pomodoro config settings work",
+    "steps": [
+      "Step 1: Run tt config set pomodoro.work 30",
+      "Step 2: Start a pomodoro",
+      "Step 3: Verify default work time is 30 minutes"
+    ],
+    "passes": false
+  },
+  {
+    "id": 265,
+    "category": "functional",
+    "area": "pomodoro",
+    "description": "Pomodoro migration creates table",
+    "steps": [
+      "Step 1: Run any command on fresh database",
+      "Step 2: Verify pomodoro_sessions table exists"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 266,
+    "category": "functional",
+    "area": "notify",
+    "description": "tt notify enable enables notifications",
+    "steps": [
+      "Step 1: Run tt notify enable",
+      "Step 2: Verify success message",
+      "Step 3: Verify config updated"
+    ],
+    "passes": false
+  },
+  {
+    "id": 267,
+    "category": "functional",
+    "area": "notify",
+    "description": "tt notify disable disables notifications",
+    "steps": [
+      "Step 1: Run tt notify disable",
+      "Step 2: Verify success message",
+      "Step 3: Verify no notifications sent on events"
+    ],
+    "passes": false
+  },
+  {
+    "id": 268,
+    "category": "functional",
+    "area": "notify",
+    "description": "tt notify test sends test notification",
+    "steps": [
+      "Step 1: Run tt notify test",
+      "Step 2: Verify macOS notification appears",
+      "Step 3: Verify notification has title and message"
+    ],
+    "passes": false
+  },
+  {
+    "id": 269,
+    "category": "functional",
+    "area": "notify",
+    "description": "tt notify list shows notification history",
+    "steps": [
+      "Step 1: Trigger some notifications",
+      "Step 2: Run tt notify list",
+      "Step 3: Verify recent notifications shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 270,
+    "category": "functional",
+    "area": "notify",
+    "description": "tt notify clear clears history",
+    "steps": [
+      "Step 1: Have some notifications in history",
+      "Step 2: Run tt notify clear",
+      "Step 3: Run tt notify list",
+      "Step 4: Verify history is empty"
+    ],
+    "passes": false
+  },
+  {
+    "id": 271,
+    "category": "functional",
+    "area": "notify",
+    "description": "Timer start triggers notification",
+    "steps": [
+      "Step 1: Enable timer notifications",
+      "Step 2: Run tt start programming",
+      "Step 3: Verify notification appears"
+    ],
+    "passes": false
+  },
+  {
+    "id": 272,
+    "category": "functional",
+    "area": "notify",
+    "description": "Timer stop triggers notification",
+    "steps": [
+      "Step 1: Enable timer notifications",
+      "Step 2: Start and stop timer",
+      "Step 3: Verify notification appears with duration"
+    ],
+    "passes": false
+  },
+  {
+    "id": 273,
+    "category": "functional",
+    "area": "notify",
+    "description": "Goal reached triggers notification",
+    "steps": [
+      "Step 1: Enable goal notifications",
+      "Step 2: Set a goal for 10 minutes",
+      "Step 3: Log 10 minutes",
+      "Step 4: Verify goal reached notification"
+    ],
+    "passes": false
+  },
+  {
+    "id": 274,
+    "category": "functional",
+    "area": "notify",
+    "description": "Quiet hours suppress notifications",
+    "steps": [
+      "Step 1: Set quiet hours to current time",
+      "Step 2: Trigger a notification event",
+      "Step 3: Verify no notification appears"
+    ],
+    "passes": false
+  },
+  {
+    "id": 275,
+    "category": "functional",
+    "area": "notify",
+    "description": "Notification config settings work",
+    "steps": [
+      "Step 1: Run tt config set notify.timer false",
+      "Step 2: Start timer",
+      "Step 3: Verify no timer notification",
+      "Step 4: Run tt config set notify.timer true"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 276,
+    "category": "functional",
+    "area": "focus",
+    "description": "tt focus start begins focus session",
+    "steps": [
+      "Step 1: Run tt focus start 2h",
+      "Step 2: Verify success message",
+      "Step 3: Verify countdown shown",
+      "Step 4: Verify focus mode active"
+    ],
+    "passes": false
+  },
+  {
+    "id": 277,
+    "category": "functional",
+    "area": "focus",
+    "description": "tt focus start with duration in minutes",
+    "steps": [
+      "Step 1: Run tt focus start 90m",
+      "Step 2: Verify focus ends after 90 minutes"
+    ],
+    "passes": false
+  },
+  {
+    "id": 278,
+    "category": "functional",
+    "area": "focus",
+    "description": "tt focus start --until sets end time",
+    "steps": [
+      "Step 1: Run tt focus start --until 17:00",
+      "Step 2: Verify focus ends at 5 PM"
+    ],
+    "passes": false
+  },
+  {
+    "id": 279,
+    "category": "functional",
+    "area": "focus",
+    "description": "tt focus start --category sets category",
+    "steps": [
+      "Step 1: Run tt focus start 1h --category programming",
+      "Step 2: Verify category recorded"
+    ],
+    "passes": false
+  },
+  {
+    "id": 280,
+    "category": "functional",
+    "area": "focus",
+    "description": "tt focus stop ends session early",
+    "steps": [
+      "Step 1: Start a focus session",
+      "Step 2: Run tt focus stop",
+      "Step 3: Verify session ended",
+      "Step 4: Verify stats recorded"
+    ],
+    "passes": false
+  },
+  {
+    "id": 281,
+    "category": "functional",
+    "area": "focus",
+    "description": "tt focus status shows current state",
+    "steps": [
+      "Step 1: Start a focus session",
+      "Step 2: Run tt focus status",
+      "Step 3: Verify remaining time shown",
+      "Step 4: Verify interruption count shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 282,
+    "category": "functional",
+    "area": "focus",
+    "description": "tt focus status with no session shows message",
+    "steps": [
+      "Step 1: Ensure no focus session",
+      "Step 2: Run tt focus status",
+      "Step 3: Verify 'No active focus session' message"
+    ],
+    "passes": false
+  },
+  {
+    "id": 283,
+    "category": "functional",
+    "area": "focus",
+    "description": "tt focus block adds app to blocklist",
+    "steps": [
+      "Step 1: Run tt focus block 'Slack'",
+      "Step 2: Verify success message",
+      "Step 3: Run tt focus list",
+      "Step 4: Verify Slack in blocklist"
+    ],
+    "passes": false
+  },
+  {
+    "id": 284,
+    "category": "functional",
+    "area": "focus",
+    "description": "tt focus block multiple apps",
+    "steps": [
+      "Step 1: Run tt focus block 'Discord' 'Twitter'",
+      "Step 2: Verify both added",
+      "Step 3: Run tt focus list",
+      "Step 4: Verify both in blocklist"
+    ],
+    "passes": false
+  },
+  {
+    "id": 285,
+    "category": "functional",
+    "area": "focus",
+    "description": "tt focus allow removes from blocklist",
+    "steps": [
+      "Step 1: Add Slack to blocklist",
+      "Step 2: Run tt focus allow 'Slack'",
+      "Step 3: Verify success message",
+      "Step 4: Verify Slack removed from blocklist"
+    ],
+    "passes": false
+  },
+  {
+    "id": 286,
+    "category": "functional",
+    "area": "focus",
+    "description": "tt focus list shows block/allow lists",
+    "steps": [
+      "Step 1: Configure some blocked apps",
+      "Step 2: Run tt focus list",
+      "Step 3: Verify blocked apps section",
+      "Step 4: Verify format is clear"
+    ],
+    "passes": false
+  },
+  {
+    "id": 287,
+    "category": "functional",
+    "area": "focus",
+    "description": "Focus mode warns on blocked app detection",
+    "steps": [
+      "Step 1: Block an app",
+      "Step 2: Start focus session",
+      "Step 3: Switch to blocked app",
+      "Step 4: Verify warning notification",
+      "Step 5: Verify interruption counted"
+    ],
+    "passes": false
+  },
+  {
+    "id": 288,
+    "category": "functional",
+    "area": "focus",
+    "description": "tt focus stats shows statistics",
+    "steps": [
+      "Step 1: Complete several focus sessions",
+      "Step 2: Run tt focus stats",
+      "Step 3: Verify total focus time",
+      "Step 4: Verify average session length",
+      "Step 5: Verify interruption stats"
+    ],
+    "passes": false
+  },
+  {
+    "id": 289,
+    "category": "functional",
+    "area": "focus",
+    "description": "tt focus history shows recent sessions",
+    "steps": [
+      "Step 1: Complete several focus sessions",
+      "Step 2: Run tt focus history",
+      "Step 3: Verify list of sessions",
+      "Step 4: Verify duration and interruptions shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 290,
+    "category": "functional",
+    "area": "focus",
+    "description": "Focus migration creates table",
+    "steps": [
+      "Step 1: Run any command on fresh database",
+      "Step 2: Verify focus_sessions table exists"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 291,
+    "category": "functional",
+    "area": "templates",
+    "description": "tt templates lists all templates",
+    "steps": [
+      "Step 1: Run tt templates",
+      "Step 2: Verify table with Name, Category, Project, Tags columns",
+      "Step 3: Verify message if no templates exist"
+    ],
+    "passes": false
+  },
+  {
+    "id": 292,
+    "category": "functional",
+    "area": "templates",
+    "description": "tt templates add creates template",
+    "steps": [
+      "Step 1: Run tt templates add 'morning-coding' --category programming",
+      "Step 2: Verify success message",
+      "Step 3: Run tt templates list",
+      "Step 4: Verify template appears"
+    ],
+    "passes": false
+  },
+  {
+    "id": 293,
+    "category": "functional",
+    "area": "templates",
+    "description": "tt templates add with all options",
+    "steps": [
+      "Step 1: Run tt templates add 'standup' --category meetings --project 'Main' --tags 'daily' --notes 'Daily standup'",
+      "Step 2: Verify success message",
+      "Step 3: Run tt templates show 'standup'",
+      "Step 4: Verify all fields set"
+    ],
+    "passes": false
+  },
+  {
+    "id": 294,
+    "category": "functional",
+    "area": "templates",
+    "description": "tt templates add duplicate shows error",
+    "steps": [
+      "Step 1: Create template 'test'",
+      "Step 2: Run tt templates add 'test' again",
+      "Step 3: Verify error 'Template already exists'"
+    ],
+    "passes": false
+  },
+  {
+    "id": 295,
+    "category": "functional",
+    "area": "templates",
+    "description": "tt templates show displays template details",
+    "steps": [
+      "Step 1: Create template with all options",
+      "Step 2: Run tt templates show 'template-name'",
+      "Step 3: Verify all fields displayed"
+    ],
+    "passes": false
+  },
+  {
+    "id": 296,
+    "category": "functional",
+    "area": "templates",
+    "description": "tt templates use starts timer from template",
+    "steps": [
+      "Step 1: Create template with category and tags",
+      "Step 2: Run tt templates use 'template-name'",
+      "Step 3: Verify timer started",
+      "Step 4: Verify category matches template",
+      "Step 5: Verify tags applied"
+    ],
+    "passes": false
+  },
+  {
+    "id": 297,
+    "category": "functional",
+    "area": "templates",
+    "description": "tt templates edit modifies template",
+    "steps": [
+      "Step 1: Create template",
+      "Step 2: Run tt templates edit 'template' --tags 'updated'",
+      "Step 3: Verify success message",
+      "Step 4: Run tt templates show 'template'",
+      "Step 5: Verify tags updated"
+    ],
+    "passes": false
+  },
+  {
+    "id": 298,
+    "category": "functional",
+    "area": "templates",
+    "description": "tt templates delete removes template",
+    "steps": [
+      "Step 1: Create template",
+      "Step 2: Run tt templates delete 'template'",
+      "Step 3: Verify success message",
+      "Step 4: Run tt templates list",
+      "Step 5: Verify template gone"
+    ],
+    "passes": false
+  },
+  {
+    "id": 299,
+    "category": "functional",
+    "area": "templates",
+    "description": "Templates migration creates table",
+    "steps": [
+      "Step 1: Run any command on fresh database",
+      "Step 2: Verify templates table exists"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 300,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "tt dashboard starts web server",
+    "steps": [
+      "Step 1: Run tt dashboard",
+      "Step 2: Verify server starts on port 3847",
+      "Step 3: Verify URL shown in output",
+      "Step 4: Access http://localhost:3847",
+      "Step 5: Verify page loads"
+    ],
+    "passes": false
+  },
+  {
+    "id": 301,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "tt dashboard --port uses custom port",
+    "steps": [
+      "Step 1: Run tt dashboard --port 8080",
+      "Step 2: Verify server starts on port 8080",
+      "Step 3: Access http://localhost:8080"
+    ],
+    "passes": false
+  },
+  {
+    "id": 302,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "tt dashboard stop stops server",
+    "steps": [
+      "Step 1: Start dashboard",
+      "Step 2: Run tt dashboard stop",
+      "Step 3: Verify server stopped",
+      "Step 4: Verify port is free"
+    ],
+    "passes": false
+  },
+  {
+    "id": 303,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "tt dashboard status shows server state",
+    "steps": [
+      "Step 1: Run tt dashboard status with server running",
+      "Step 2: Verify 'Dashboard running' shown",
+      "Step 3: Stop dashboard",
+      "Step 4: Run tt dashboard status",
+      "Step 5: Verify 'Dashboard not running' shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 304,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "Dashboard home page shows today summary",
+    "steps": [
+      "Step 1: Create some entries for today",
+      "Step 2: Start dashboard and open in browser",
+      "Step 3: Verify today's total shown",
+      "Step 4: Verify category breakdown visible"
+    ],
+    "passes": false
+  },
+  {
+    "id": 305,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "Dashboard shows current timer status",
+    "steps": [
+      "Step 1: Start a timer",
+      "Step 2: Open dashboard",
+      "Step 3: Verify current timer shown",
+      "Step 4: Verify live countdown updates"
+    ],
+    "passes": false
+  },
+  {
+    "id": 306,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "Dashboard shows week chart",
+    "steps": [
+      "Step 1: Create entries over the week",
+      "Step 2: Open dashboard",
+      "Step 3: Verify Chart.js chart rendered",
+      "Step 4: Verify all days shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 307,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "Dashboard reports page works",
+    "steps": [
+      "Step 1: Navigate to /reports",
+      "Step 2: Verify date range picker",
+      "Step 3: Select custom date range",
+      "Step 4: Verify filtered data displayed"
+    ],
+    "passes": false
+  },
+  {
+    "id": 308,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "Dashboard projects page works",
+    "steps": [
+      "Step 1: Create some projects with time",
+      "Step 2: Navigate to /projects",
+      "Step 3: Verify project list shown",
+      "Step 4: Verify total hours per project"
+    ],
+    "passes": false
+  },
+  {
+    "id": 309,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "Dashboard goals page works",
+    "steps": [
+      "Step 1: Create some goals",
+      "Step 2: Navigate to /goals",
+      "Step 3: Verify goal progress bars",
+      "Step 4: Verify percentage shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 310,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "Dashboard API /api/status works",
+    "steps": [
+      "Step 1: Start timer",
+      "Step 2: GET /api/status",
+      "Step 3: Verify JSON response",
+      "Step 4: Verify timer info present"
+    ],
+    "passes": false
+  },
+  {
+    "id": 311,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "Dashboard API /api/today works",
+    "steps": [
+      "Step 1: Create entries for today",
+      "Step 2: GET /api/today",
+      "Step 3: Verify JSON response",
+      "Step 4: Verify entries present"
+    ],
+    "passes": false
+  },
+  {
+    "id": 312,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "Dashboard API /api/week works",
+    "steps": [
+      "Step 1: Create entries for week",
+      "Step 2: GET /api/week",
+      "Step 3: Verify JSON response",
+      "Step 4: Verify daily totals present"
+    ],
+    "passes": false
+  },
+  {
+    "id": 313,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "Dashboard API POST /api/timer/start works",
+    "steps": [
+      "Step 1: POST /api/timer/start with category",
+      "Step 2: Verify timer started",
+      "Step 3: Run tt status to confirm"
+    ],
+    "passes": false
+  },
+  {
+    "id": 314,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "Dashboard API POST /api/timer/stop works",
+    "steps": [
+      "Step 1: Start a timer",
+      "Step 2: POST /api/timer/stop",
+      "Step 3: Verify timer stopped",
+      "Step 4: Verify entry created"
+    ],
+    "passes": false
+  },
+  {
+    "id": 315,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "Dashboard dark theme works",
+    "steps": [
+      "Step 1: Open dashboard",
+      "Step 2: Toggle dark theme",
+      "Step 3: Verify dark colors applied",
+      "Step 4: Verify readable text"
+    ],
+    "passes": false
+  },
+  {
+    "id": 316,
+    "category": "functional",
+    "area": "dashboard",
+    "description": "Dashboard is mobile responsive",
+    "steps": [
+      "Step 1: Open dashboard",
+      "Step 2: Resize to mobile width",
+      "Step 3: Verify layout adapts",
+      "Step 4: Verify no horizontal scroll"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 317,
+    "category": "functional",
+    "area": "score",
+    "description": "tt score shows today's score",
+    "steps": [
+      "Step 1: Track some time today",
+      "Step 2: Run tt score",
+      "Step 3: Verify score 0-100 shown",
+      "Step 4: Verify visual indicator"
+    ],
+    "passes": false
+  },
+  {
+    "id": 318,
+    "category": "functional",
+    "area": "score",
+    "description": "tt score --week shows weekly average",
+    "steps": [
+      "Step 1: Track time over the week",
+      "Step 2: Run tt score --week",
+      "Step 3: Verify weekly average shown",
+      "Step 4: Verify trend indicator"
+    ],
+    "passes": false
+  },
+  {
+    "id": 319,
+    "category": "functional",
+    "area": "score",
+    "description": "tt score --month shows monthly average",
+    "steps": [
+      "Step 1: Run tt score --month",
+      "Step 2: Verify monthly average shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 320,
+    "category": "functional",
+    "area": "score",
+    "description": "tt score --breakdown shows factors",
+    "steps": [
+      "Step 1: Run tt score --breakdown",
+      "Step 2: Verify hours tracked component",
+      "Step 3: Verify goals component",
+      "Step 4: Verify focus time component",
+      "Step 5: Verify context switching component"
+    ],
+    "passes": false
+  },
+  {
+    "id": 321,
+    "category": "functional",
+    "area": "score",
+    "description": "Score increases with more hours tracked",
+    "steps": [
+      "Step 1: Note initial score",
+      "Step 2: Log more hours",
+      "Step 3: Verify score increased"
+    ],
+    "passes": false
+  },
+  {
+    "id": 322,
+    "category": "functional",
+    "area": "score",
+    "description": "Score rewards goal completion",
+    "steps": [
+      "Step 1: Set a goal",
+      "Step 2: Note score before completion",
+      "Step 3: Complete the goal",
+      "Step 4: Verify score increased"
+    ],
+    "passes": false
+  },
+  {
+    "id": 323,
+    "category": "functional",
+    "area": "score",
+    "description": "tt insights shows productivity insights",
+    "steps": [
+      "Step 1: Track time for several days",
+      "Step 2: Run tt insights",
+      "Step 3: Verify personalized insights shown",
+      "Step 4: Verify actionable suggestions"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 324,
+    "category": "functional",
+    "area": "predict",
+    "description": "tt predict week shows predicted total",
+    "steps": [
+      "Step 1: Track time for part of week",
+      "Step 2: Run tt predict week",
+      "Step 3: Verify prediction shown",
+      "Step 4: Verify confidence indicator"
+    ],
+    "passes": false
+  },
+  {
+    "id": 325,
+    "category": "functional",
+    "area": "predict",
+    "description": "tt predict goal shows goal likelihood",
+    "steps": [
+      "Step 1: Set a goal",
+      "Step 2: Run tt predict goal 'programming'",
+      "Step 3: Verify likelihood percentage",
+      "Step 4: Verify suggested daily target"
+    ],
+    "passes": false
+  },
+  {
+    "id": 326,
+    "category": "functional",
+    "area": "predict",
+    "description": "tt predict today shows suggested hours",
+    "steps": [
+      "Step 1: Have some tracking history",
+      "Step 2: Run tt predict today",
+      "Step 3: Verify suggested hours to track",
+      "Step 4: Verify based on patterns"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 327,
+    "category": "functional",
+    "area": "calendar",
+    "description": "tt calendar export creates ICS file",
+    "steps": [
+      "Step 1: Create some time entries",
+      "Step 2: Run tt calendar export",
+      "Step 3: Verify .ics file created",
+      "Step 4: Verify valid iCal format"
+    ],
+    "passes": false
+  },
+  {
+    "id": 328,
+    "category": "functional",
+    "area": "calendar",
+    "description": "tt calendar export --from --to filters dates",
+    "steps": [
+      "Step 1: Create entries across date range",
+      "Step 2: Run tt calendar export --from 2025-01-01 --to 2025-01-31",
+      "Step 3: Verify only entries in range exported"
+    ],
+    "passes": false
+  },
+  {
+    "id": 329,
+    "category": "functional",
+    "area": "calendar",
+    "description": "tt calendar export -o saves to specific file",
+    "steps": [
+      "Step 1: Run tt calendar export -o work-time.ics",
+      "Step 2: Verify file created at specified path"
+    ],
+    "passes": false
+  },
+  {
+    "id": 330,
+    "category": "functional",
+    "area": "calendar",
+    "description": "tt calendar import loads ICS file",
+    "steps": [
+      "Step 1: Have a valid ICS file",
+      "Step 2: Run tt calendar import events.ics",
+      "Step 3: Verify entries created from events",
+      "Step 4: Verify times match"
+    ],
+    "passes": false
+  },
+  {
+    "id": 331,
+    "category": "functional",
+    "area": "calendar",
+    "description": "tt calendar view shows ASCII calendar",
+    "steps": [
+      "Step 1: Create entries for current week",
+      "Step 2: Run tt calendar view",
+      "Step 3: Verify calendar grid displayed",
+      "Step 4: Verify entries marked"
+    ],
+    "passes": false
+  },
+  {
+    "id": 332,
+    "category": "functional",
+    "area": "calendar",
+    "description": "tt calendar view --month shows monthly view",
+    "steps": [
+      "Step 1: Run tt calendar view --month",
+      "Step 2: Verify full month displayed",
+      "Step 3: Verify days with entries marked"
+    ],
+    "passes": false
+  },
+  {
+    "id": 333,
+    "category": "functional",
+    "area": "calendar",
+    "description": "Exported ICS opens in Calendar app",
+    "steps": [
+      "Step 1: Export calendar to ICS",
+      "Step 2: Open file in macOS Calendar",
+      "Step 3: Verify events display correctly"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 334,
+    "category": "functional",
+    "area": "integrate",
+    "description": "tt integrate jira setup configures Jira",
+    "steps": [
+      "Step 1: Run tt integrate jira setup --url https://company.atlassian.net --token xxx",
+      "Step 2: Verify credentials saved",
+      "Step 3: Verify connection tested"
+    ],
+    "passes": false
+  },
+  {
+    "id": 335,
+    "category": "functional",
+    "area": "integrate",
+    "description": "tt integrate github setup configures GitHub",
+    "steps": [
+      "Step 1: Run tt integrate github setup --token xxx",
+      "Step 2: Verify token saved",
+      "Step 3: Verify connection tested"
+    ],
+    "passes": false
+  },
+  {
+    "id": 336,
+    "category": "functional",
+    "area": "integrate",
+    "description": "tt start --issue links to Jira ticket",
+    "steps": [
+      "Step 1: Configure Jira integration",
+      "Step 2: Run tt start programming --issue 'PROJ-123'",
+      "Step 3: Verify issue linked to entry",
+      "Step 4: Verify issue title fetched"
+    ],
+    "passes": false
+  },
+  {
+    "id": 337,
+    "category": "functional",
+    "area": "integrate",
+    "description": "tt start --issue links to GitHub issue",
+    "steps": [
+      "Step 1: Configure GitHub integration",
+      "Step 2: Run tt start programming --issue 'owner/repo#45'",
+      "Step 3: Verify issue linked to entry",
+      "Step 4: Verify issue title fetched"
+    ],
+    "passes": false
+  },
+  {
+    "id": 338,
+    "category": "functional",
+    "area": "integrate",
+    "description": "tt integrate status shows integration status",
+    "steps": [
+      "Step 1: Configure integrations",
+      "Step 2: Run tt integrate status",
+      "Step 3: Verify Jira status shown",
+      "Step 4: Verify GitHub status shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 339,
+    "category": "functional",
+    "area": "integrate",
+    "description": "Issue titles shown in reports",
+    "steps": [
+      "Step 1: Link entries to issues",
+      "Step 2: Run tt today",
+      "Step 3: Verify issue references shown"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 340,
+    "category": "functional",
+    "area": "import",
+    "description": "tt import toggl imports Toggl CSV",
+    "steps": [
+      "Step 1: Have Toggl export CSV",
+      "Step 2: Run tt import toggl export.csv",
+      "Step 3: Verify entries created",
+      "Step 4: Verify times correct"
+    ],
+    "passes": false
+  },
+  {
+    "id": 341,
+    "category": "functional",
+    "area": "import",
+    "description": "tt import clockify imports Clockify CSV",
+    "steps": [
+      "Step 1: Have Clockify export CSV",
+      "Step 2: Run tt import clockify export.csv",
+      "Step 3: Verify entries created"
+    ],
+    "passes": false
+  },
+  {
+    "id": 342,
+    "category": "functional",
+    "area": "import",
+    "description": "tt import csv imports generic CSV",
+    "steps": [
+      "Step 1: Have CSV with standard columns",
+      "Step 2: Run tt import csv data.csv",
+      "Step 3: Verify entries created"
+    ],
+    "passes": false
+  },
+  {
+    "id": 343,
+    "category": "functional",
+    "area": "import",
+    "description": "tt import csv --mapping uses custom mapping",
+    "steps": [
+      "Step 1: Create mapping JSON",
+      "Step 2: Run tt import csv data.csv --mapping map.json",
+      "Step 3: Verify columns mapped correctly"
+    ],
+    "passes": false
+  },
+  {
+    "id": 344,
+    "category": "functional",
+    "area": "import",
+    "description": "tt import preview shows before importing",
+    "steps": [
+      "Step 1: Run tt import preview data.csv",
+      "Step 2: Verify entries shown but not created",
+      "Step 3: Verify count of entries shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 345,
+    "category": "functional",
+    "area": "import",
+    "description": "tt import history shows import history",
+    "steps": [
+      "Step 1: Import some data",
+      "Step 2: Run tt import history",
+      "Step 3: Verify import record shown",
+      "Step 4: Verify count and date shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 346,
+    "category": "functional",
+    "area": "import",
+    "description": "Import creates categories if missing",
+    "steps": [
+      "Step 1: Import data with unknown category",
+      "Step 2: Verify category auto-created",
+      "Step 3: Verify entries assigned to it"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 347,
+    "category": "functional",
+    "area": "webhooks",
+    "description": "tt webhooks add creates webhook",
+    "steps": [
+      "Step 1: Run tt webhooks add https://example.com/hook --events timer.start,timer.stop",
+      "Step 2: Verify success message",
+      "Step 3: Run tt webhooks list",
+      "Step 4: Verify webhook appears"
+    ],
+    "passes": false
+  },
+  {
+    "id": 348,
+    "category": "functional",
+    "area": "webhooks",
+    "description": "tt webhooks list shows all webhooks",
+    "steps": [
+      "Step 1: Create several webhooks",
+      "Step 2: Run tt webhooks list",
+      "Step 3: Verify all webhooks shown",
+      "Step 4: Verify URL, events, status shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 349,
+    "category": "functional",
+    "area": "webhooks",
+    "description": "tt webhooks show displays webhook details",
+    "steps": [
+      "Step 1: Create webhook",
+      "Step 2: Run tt webhooks show <id>",
+      "Step 3: Verify all details shown",
+      "Step 4: Verify recent calls shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 350,
+    "category": "functional",
+    "area": "webhooks",
+    "description": "tt webhooks test sends test payload",
+    "steps": [
+      "Step 1: Create webhook to test endpoint",
+      "Step 2: Run tt webhooks test <id>",
+      "Step 3: Verify test payload sent",
+      "Step 4: Verify response shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 351,
+    "category": "functional",
+    "area": "webhooks",
+    "description": "tt webhooks enable enables webhook",
+    "steps": [
+      "Step 1: Disable a webhook",
+      "Step 2: Run tt webhooks enable <id>",
+      "Step 3: Verify webhook is active"
+    ],
+    "passes": false
+  },
+  {
+    "id": 352,
+    "category": "functional",
+    "area": "webhooks",
+    "description": "tt webhooks disable disables webhook",
+    "steps": [
+      "Step 1: Run tt webhooks disable <id>",
+      "Step 2: Verify webhook is inactive",
+      "Step 3: Trigger event",
+      "Step 4: Verify no call made"
+    ],
+    "passes": false
+  },
+  {
+    "id": 353,
+    "category": "functional",
+    "area": "webhooks",
+    "description": "tt webhooks delete removes webhook",
+    "steps": [
+      "Step 1: Create webhook",
+      "Step 2: Run tt webhooks delete <id>",
+      "Step 3: Verify success message",
+      "Step 4: Run tt webhooks list",
+      "Step 5: Verify webhook gone"
+    ],
+    "passes": false
+  },
+  {
+    "id": 354,
+    "category": "functional",
+    "area": "webhooks",
+    "description": "tt webhooks history shows recent calls",
+    "steps": [
+      "Step 1: Trigger some webhook events",
+      "Step 2: Run tt webhooks history",
+      "Step 3: Verify recent calls shown",
+      "Step 4: Verify status codes shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 355,
+    "category": "functional",
+    "area": "webhooks",
+    "description": "timer.start event triggers webhook",
+    "steps": [
+      "Step 1: Create webhook for timer.start",
+      "Step 2: Run tt start programming",
+      "Step 3: Verify webhook called",
+      "Step 4: Verify payload contains timer info"
+    ],
+    "passes": false
+  },
+  {
+    "id": 356,
+    "category": "functional",
+    "area": "webhooks",
+    "description": "timer.stop event triggers webhook",
+    "steps": [
+      "Step 1: Create webhook for timer.stop",
+      "Step 2: Start and stop timer",
+      "Step 3: Verify webhook called",
+      "Step 4: Verify payload contains duration"
+    ],
+    "passes": false
+  },
+  {
+    "id": 357,
+    "category": "functional",
+    "area": "webhooks",
+    "description": "goal.reached event triggers webhook",
+    "steps": [
+      "Step 1: Create webhook for goal.reached",
+      "Step 2: Complete a goal",
+      "Step 3: Verify webhook called"
+    ],
+    "passes": false
+  },
+  {
+    "id": 358,
+    "category": "functional",
+    "area": "webhooks",
+    "description": "Webhook retries on failure",
+    "steps": [
+      "Step 1: Create webhook to failing endpoint",
+      "Step 2: Trigger event",
+      "Step 3: Verify retry attempts made",
+      "Step 4: Verify failure logged"
+    ],
+    "passes": false
+  },
+  {
+    "id": 359,
+    "category": "functional",
+    "area": "webhooks",
+    "description": "Webhooks migration creates tables",
+    "steps": [
+      "Step 1: Run any command on fresh database",
+      "Step 2: Verify webhooks table exists",
+      "Step 3: Verify webhook_logs table exists"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 360,
+    "category": "functional",
+    "area": "linux",
+    "description": "Linux window detection works on X11",
+    "steps": [
+      "Step 1: Run on Linux with X11",
+      "Step 2: Run tt detect",
+      "Step 3: Verify app name detected",
+      "Step 4: Verify window title detected"
+    ],
+    "passes": false
+  },
+  {
+    "id": 361,
+    "category": "functional",
+    "area": "linux",
+    "description": "Linux daemon uses systemd",
+    "steps": [
+      "Step 1: Run on Linux",
+      "Step 2: Run tt daemon install",
+      "Step 3: Verify systemd user service created",
+      "Step 4: Verify service starts"
+    ],
+    "passes": false
+  },
+  {
+    "id": 362,
+    "category": "functional",
+    "area": "linux",
+    "description": "Linux daemon uninstall removes service",
+    "steps": [
+      "Step 1: Install daemon on Linux",
+      "Step 2: Run tt daemon uninstall",
+      "Step 3: Verify service removed"
+    ],
+    "passes": false
+  },
+  {
+    "id": 363,
+    "category": "functional",
+    "area": "linux",
+    "description": "Linux notifications use notify-send",
+    "steps": [
+      "Step 1: Run on Linux",
+      "Step 2: Run tt notify test",
+      "Step 3: Verify notification appears"
+    ],
+    "passes": false
+  },
+  {
+    "id": 364,
+    "category": "functional",
+    "area": "linux",
+    "description": "Platform detection works correctly",
+    "steps": [
+      "Step 1: Check detection code",
+      "Step 2: Verify macOS uses AppleScript",
+      "Step 3: Verify Linux uses xdotool"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 365,
+    "category": "functional",
+    "area": "invoice",
+    "description": "tt invoice create generates invoice",
+    "steps": [
+      "Step 1: Create project with time entries",
+      "Step 2: Run tt invoice create --project 'Website' --from 2025-01-01 --to 2025-01-31",
+      "Step 3: Verify invoice created",
+      "Step 4: Verify total hours calculated",
+      "Step 5: Verify amount calculated"
+    ],
+    "passes": false
+  },
+  {
+    "id": 366,
+    "category": "functional",
+    "area": "invoice",
+    "description": "tt invoice create --month uses month range",
+    "steps": [
+      "Step 1: Run tt invoice create --project 'API' --month 2025-01",
+      "Step 2: Verify date range is January 2025"
+    ],
+    "passes": false
+  },
+  {
+    "id": 367,
+    "category": "functional",
+    "area": "invoice",
+    "description": "tt invoice list shows all invoices",
+    "steps": [
+      "Step 1: Create several invoices",
+      "Step 2: Run tt invoice list",
+      "Step 3: Verify all invoices shown",
+      "Step 4: Verify invoice numbers, amounts, dates"
+    ],
+    "passes": false
+  },
+  {
+    "id": 368,
+    "category": "functional",
+    "area": "invoice",
+    "description": "tt invoice show displays invoice details",
+    "steps": [
+      "Step 1: Create an invoice",
+      "Step 2: Run tt invoice show <id>",
+      "Step 3: Verify all details shown",
+      "Step 4: Verify line items shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 369,
+    "category": "functional",
+    "area": "invoice",
+    "description": "tt invoice export --format html exports HTML",
+    "steps": [
+      "Step 1: Create an invoice",
+      "Step 2: Run tt invoice export <id> --format html",
+      "Step 3: Verify HTML file created",
+      "Step 4: Verify valid HTML"
+    ],
+    "passes": false
+  },
+  {
+    "id": 370,
+    "category": "functional",
+    "area": "invoice",
+    "description": "tt invoice delete removes invoice",
+    "steps": [
+      "Step 1: Create an invoice",
+      "Step 2: Run tt invoice delete <id>",
+      "Step 3: Verify success message",
+      "Step 4: Verify invoice gone"
+    ],
+    "passes": false
+  },
+  {
+    "id": 371,
+    "category": "functional",
+    "area": "invoice",
+    "description": "Invoice number auto-increments",
+    "steps": [
+      "Step 1: Create first invoice",
+      "Step 2: Verify invoice number is INV-001 or similar",
+      "Step 3: Create second invoice",
+      "Step 4: Verify invoice number incremented"
+    ],
+    "passes": false
+  },
+  {
+    "id": 372,
+    "category": "functional",
+    "area": "invoice",
+    "description": "Invoice uses project hourly rate",
+    "steps": [
+      "Step 1: Create project with rate $150",
+      "Step 2: Log 10 hours to project",
+      "Step 3: Create invoice",
+      "Step 4: Verify amount is $1500"
+    ],
+    "passes": false
+  },
+  {
+    "id": 373,
+    "category": "functional",
+    "area": "invoice",
+    "description": "Invoices migration creates table",
+    "steps": [
+      "Step 1: Run any command on fresh database",
+      "Step 2: Verify invoices table exists"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 374,
+    "category": "functional",
+    "area": "team",
+    "description": "tt team export exports current week",
+    "steps": [
+      "Step 1: Track time during week",
+      "Step 2: Run tt team export",
+      "Step 3: Verify export created",
+      "Step 4: Verify week's data included"
+    ],
+    "passes": false
+  },
+  {
+    "id": 375,
+    "category": "functional",
+    "area": "team",
+    "description": "tt team export --from --to exports range",
+    "steps": [
+      "Step 1: Run tt team export --from 2025-01-01 --to 2025-01-31",
+      "Step 2: Verify date range applied"
+    ],
+    "passes": false
+  },
+  {
+    "id": 376,
+    "category": "functional",
+    "area": "team",
+    "description": "tt team export --format html creates HTML report",
+    "steps": [
+      "Step 1: Run tt team export --format html -o report.html",
+      "Step 2: Verify HTML file created",
+      "Step 3: Open in browser",
+      "Step 4: Verify formatted report"
+    ],
+    "passes": false
+  },
+  {
+    "id": 377,
+    "category": "functional",
+    "area": "team",
+    "description": "tt team export --format json creates JSON",
+    "steps": [
+      "Step 1: Run tt team export --format json",
+      "Step 2: Verify valid JSON output",
+      "Step 3: Verify all data present"
+    ],
+    "passes": false
+  },
+  {
+    "id": 378,
+    "category": "functional",
+    "area": "team",
+    "description": "tt team export --detailed includes entries",
+    "steps": [
+      "Step 1: Run tt team export --detailed",
+      "Step 2: Verify individual entries shown",
+      "Step 3: Not just summaries"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 379,
+    "category": "functional",
+    "area": "undo",
+    "description": "tt undo undoes last action",
+    "steps": [
+      "Step 1: Run tt start programming",
+      "Step 2: Run tt undo",
+      "Step 3: Verify timer stopped",
+      "Step 4: Verify entry removed"
+    ],
+    "passes": false
+  },
+  {
+    "id": 380,
+    "category": "functional",
+    "area": "undo",
+    "description": "tt undo undoes stop action",
+    "steps": [
+      "Step 1: Start and stop timer",
+      "Step 2: Run tt undo",
+      "Step 3: Verify timer restarted"
+    ],
+    "passes": false
+  },
+  {
+    "id": 381,
+    "category": "functional",
+    "area": "undo",
+    "description": "tt undo undoes log action",
+    "steps": [
+      "Step 1: Run tt log -c programming -d 1h",
+      "Step 2: Run tt undo",
+      "Step 3: Verify entry removed"
+    ],
+    "passes": false
+  },
+  {
+    "id": 382,
+    "category": "functional",
+    "area": "undo",
+    "description": "tt undo --list shows undo history",
+    "steps": [
+      "Step 1: Perform several actions",
+      "Step 2: Run tt undo --list",
+      "Step 3: Verify action history shown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 383,
+    "category": "functional",
+    "area": "undo",
+    "description": "tt redo redoes last undone action",
+    "steps": [
+      "Step 1: Perform action",
+      "Step 2: Run tt undo",
+      "Step 3: Run tt redo",
+      "Step 4: Verify action restored"
+    ],
+    "passes": false
+  },
+  {
+    "id": 384,
+    "category": "functional",
+    "area": "undo",
+    "description": "tt undo with nothing to undo shows message",
+    "steps": [
+      "Step 1: Clear undo history",
+      "Step 2: Run tt undo",
+      "Step 3: Verify 'Nothing to undo' message"
+    ],
+    "passes": false
+  },
+  {
+    "id": 385,
+    "category": "functional",
+    "area": "undo",
+    "description": "Undo migration creates table",
+    "steps": [
+      "Step 1: Run any command on fresh database",
+      "Step 2: Verify undo_history table exists"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 386,
+    "category": "functional",
+    "area": "completions",
+    "description": "tt completions bash outputs bash completions",
+    "steps": [
+      "Step 1: Run tt completions bash",
+      "Step 2: Verify bash completion script output",
+      "Step 3: Verify valid bash syntax"
+    ],
+    "passes": false
+  },
+  {
+    "id": 387,
+    "category": "functional",
+    "area": "completions",
+    "description": "tt completions zsh outputs zsh completions",
+    "steps": [
+      "Step 1: Run tt completions zsh",
+      "Step 2: Verify zsh completion script output",
+      "Step 3: Verify valid zsh syntax"
+    ],
+    "passes": false
+  },
+  {
+    "id": 388,
+    "category": "functional",
+    "area": "completions",
+    "description": "tt completions fish outputs fish completions",
+    "steps": [
+      "Step 1: Run tt completions fish",
+      "Step 2: Verify fish completion script output"
+    ],
+    "passes": false
+  },
+  {
+    "id": 389,
+    "category": "functional",
+    "area": "completions",
+    "description": "tt completions install bash installs to .bashrc",
+    "steps": [
+      "Step 1: Run tt completions install bash",
+      "Step 2: Verify source line added to .bashrc",
+      "Step 3: Verify completions file created"
+    ],
+    "passes": false
+  },
+  {
+    "id": 390,
+    "category": "functional",
+    "area": "completions",
+    "description": "tt completions install zsh installs to .zshrc",
+    "steps": [
+      "Step 1: Run tt completions install zsh",
+      "Step 2: Verify source line added to .zshrc"
+    ],
+    "passes": false
+  },
+  {
+    "id": 391,
+    "category": "functional",
+    "area": "completions",
+    "description": "Bash completions complete commands",
+    "steps": [
+      "Step 1: Source bash completions",
+      "Step 2: Type 'tt sta' and press TAB",
+      "Step 3: Verify 'start' and 'status' suggested"
+    ],
+    "passes": false
+  },
+  {
+    "id": 392,
+    "category": "functional",
+    "area": "completions",
+    "description": "Bash completions complete categories",
+    "steps": [
+      "Step 1: Source bash completions",
+      "Step 2: Type 'tt start pro' and press TAB",
+      "Step 3: Verify 'programming' suggested"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 393,
+    "category": "functional",
+    "area": "config",
+    "description": "tt config shows all settings",
+    "steps": [
+      "Step 1: Run tt config",
+      "Step 2: Verify all config sections shown",
+      "Step 3: Verify values displayed"
+    ],
+    "passes": false
+  },
+  {
+    "id": 394,
+    "category": "functional",
+    "area": "config",
+    "description": "tt config get retrieves specific value",
+    "steps": [
+      "Step 1: Run tt config get pomodoro.work",
+      "Step 2: Verify value displayed (25 by default)"
+    ],
+    "passes": false
+  },
+  {
+    "id": 395,
+    "category": "functional",
+    "area": "config",
+    "description": "tt config set sets value",
+    "steps": [
+      "Step 1: Run tt config set pomodoro.work 30",
+      "Step 2: Verify success message",
+      "Step 3: Run tt config get pomodoro.work",
+      "Step 4: Verify value is 30"
+    ],
+    "passes": false
+  },
+  {
+    "id": 396,
+    "category": "functional",
+    "area": "config",
+    "description": "tt config set validates values",
+    "steps": [
+      "Step 1: Run tt config set pomodoro.work 'invalid'",
+      "Step 2: Verify error about invalid type"
+    ],
+    "passes": false
+  },
+  {
+    "id": 397,
+    "category": "functional",
+    "area": "config",
+    "description": "tt config reset resets all to defaults",
+    "steps": [
+      "Step 1: Change some config values",
+      "Step 2: Run tt config reset",
+      "Step 3: Verify confirmation prompt",
+      "Step 4: Confirm reset",
+      "Step 5: Verify default values restored"
+    ],
+    "passes": false
+  },
+  {
+    "id": 398,
+    "category": "functional",
+    "area": "config",
+    "description": "tt config reset <key> resets specific value",
+    "steps": [
+      "Step 1: Change pomodoro.work to 30",
+      "Step 2: Run tt config reset pomodoro.work",
+      "Step 3: Verify value reset to 25"
+    ],
+    "passes": false
+  },
+  {
+    "id": 399,
+    "category": "functional",
+    "area": "config",
+    "description": "tt config path shows config file location",
+    "steps": [
+      "Step 1: Run tt config path",
+      "Step 2: Verify path shown",
+      "Step 3: Verify path is ~/.config/timer-record/config.json or similar"
+    ],
+    "passes": false
+  },
+  {
+    "id": 400,
+    "category": "functional",
+    "area": "config",
+    "description": "tt config edit opens in $EDITOR",
+    "steps": [
+      "Step 1: Set EDITOR environment variable",
+      "Step 2: Run tt config edit",
+      "Step 3: Verify editor opens with config file"
+    ],
+    "passes": false
+  },
+  {
+    "id": 401,
+    "category": "functional",
+    "area": "config",
+    "description": "Config file created if missing",
+    "steps": [
+      "Step 1: Remove config file",
+      "Step 2: Run any command",
+      "Step 3: Verify default config created"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 402,
+    "category": "style",
+    "area": "projects",
+    "description": "Projects table is properly formatted",
+    "steps": [
+      "Step 1: Create several projects",
+      "Step 2: Run tt projects list",
+      "Step 3: Verify columns aligned",
+      "Step 4: Verify colors applied"
+    ],
+    "passes": false
+  },
+  {
+    "id": 403,
+    "category": "style",
+    "area": "tags",
+    "description": "Tags display with colors",
+    "steps": [
+      "Step 1: Create tags with colors",
+      "Step 2: Run tt tags list",
+      "Step 3: Verify tags colored appropriately"
+    ],
+    "passes": false
+  },
+  {
+    "id": 404,
+    "category": "style",
+    "area": "pomodoro",
+    "description": "Pomodoro countdown is visually clear",
+    "steps": [
+      "Step 1: Start a pomodoro",
+      "Step 2: Observe countdown display",
+      "Step 3: Verify large/bold time display",
+      "Step 4: Verify progress indicator"
+    ],
+    "passes": false
+  },
+  {
+    "id": 405,
+    "category": "style",
+    "area": "dashboard",
+    "description": "Dashboard uses consistent color scheme",
+    "steps": [
+      "Step 1: Open dashboard",
+      "Step 2: Navigate through pages",
+      "Step 3: Verify consistent colors",
+      "Step 4: Verify charts match CLI colors"
+    ],
+    "passes": false
+  },
+  {
+    "id": 406,
+    "category": "style",
+    "area": "score",
+    "description": "Score displays with visual indicator",
+    "steps": [
+      "Step 1: Run tt score",
+      "Step 2: Verify score has visual bar/gauge",
+      "Step 3: Verify color indicates good/bad"
+    ],
+    "passes": false
+  },
+
+  {
+    "id": 407,
+    "category": "performance",
+    "area": "projects",
+    "description": "tt projects list executes in < 300ms",
+    "steps": [
+      "Step 1: Create 50 projects",
+      "Step 2: Time tt projects list",
+      "Step 3: Verify < 300ms"
+    ],
+    "passes": false
+  },
+  {
+    "id": 408,
+    "category": "performance",
+    "area": "tags",
+    "description": "tt start with tags executes in < 500ms",
+    "steps": [
+      "Step 1: Have 100 tags",
+      "Step 2: Time tt start programming --tags 'tag1,tag2,tag3'",
+      "Step 3: Verify < 500ms"
+    ],
+    "passes": false
+  },
+  {
+    "id": 409,
+    "category": "performance",
+    "area": "dashboard",
+    "description": "Dashboard pages load in < 1s",
+    "steps": [
+      "Step 1: Have substantial data",
+      "Step 2: Time page load",
+      "Step 3: Verify < 1s"
+    ],
+    "passes": false
+  },
+  {
+    "id": 410,
+    "category": "performance",
+    "area": "webhooks",
+    "description": "Webhooks don't block command execution",
+    "steps": [
+      "Step 1: Create webhook to slow endpoint",
+      "Step 2: Time tt start programming",
+      "Step 3: Verify command returns quickly",
+      "Step 4: Verify webhook sent async"
+    ],
+    "passes": false
   }
 ]

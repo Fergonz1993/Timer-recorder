@@ -2,6 +2,41 @@
 
 ## Session Log
 
+### Session 3 - v2.0 Harness Expansion
+**Date:** 2026-01-02
+**Agent:** Coding Agent
+
+**Accomplished:**
+- Expanded `app_spec.txt` with full v2.0 specification (19 new feature areas)
+- Added 200 new test cases to `feature-list.json` (IDs 211-410)
+- Total tests now: 410 (210 v1.0 passing + 200 v2.0 pending)
+- Defined 7 implementation phases for v2.0 features
+
+**Test Status:** 210/410 features passing (v1.0 complete, v2.0 pending)
+
+**v2.0 Feature Phases:**
+1. **Phase 1**: Projects, Tags, Notes (IDs 211-240)
+2. **Phase 2**: Pomodoro, Notifications, Focus, Templates (IDs 241-280)
+3. **Phase 3**: Dashboard, Score, Predictions (IDs 281-315)
+4. **Phase 4**: Calendar, Jira/GitHub, Import, Webhooks (IDs 316-365)
+5. **Phase 5**: Linux Support (IDs 366-380)
+6. **Phase 6**: Invoicing, Team Export (IDs 381-400)
+7. **Phase 7**: Undo, Shell Completions (IDs 401-410)
+
+**New Database Tables Planned:**
+- projects, tags, entry_tags
+- pomodoro_sessions, focus_sessions
+- templates, webhooks, webhook_logs
+- invoices, undo_history, notifications
+
+**Next Session Should:**
+- Begin Phase 1: Projects/Tags/Notes implementation
+- Start with database migrations for new tables
+- Implement `tt project` commands
+- Implement `tt tag` commands
+
+---
+
 ### Session 2 - Complete Verification
 **Date:** 2025-12-31
 **Agent:** Testing Agent
@@ -92,7 +127,7 @@ Project is complete! All 210 tests passing.
 ### At End of Session
 1. Update this file with:
    - What you accomplished
-   - Current test status (X/210 passing)
+   - Current test status (X/410 passing)
    - What the next session should work on
 2. Commit all changes with descriptive message
 3. Ensure no broken features
@@ -101,7 +136,7 @@ Project is complete! All 210 tests passing.
 
 ## Feature Categories
 
-### Functional Tests (180+ tests)
+### v1.0 Functional Tests (180+ tests) - COMPLETE
 - **build** (1-6): Project compilation and setup
 - **database** (4-6, 146-150): SQLite operations
 - **start** (7-11): Timer start command
@@ -124,17 +159,38 @@ Project is complete! All 210 tests passing.
 - **detection** (116-125): macOS detection
 - **categorization** (120-125): Rule matching
 
-### Style Tests (30+ tests)
+### v1.0 Style Tests (30+ tests) - COMPLETE
 - **colors** (86-91): Chalk color usage
 - **tables** (92-95): cli-table3 formatting
 - **charts** (96-98): ASCII charts
 - **formatting** (99-106): Duration/time format
 - **consistency** (197-201): UI consistency
 
-### Performance Tests (8 tests)
+### v1.0 Performance Tests (8 tests) - COMPLETE
 - **commands** (151-155): Command speed
 - **daemon** (156-157): Background CPU usage
 - **database** (158): Storage efficiency
+
+### v2.0 New Features (200 tests) - PENDING
+- **projects** (211-220): Project/client management
+- **tags** (221-228): Tag system
+- **notes** (229-240): Enhanced notes with search
+- **pomodoro** (241-255): Pomodoro timer mode
+- **notify** (256-265): Desktop notifications
+- **focus** (266-275): Focus mode / DND
+- **templates** (276-280): Entry templates
+- **dashboard** (281-295): Web dashboard
+- **score** (296-305): Productivity scoring
+- **predict** (306-315): Time predictions
+- **calendar** (316-330): Calendar sync
+- **integrate** (331-350): Jira/GitHub integration
+- **import** (351-360): Import from other tools
+- **webhooks** (361-365): Webhook events
+- **linux** (366-380): Linux support
+- **invoice** (381-390): Invoice generation
+- **team** (391-400): Team export
+- **undo** (401-405): Undo operations
+- **completions** (406-410): Shell completions
 
 ---
 
