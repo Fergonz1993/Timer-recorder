@@ -4,6 +4,7 @@ import { getDatabase } from '../../storage/database.js';
 import { getCategoryByName, getAllCategories } from '../../storage/repositories/categories.js';
 import { getProjectByName, getDefaultProject } from '../../storage/repositories/projects.js';
 import { parseAndGetTags, attachTagsToEntry } from '../../storage/repositories/tags.js';
+import { pushUndoAction } from '../../core/undo.js';
 import { success, error, formatDuration, formatCategory } from '../utils/format.js';
 
 interface LogOptions {
@@ -194,6 +195,22 @@ export function logCommand(options: LogOptions): void {
   );
 
   const entryId = result.lastInsertRowid as number;
+
+  // Push to undo stack
+  pushUndoAction({
+    actionType: 'create_entry',
+    entityType: 'time_entry',
+    entityId: entryId,
+    newData: {
+      id: entryId,
+      category_id: category.id,
+      project_id: projectId,
+      start_time: formatDbTime(startTime),
+      end_time: formatDbTime(endTime),
+      duration_seconds: durationSeconds,
+      notes: options.notes || null,
+    },
+  });
 
   // Attach tags if provided
   if (options.tags) {

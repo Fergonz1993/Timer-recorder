@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import {
   popAndExecuteUndo,
+  popAndExecuteRedo,
   getUndoHistory,
   clearUndoHistory,
   UndoAction,
@@ -10,6 +11,19 @@ import { success, error, info } from '../utils/format.js';
 // Execute undo
 export function undoCommand(): void {
   const result = popAndExecuteUndo();
+
+  console.log();
+  if (result.success) {
+    success(result.message);
+  } else {
+    info(result.message);
+  }
+  console.log();
+}
+
+// Execute redo
+export function redoCommand(): void {
+  const result = popAndExecuteRedo();
 
   console.log();
   if (result.success) {

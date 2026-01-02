@@ -4821,7 +4821,7 @@
       "Step 3: Verify timer stopped",
       "Step 4: Verify entry removed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 380,
@@ -4833,7 +4833,7 @@
       "Step 2: Run tt undo",
       "Step 3: Verify timer restarted"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 381,
@@ -4845,7 +4845,7 @@
       "Step 2: Run tt undo",
       "Step 3: Verify entry removed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 382,
@@ -4857,7 +4857,7 @@
       "Step 2: Run tt undo --list",
       "Step 3: Verify action history shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 383,
@@ -4870,7 +4870,7 @@
       "Step 3: Run tt redo",
       "Step 4: Verify action restored"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 384,
@@ -4882,7 +4882,7 @@
       "Step 2: Run tt undo",
       "Step 3: Verify 'Nothing to undo' message"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 385,
@@ -4893,7 +4893,7 @@
       "Step 1: Run any command on fresh database",
       "Step 2: Verify undo_history table exists"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 386,

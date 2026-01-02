@@ -6,6 +6,7 @@ import {
 import { getCategoryByName } from '../storage/repositories/categories.js';
 import { getProjectByName, getDefaultProject } from '../storage/repositories/projects.js';
 import { parseAndGetTags, attachTagsToEntry } from '../storage/repositories/tags.js';
+import { pushUndoAction } from './undo.js';
 import type { TimeEntry, ActiveSession } from '../types/index.js';
 
 export interface StartTimerOptions {
@@ -60,6 +61,14 @@ export function startTimer(options: StartTimerOptions = {}): TimeEntry {
     notes: options.notes,
   });
 
+  // Push to undo stack
+  pushUndoAction({
+    actionType: 'start_timer',
+    entityType: 'time_entry',
+    entityId: entry.id,
+    newData: entry,
+  });
+
   // Attach tags if provided
   if (options.tags) {
     const tags = parseAndGetTags(options.tags);
@@ -74,6 +83,18 @@ export function startTimer(options: StartTimerOptions = {}): TimeEntry {
 // Stop current timer
 export function stopTimer(): TimeEntry | null {
   const entry = stopActiveEntry();
+
+  if (entry) {
+    // Push to undo stack
+    pushUndoAction({
+      actionType: 'stop_timer',
+      entityType: 'time_entry',
+      entityId: entry.id,
+      oldData: { ...entry, end_time: null, duration_seconds: null },
+      newData: entry,
+    });
+  }
+
   return entry ?? null;
 }
 

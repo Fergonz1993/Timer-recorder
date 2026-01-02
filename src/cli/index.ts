@@ -104,6 +104,7 @@ import {
 } from './commands/dashboard.js';
 import {
   undoCommand,
+  redoCommand,
   undoHistoryCommand,
   undoClearCommand,
 } from './commands/undo.js';
@@ -992,6 +993,14 @@ export function createCLI(): Command {
     .description('Undo the last action')
     .action(() => {
       undoCommand();
+    });
+
+  // Redo command
+  program
+    .command('redo')
+    .description('Redo the last undone action')
+    .action(() => {
+      redoCommand();
     });
 
   // Undo history
