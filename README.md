@@ -54,6 +54,7 @@ Friday, January 2, 2026
 ### Platform Support
 - **macOS** - Accessibility API, launchd, native notifications
 - **Linux** - X11/xdotool, systemd, notify-send
+- **Windows** - PowerShell detection, Task Scheduler, toast notifications
 - **Shell Completions** - bash, zsh, fish
 
 ## Installation
@@ -84,6 +85,14 @@ sudo pacman -S xdotool          # Arch
 # Install notify-send for notifications (usually pre-installed)
 sudo apt install libnotify-bin  # Ubuntu/Debian
 ```
+
+### Windows Requirements
+
+- Windows 10 or later
+- PowerShell (included with Windows)
+- Node.js 18+ installed and in PATH
+
+Window detection uses PowerShell to query the active window. No additional software required.
 
 ### macOS Requirements
 

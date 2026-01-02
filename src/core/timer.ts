@@ -4,7 +4,7 @@ import {
   stopActiveEntry,
 } from '../storage/repositories/entries.js';
 import { getCategoryByName, getCategoryById } from '../storage/repositories/categories.js';
-import { getProjectByName, getDefaultProject } from '../storage/repositories/projects.js';
+import { getProjectByName, getProjectById, getDefaultProject } from '../storage/repositories/projects.js';
 import { parseAndGetTags, attachTagsToEntry } from '../storage/repositories/tags.js';
 import { getGoalsForCategory } from '../storage/repositories/goals.js';
 import { pushUndoAction } from './undo.js';
@@ -79,11 +79,17 @@ export function startTimer(options: StartTimerOptions = {}): TimeEntry {
     }
   }
 
+  // Get full category and project details for webhook
+  const category = categoryId ? getCategoryById(categoryId) : null;
+  const project = projectId ? getProjectById(projectId) : (options.project ? getProjectByName(options.project) : null);
+
   // Trigger webhooks asynchronously (non-blocking)
   triggerWebhooks('timer.start', {
     entry_id: entry.id,
-    category: options.category || null,
-    project: options.project || null,
+    category: category?.name || null,
+    category_id: categoryId,
+    project: project?.name || null,
+    project_id: projectId,
     start_time: entry.start_time,
     tags: options.tags || null,
   }).catch(() => {
@@ -107,10 +113,16 @@ export function stopTimer(): TimeEntry | null {
       newData: entry,
     });
 
+    // Get full category and project details for webhook
+    const category = entry.category_id ? getCategoryById(entry.category_id) : null;
+    const project = entry.project_id ? getProjectById(entry.project_id) : null;
+
     // Trigger webhooks asynchronously (non-blocking)
     triggerWebhooks('timer.stop', {
       entry_id: entry.id,
+      category: category?.name || null,
       category_id: entry.category_id,
+      project: project?.name || null,
       project_id: entry.project_id,
       start_time: entry.start_time,
       end_time: entry.end_time,
@@ -155,8 +167,12 @@ function checkAndTriggerGoalReached(categoryId: number, addedSeconds: number): v
         });
       }
     }
-  } catch {
-    // Silently ignore errors in goal checking
+  } catch (error) {
+    // Log the error but don't crash - goal checking is non-critical
+    // In production this would use a proper logger
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('Error checking goals after timer stop:', error);
+    }
   }
 }
 

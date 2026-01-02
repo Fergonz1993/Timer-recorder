@@ -53,7 +53,8 @@
   ],
   "os": [
     "darwin",
-    "linux"
+    "linux",
+    "win32"
   ],
   "dependencies": {
     "asciichart": "^1.5.25",

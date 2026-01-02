@@ -166,11 +166,11 @@ export function isLaunchdRunning(): boolean {
 export function getLaunchdStatus(): {
   installed: boolean;
   running: boolean;
-  plistPath: string;
+  servicePath: string;
 } {
   return {
     installed: isLaunchdInstalled(),
     running: isLaunchdRunning(),
-    plistPath: PLIST_PATH,
+    servicePath: PLIST_PATH,
   };
 }

@@ -19,8 +19,26 @@ import {
   uninstallSystemd,
   getSystemdStatus,
 } from '../../daemon/systemd.js';
+import {
+  installWindowsService,
+  uninstallWindowsService,
+  getWindowsServiceStatus,
+} from '../../daemon/windows-service.js';
 
 const currentPlatform = platform();
+
+// Helper to handle platform-specific logic
+function withPlatform<T>(handlers: {
+  linux: () => T;
+  darwin: () => T;
+  win32: () => T;
+  unsupported: () => T;
+}): T {
+  if (currentPlatform === 'linux') return handlers.linux();
+  if (currentPlatform === 'darwin') return handlers.darwin();
+  if (currentPlatform === 'win32') return handlers.win32();
+  return handlers.unsupported();
+}
 
 const PID_FILE = '/tmp/timer-record.pid';
 const LOG_FILE = '/tmp/timer-record.log';
@@ -185,7 +203,15 @@ export function daemonInstall(): void {
   console.log();
 
   // Use platform-appropriate service manager
-  const result = currentPlatform === 'linux' ? installSystemd() : installLaunchd();
+  const result = withPlatform({
+    linux: () => installSystemd(),
+    darwin: () => installLaunchd(),
+    win32: () => installWindowsService(),
+    unsupported: () => ({
+      success: false,
+      message: `Platform '${currentPlatform}' is not supported.`,
+    }),
+  });
 
   if (result.success) {
     success('Service installed!');
@@ -207,7 +233,15 @@ export function daemonUninstall(): void {
   console.log();
 
   // Use platform-appropriate service manager
-  const result = currentPlatform === 'linux' ? uninstallSystemd() : uninstallLaunchd();
+  const result = withPlatform({
+    linux: () => uninstallSystemd(),
+    darwin: () => uninstallLaunchd(),
+    win32: () => uninstallWindowsService(),
+    unsupported: () => ({
+      success: false,
+      message: `Platform '${currentPlatform}' is not supported.`,
+    }),
+  });
 
   if (result.success) {
     success(result.message);
@@ -220,8 +254,21 @@ export function daemonUninstall(): void {
 // Enhanced status with service manager info
 export function daemonStatusFull(): void {
   const { running, pid } = isDaemonRunning();
-  const serviceStatus = currentPlatform === 'linux' ? getSystemdStatus() : getLaunchdStatus();
-  const serviceName = currentPlatform === 'linux' ? 'systemd' : 'launchd';
+  
+  // Get service status and name using platform helper
+  const serviceStatus = withPlatform({
+    linux: () => getSystemdStatus(),
+    darwin: () => getLaunchdStatus(),
+    win32: () => getWindowsServiceStatus(),
+    unsupported: () => ({ installed: false, running: false, servicePath: '' }),
+  });
+
+  const serviceName = withPlatform({
+    linux: () => 'systemd',
+    darwin: () => 'launchd',
+    win32: () => 'Windows Task Scheduler',
+    unsupported: () => 'unsupported',
+  });
 
   console.log();
   console.log(chalk.bold('Daemon Status'));
@@ -239,7 +286,10 @@ export function daemonStatusFull(): void {
   console.log();
 
   // Service manager status
-  if (serviceStatus.installed) {
+  if (serviceName === 'unsupported') {
+    console.log(chalk.dim('○ Auto-start: Not available'));
+    console.log(chalk.dim(`  Platform '${currentPlatform}' is not supported`));
+  } else if (serviceStatus.installed) {
     console.log(chalk.green('● Auto-start: Enabled'));
     if (serviceStatus.running) {
       console.log(chalk.dim(`  (managed by ${serviceName})`));

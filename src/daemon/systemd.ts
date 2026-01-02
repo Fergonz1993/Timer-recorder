@@ -10,10 +10,12 @@ const SERVICE_PATH = join(SYSTEMD_USER_DIR, SERVICE_NAME);
 
 // Get the path to the daemon script
 function getDaemonScriptPath(): string {
+  let globalPath: string | null = null;
+  
   // Try to find the installed location
   try {
     const npmRoot = execSync('npm root -g', { encoding: 'utf-8' }).trim();
-    const globalPath = join(npmRoot, 'timer-record', 'dist', 'daemon', 'index.js');
+    globalPath = join(npmRoot, 'timer-record', 'dist', 'daemon', 'index.js');
     if (existsSync(globalPath)) {
       return globalPath;
     }
@@ -23,7 +25,20 @@ function getDaemonScriptPath(): string {
 
   // Use local path relative to this file
   const currentFile = fileURLToPath(import.meta.url);
-  return join(dirname(dirname(currentFile)), 'daemon', 'index.js');
+  const localPath = join(dirname(dirname(currentFile)), 'daemon', 'index.js');
+  
+  // Validate that the local path exists
+  if (existsSync(localPath)) {
+    return localPath;
+  }
+  
+  // If neither path exists, throw a descriptive error
+  throw new Error(
+    `Daemon script not found. Tried:\n` +
+    `  - Global: ${globalPath || '(npm root failed)'}\n` +
+    `  - Local: ${localPath}\n` +
+    `Please run 'npm run build' to compile the project.`
+  );
 }
 
 // Get Node.js path
@@ -72,9 +87,12 @@ export function installSystemd(): { success: boolean; message: string } {
       mkdirSync(SYSTEMD_USER_DIR, { recursive: true });
     }
 
-    // Stop existing service if running
+    // Stop existing service if running (with timeout to prevent hanging)
     try {
-      execSync('systemctl --user stop timer-record.service', { stdio: 'ignore' });
+      execSync('systemctl --user stop timer-record.service', { 
+        stdio: 'ignore',
+        timeout: 5000, // 5 second timeout
+      });
     } catch {
       // Ignore if not running
     }
@@ -84,14 +102,23 @@ export function installSystemd(): { success: boolean; message: string } {
     writeFileSync(SERVICE_PATH, serviceContent);
     chmodSync(SERVICE_PATH, 0o644);
 
-    // Reload systemd daemon
-    execSync('systemctl --user daemon-reload');
+    // Reload systemd daemon (with timeout)
+    execSync('systemctl --user daemon-reload', {
+      stdio: 'ignore',
+      timeout: 5000, // 5 second timeout
+    });
 
-    // Enable the service (auto-start on login)
-    execSync('systemctl --user enable timer-record.service');
+    // Enable the service (auto-start on login, with timeout)
+    execSync('systemctl --user enable timer-record.service', {
+      stdio: 'ignore',
+      timeout: 5000, // 5 second timeout
+    });
 
-    // Start the service
-    execSync('systemctl --user start timer-record.service');
+    // Start the service (with timeout)
+    execSync('systemctl --user start timer-record.service', {
+      stdio: 'ignore',
+      timeout: 5000, // 5 second timeout
+    });
 
     return {
       success: true,
@@ -115,16 +142,22 @@ export function uninstallSystemd(): { success: boolean; message: string } {
       };
     }
 
-    // Stop the service
+    // Stop the service (with timeout to prevent hanging)
     try {
-      execSync('systemctl --user stop timer-record.service');
+      execSync('systemctl --user stop timer-record.service', {
+        stdio: 'ignore',
+        timeout: 5000, // 5 second timeout
+      });
     } catch {
       // Ignore if not running
     }
 
-    // Disable the service
+    // Disable the service (with timeout)
     try {
-      execSync('systemctl --user disable timer-record.service');
+      execSync('systemctl --user disable timer-record.service', {
+        stdio: 'ignore',
+        timeout: 5000, // 5 second timeout
+      });
     } catch {
       // Ignore if not enabled
     }
@@ -132,8 +165,11 @@ export function uninstallSystemd(): { success: boolean; message: string } {
     // Remove the service file
     unlinkSync(SERVICE_PATH);
 
-    // Reload systemd daemon
-    execSync('systemctl --user daemon-reload');
+    // Reload systemd daemon (with timeout)
+    execSync('systemctl --user daemon-reload', {
+      stdio: 'ignore',
+      timeout: 5000, // 5 second timeout
+    });
 
     return {
       success: true,
@@ -158,6 +194,7 @@ export function isSystemdRunning(): boolean {
     const output = execSync('systemctl --user is-active timer-record.service', {
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'pipe'],
+      timeout: 5000, // 5 second timeout to prevent hanging
     }).trim();
     return output === 'active';
   } catch {

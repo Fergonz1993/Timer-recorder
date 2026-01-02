@@ -7,6 +7,7 @@ export * from './idle.js';
 // Import platform-specific modules
 import * as macosModule from './macos.js';
 import * as linuxModule from './linux.js';
+import * as windowsModule from './windows.js';
 
 const currentPlatform = platform();
 
@@ -16,6 +17,8 @@ export function getActiveWindow(): WindowInfo {
     return macosModule.getActiveWindow();
   } else if (currentPlatform === 'linux') {
     return linuxModule.getActiveWindow();
+  } else if (currentPlatform === 'win32') {
+    return windowsModule.getActiveWindow();
   }
 
   // Unsupported platform
@@ -32,6 +35,8 @@ export function checkAccessibilityPermission(): boolean {
     return macosModule.checkAccessibilityPermission();
   } else if (currentPlatform === 'linux') {
     return linuxModule.checkLinuxPermission();
+  } else if (currentPlatform === 'win32') {
+    return windowsModule.checkWindowsPermission();
   }
   return false;
 }
@@ -41,6 +46,8 @@ export function getPermissionInstructions(): string {
     return macosModule.getPermissionInstructions();
   } else if (currentPlatform === 'linux') {
     return linuxModule.getLinuxPermissionInstructions();
+  } else if (currentPlatform === 'win32') {
+    return windowsModule.getWindowsPermissionInstructions();
   }
   return `
 Window detection is not supported on this platform.
@@ -48,13 +55,12 @@ Window detection is not supported on this platform.
 Supported platforms:
   - macOS (uses Accessibility API)
   - Linux with X11 (uses xdotool)
-
-Windows support is not yet available.
+  - Windows (uses PowerShell)
 `;
 }
 
 export function isSupported(): boolean {
-  return currentPlatform === 'darwin' || currentPlatform === 'linux';
+  return currentPlatform === 'darwin' || currentPlatform === 'linux' || currentPlatform === 'win32';
 }
 
 export function getPlatformName(): string {

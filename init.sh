@@ -54,9 +54,14 @@ git log --oneline -10 2>/dev/null | sed 's/^/  /' || echo "  (no git history)"
 echo -e "\n${YELLOW}[1.4]${NC} Feature Status:"
 if [ -f "feature-list.json" ]; then
     TOTAL=$(grep -c '"passes"' feature-list.json 2>/dev/null) || TOTAL=0
-    PASSING=$(grep '"passes": true' feature-list.json 2>/dev/null | wc -l | tr -d ' ') || PASSING=0
+    PASSING=$(grep -c '"passes": true' feature-list.json 2>/dev/null) || PASSING=0
     FAILING=$((TOTAL - PASSING))
-    PERCENT=$((PASSING * 100 / TOTAL))
+    # Avoid division by zero
+    if [ "$TOTAL" -gt 0 ]; then
+        PERCENT=$((PASSING * 100 / TOTAL))
+    else
+        PERCENT=0
+    fi
     echo -e "  ${GREEN}✓ Passing:${NC} $PASSING"
     echo -e "  ${RED}✗ Failing:${NC} $FAILING"
     echo -e "  ${BLUE}Total:${NC}    $TOTAL ($PERCENT%)"
@@ -89,8 +94,19 @@ else
     exit 1
 fi
 
-# 2.2 Install dependencies
-echo -e "\n${YELLOW}[2.2]${NC} Checking dependencies..."
+# 2.2 Check Python3 availability
+echo -e "\n${YELLOW}[2.2]${NC} Checking Python3..."
+PYTHON3_AVAILABLE=0
+if command -v python3 &> /dev/null; then
+    PYTHON_VERSION=$(python3 --version 2>&1)
+    echo -e "  ${GREEN}✓${NC} ${PYTHON_VERSION} found"
+    PYTHON3_AVAILABLE=1
+else
+    echo -e "  ${YELLOW}!${NC} Python3 not found (feature parsing will be skipped)"
+fi
+
+# 2.3 Install dependencies
+echo -e "\n${YELLOW}[2.3]${NC} Checking dependencies..."
 if [ -d "node_modules" ]; then
     echo -e "  ${GREEN}✓${NC} node_modules exists"
 else
@@ -99,8 +115,8 @@ else
     echo -e "  ${GREEN}✓${NC} Dependencies installed"
 fi
 
-# 2.3 Build TypeScript
-echo -e "\n${YELLOW}[2.3]${NC} Building TypeScript..."
+# 2.4 Build TypeScript
+echo -e "\n${YELLOW}[2.4]${NC} Building TypeScript..."
 npm run build 2>&1 | tail -1
 if [ -d "dist" ] && [ -f "dist/bin/tt.js" ]; then
     echo -e "  ${GREEN}✓${NC} Build successful"
@@ -109,12 +125,19 @@ else
     exit 1
 fi
 
-# 2.4 Run unit tests
-echo -e "\n${YELLOW}[2.4]${NC} Running unit tests..."
-npm test 2>&1 | tail -5 | sed 's/^/  /'
+# 2.5 Run unit tests
+echo -e "\n${YELLOW}[2.5]${NC} Running unit tests..."
+TEST_OUTPUT=$(npm test 2>&1) || TEST_EXIT_CODE=$?
+if [ -z "$TEST_EXIT_CODE" ] || [ "$TEST_EXIT_CODE" -eq 0 ]; then
+    echo "$TEST_OUTPUT" | tail -10 | sed 's/^/  /'
+else
+    echo -e "${RED}Tests failed with exit code $TEST_EXIT_CODE${NC}"
+    echo "$TEST_OUTPUT" | sed 's/^/    /'
+    exit "$TEST_EXIT_CODE"
+fi
 
-# 2.5 Verify CLI works
-echo -e "\n${YELLOW}[2.5]${NC} Verifying CLI..."
+# 2.6 Verify CLI works
+echo -e "\n${YELLOW}[2.6]${NC} Verifying CLI..."
 VERSION=$(node dist/bin/tt.js --version 2>&1)
 echo -e "  ${GREEN}✓${NC} CLI version ${VERSION}"
 
@@ -128,20 +151,29 @@ echo -e "${CYAN}─────────────────────�
 # Find next failing feature
 echo -e "\n${YELLOW}Next feature to implement:${NC}"
 if [ -f "feature-list.json" ]; then
-    # Get first failing feature
-    python3 -c "
+    if [ "$PYTHON3_AVAILABLE" -eq 1 ]; then
+        # Get first failing feature
+        python3 -c "
 import json
-with open('feature-list.json') as f:
-    data = json.load(f)
-for item in data:
-    if not item.get('passes', False):
-        print(f\"  ID: {item.get('id', 'N/A')}\")
-        print(f\"  Area: {item.get('area', 'N/A')}\")
-        print(f\"  Description: {item.get('description', 'N/A')}\")
-        if 'steps' in item:
-            print(f\"  Steps: {len(item['steps'])} steps\")
-        break
-" 2>/dev/null || echo "  (Could not parse feature list)"
+import sys
+try:
+    with open('feature-list.json') as f:
+        data = json.load(f)
+    for item in data:
+        if not item.get('passes', False):
+            print(f\"  ID: {item.get('id', 'N/A')}\")
+            print(f\"  Area: {item.get('area', 'N/A')}\")
+            print(f\"  Description: {item.get('description', 'N/A')}\")
+            if 'steps' in item:
+                print(f\"  Steps: {len(item['steps'])} steps\")
+            break
+except Exception as e:
+    print(f\"  (Error parsing feature list: {e})\", file=sys.stderr)
+    sys.exit(1)
+"
+    else
+        echo -e "  ${YELLOW}!${NC} Python3 not available - skipping feature parsing"
+    fi
 fi
 
 echo ""

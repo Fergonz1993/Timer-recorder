@@ -1,5 +1,5 @@
 import notifier from 'node-notifier';
-import { execSync } from 'child_process';
+import { execSync, spawnSync } from 'child_process';
 import { platform } from 'os';
 import { getDatabase } from '../storage/database.js';
 
@@ -19,13 +19,18 @@ function isNotifySendAvailable(): boolean {
 // Send notification using notify-send on Linux
 function sendLinuxNotification(title: string, message: string): void {
   try {
-    // Escape quotes in message for shell
-    const escapedTitle = title.replace(/"/g, '\\"');
-    const escapedMessage = message.replace(/"/g, '\\"');
-    execSync(`notify-send "${escapedTitle}" "${escapedMessage}"`, {
+    // Use spawnSync to safely pass arguments without shell interpretation
+    // This prevents command injection vulnerabilities by passing arguments
+    // as an array instead of interpolating them into a shell command string
+    const result = spawnSync('notify-send', [title, message], {
       encoding: 'utf-8',
       stdio: 'pipe',
     });
+    
+    // If notify-send failed, fall back to node-notifier
+    if (result.error || result.status !== 0) {
+      notifier.notify({ title, message });
+    }
   } catch {
     // Fall back to node-notifier if notify-send fails
     notifier.notify({ title, message });
