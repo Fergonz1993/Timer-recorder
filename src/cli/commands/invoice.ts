@@ -2,6 +2,17 @@ import { writeFileSync } from 'fs';
 import chalk from 'chalk';
 import { getDatabase } from '../../storage/database.js';
 import { getAllProjects, getProjectByName } from '../../storage/repositories/projects.js';
+import {
+  createInvoice,
+  getAllInvoices,
+  getInvoiceById,
+  getInvoiceByNumber,
+  getInvoiceLineItems,
+  deleteInvoice,
+  updateInvoiceStatus,
+  ensureInvoicesTable,
+  Invoice,
+} from '../../storage/repositories/invoices.js';
 import { success, error, info, formatDuration } from '../utils/format.js';
 
 interface InvoiceEntry {
@@ -283,6 +294,310 @@ export function invoicePreview(options: {
   console.log(`  Total:       ${chalk.green('$' + data.totalAmount.toFixed(2))}`);
   console.log(`  Entries:     ${data.entries.length}`);
   console.log();
-  info('Generate with: tt invoice --project <name> -o invoice.html --format html');
+  info('Generate with: tt invoice create --project <name>');
   console.log();
+}
+
+// Parse month option into date range
+function parseMonthToRange(month: string): { from: string; to: string } | null {
+  const match = month.match(/^(\d{4})-(\d{2})$/);
+  if (!match) {
+    return null;
+  }
+  const year = parseInt(match[1], 10);
+  const monthNum = parseInt(match[2], 10);
+  if (monthNum < 1 || monthNum > 12) {
+    return null;
+  }
+  const from = `${year}-${month.slice(-2)}-01`;
+  const lastDay = new Date(year, monthNum, 0).getDate();
+  const to = `${year}-${month.slice(-2)}-${lastDay.toString().padStart(2, '0')}`;
+  return { from, to };
+}
+
+// Create invoice and persist to database
+export function invoiceCreateCommand(options: {
+  project?: string;
+  from?: string;
+  to?: string;
+  month?: string;
+  rate?: string;
+}): void {
+  // Handle --month option
+  let fromDate = options.from;
+  let toDate = options.to;
+  if (options.month) {
+    const range = parseMonthToRange(options.month);
+    if (!range) {
+      console.log();
+      error('Invalid month format. Use YYYY-MM (e.g., 2025-01)');
+      console.log();
+      return;
+    }
+    fromDate = range.from;
+    toDate = range.to;
+  }
+
+  const rate = options.rate ? parseFloat(options.rate) : undefined;
+  const data = generateInvoiceData({
+    project: options.project,
+    from: fromDate,
+    to: toDate,
+    rate,
+  });
+
+  if (!data) {
+    console.log();
+    if (options.project) {
+      error(`Project "${options.project}" not found or no entries in period`);
+    } else {
+      error('No billable entries found in the specified period');
+    }
+    console.log();
+    return;
+  }
+
+  // Get project ID
+  let projectId: number | null = null;
+  if (options.project) {
+    const project = getProjectByName(options.project);
+    if (project) {
+      projectId = project.id;
+    }
+  }
+
+  // Create invoice in database
+  const invoice = createInvoice({
+    projectId,
+    client: data.client,
+    fromDate: fromDate || new Date().toISOString().slice(0, 8) + '01',
+    toDate: toDate || new Date().toISOString().slice(0, 10),
+    totalHours: data.totalHours,
+    hourlyRate: data.rate,
+    totalAmount: data.totalAmount,
+    lineItems: data.entries.map(e => ({
+      date: e.date,
+      category: e.category,
+      hours: e.hours,
+      rate: e.rate,
+      amount: e.amount,
+      notes: e.notes || undefined,
+    })),
+  });
+
+  console.log();
+  success(`Invoice ${invoice.invoice_number} created`);
+  console.log();
+  console.log(`  Total Hours:  ${chalk.cyan(data.totalHours.toFixed(2))}`);
+  console.log(`  Hourly Rate:  ${chalk.cyan('$' + data.rate.toFixed(2))}`);
+  console.log(`  Total Amount: ${chalk.green('$' + data.totalAmount.toFixed(2))}`);
+  console.log(`  Period:       ${fromDate || 'start'} to ${toDate || 'now'}`);
+  console.log();
+}
+
+// List all invoices
+export function invoiceListCommand(): void {
+  ensureInvoicesTable();
+  const invoices = getAllInvoices();
+
+  console.log();
+  if (invoices.length === 0) {
+    info('No invoices found');
+    console.log();
+    return;
+  }
+
+  console.log(chalk.bold('Invoices'));
+  console.log();
+
+  // Table header
+  const header = [
+    'Number'.padEnd(12),
+    'Date'.padEnd(12),
+    'Period'.padEnd(24),
+    'Hours'.padStart(8),
+    'Amount'.padStart(12),
+    'Status'.padEnd(8),
+  ].join('  ');
+  console.log(chalk.dim(header));
+  console.log(chalk.dim('─'.repeat(80)));
+
+  for (const inv of invoices) {
+    const number = chalk.cyan(inv.invoice_number.padEnd(12));
+    const date = inv.created_at.slice(0, 10).padEnd(12);
+    const period = `${inv.from_date} - ${inv.to_date}`.padEnd(24);
+    const hours = inv.total_hours.toFixed(2).padStart(8);
+    const amount = chalk.green('$' + inv.total_amount.toFixed(2).padStart(10));
+    const statusColors: Record<string, (s: string) => string> = {
+      draft: chalk.yellow,
+      sent: chalk.blue,
+      paid: chalk.green,
+    };
+    const statusFn = statusColors[inv.status] || chalk.white;
+    const status = statusFn(inv.status.padEnd(8));
+
+    console.log(`${number}  ${date}  ${period}  ${hours}  ${amount}  ${status}`);
+  }
+
+  console.log();
+}
+
+// Show invoice details
+export function invoiceShowCommand(idOrNumber: string): void {
+  ensureInvoicesTable();
+
+  // Try to find by number or ID
+  let invoice: Invoice | null = null;
+  if (idOrNumber.startsWith('INV-')) {
+    invoice = getInvoiceByNumber(idOrNumber);
+  } else {
+    const id = parseInt(idOrNumber, 10);
+    if (!isNaN(id)) {
+      invoice = getInvoiceById(id);
+    }
+  }
+
+  if (!invoice) {
+    console.log();
+    error(`Invoice "${idOrNumber}" not found`);
+    console.log();
+    return;
+  }
+
+  const lineItems = getInvoiceLineItems(invoice.id);
+
+  console.log();
+  console.log(chalk.bold(`Invoice ${invoice.invoice_number}`));
+  console.log();
+  console.log(`  Status:       ${invoice.status}`);
+  console.log(`  Created:      ${invoice.created_at.slice(0, 10)}`);
+  console.log(`  Period:       ${invoice.from_date} to ${invoice.to_date}`);
+  if (invoice.client) {
+    console.log(`  Client:       ${invoice.client}`);
+  }
+  console.log(`  Hourly Rate:  $${invoice.hourly_rate.toFixed(2)}`);
+  console.log();
+  console.log(chalk.bold('Line Items'));
+  console.log();
+
+  // Line items table
+  const header = [
+    'Date'.padEnd(12),
+    'Category'.padEnd(16),
+    'Hours'.padStart(8),
+    'Amount'.padStart(12),
+  ].join('  ');
+  console.log(chalk.dim(header));
+  console.log(chalk.dim('─'.repeat(52)));
+
+  for (const item of lineItems) {
+    const date = item.date.padEnd(12);
+    const category = item.category.slice(0, 15).padEnd(16);
+    const hours = item.hours.toFixed(2).padStart(8);
+    const amount = ('$' + item.amount.toFixed(2)).padStart(12);
+    console.log(`${date}  ${category}  ${hours}  ${amount}`);
+  }
+
+  console.log(chalk.dim('─'.repeat(52)));
+  console.log(`${'Total'.padEnd(30)}  ${invoice.total_hours.toFixed(2).padStart(8)}  ${chalk.green('$' + invoice.total_amount.toFixed(2).padStart(10))}`);
+  console.log();
+}
+
+// Export invoice to file
+export function invoiceExportCommand(idOrNumber: string, options: {
+  format?: string;
+  output?: string;
+}): void {
+  ensureInvoicesTable();
+
+  // Try to find by number or ID
+  let invoice: Invoice | null = null;
+  if (idOrNumber.startsWith('INV-')) {
+    invoice = getInvoiceByNumber(idOrNumber);
+  } else {
+    const id = parseInt(idOrNumber, 10);
+    if (!isNaN(id)) {
+      invoice = getInvoiceById(id);
+    }
+  }
+
+  if (!invoice) {
+    console.log();
+    error(`Invoice "${idOrNumber}" not found`);
+    console.log();
+    return;
+  }
+
+  const lineItems = getInvoiceLineItems(invoice.id);
+  const format = options.format || 'html';
+
+  // Build InvoiceData compatible structure
+  const data: InvoiceData = {
+    project: invoice.client || 'Project',
+    client: invoice.client,
+    period: `${invoice.from_date} to ${invoice.to_date}`,
+    entries: lineItems.map(item => ({
+      date: item.date,
+      category: item.category,
+      project: null,
+      hours: item.hours,
+      rate: item.rate,
+      amount: item.amount,
+      notes: item.notes,
+    })),
+    totalHours: invoice.total_hours,
+    totalAmount: invoice.total_amount,
+    rate: invoice.hourly_rate,
+  };
+
+  let content: string;
+  let ext: string;
+  if (format === 'html') {
+    content = generateHtmlInvoice(data);
+    ext = 'html';
+  } else {
+    content = generateTextInvoice(data);
+    ext = 'txt';
+  }
+
+  const filename = options.output || `${invoice.invoice_number}.${ext}`;
+  writeFileSync(filename, content);
+
+  console.log();
+  success(`Invoice exported to ${filename}`);
+  console.log();
+}
+
+// Delete invoice
+export function invoiceDeleteCommand(idOrNumber: string): void {
+  ensureInvoicesTable();
+
+  // Try to find by number or ID
+  let invoice: Invoice | null = null;
+  if (idOrNumber.startsWith('INV-')) {
+    invoice = getInvoiceByNumber(idOrNumber);
+  } else {
+    const id = parseInt(idOrNumber, 10);
+    if (!isNaN(id)) {
+      invoice = getInvoiceById(id);
+    }
+  }
+
+  if (!invoice) {
+    console.log();
+    error(`Invoice "${idOrNumber}" not found`);
+    console.log();
+    return;
+  }
+
+  const deleted = deleteInvoice(invoice.id);
+  if (deleted) {
+    console.log();
+    success(`Invoice ${invoice.invoice_number} deleted`);
+    console.log();
+  } else {
+    console.log();
+    error('Failed to delete invoice');
+    console.log();
+  }
 }

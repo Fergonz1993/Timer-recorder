@@ -1143,7 +1143,7 @@
     "steps": [
       "Step 1: Run tt start programming",
       "Step 2: Run tt status",
-      "Step 3: Verify green dot (●) indicator",
+      "Step 3: Verify green dot (\u25cf) indicator",
       "Step 4: Run tt stop"
     ],
     "passes": true
@@ -1156,7 +1156,7 @@
     "steps": [
       "Step 1: Run tt stop",
       "Step 2: Run tt status",
-      "Step 3: Verify dim circle (○) indicator"
+      "Step 3: Verify dim circle (\u25cb) indicator"
     ],
     "passes": true
   },
@@ -1234,10 +1234,10 @@
     "steps": [
       "Step 1: Create entries at different hours",
       "Step 2: Run tt week",
-      "Step 3: Verify ░░ for none",
-      "Step 4: Verify ▒▒ for low",
-      "Step 5: Verify ▓▓ for medium",
-      "Step 6: Verify ██ for high"
+      "Step 3: Verify \u2591\u2591 for none",
+      "Step 4: Verify \u2592\u2592 for low",
+      "Step 5: Verify \u2593\u2593 for medium",
+      "Step 6: Verify \u2588\u2588 for high"
     ],
     "passes": true
   },
@@ -1379,7 +1379,7 @@
     "area": "edge-cases",
     "description": "Unicode in category names works",
     "steps": [
-      "Step 1: Run tt categories add '日本語-test'",
+      "Step 1: Run tt categories add '\u65e5\u672c\u8a9e-test'",
       "Step 2: Verify success",
       "Step 3: Run tt categories list",
       "Step 4: Verify unicode displays correctly"
@@ -4546,7 +4546,7 @@
       "Step 2: Complete a goal",
       "Step 3: Verify webhook called"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 358,
@@ -4559,7 +4559,7 @@
       "Step 3: Verify retry attempts made",
       "Step 4: Verify failure logged"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 359,
@@ -4571,7 +4571,7 @@
       "Step 2: Verify webhooks table exists",
       "Step 3: Verify webhook_logs table exists"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 360,
@@ -4647,7 +4647,7 @@
       "Step 4: Verify total hours calculated",
       "Step 5: Verify amount calculated"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 366,
@@ -4658,7 +4658,7 @@
       "Step 1: Run tt invoice create --project 'API' --month 2025-01",
       "Step 2: Verify date range is January 2025"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 367,
@@ -4671,7 +4671,7 @@
       "Step 3: Verify all invoices shown",
       "Step 4: Verify invoice numbers, amounts, dates"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 368,
@@ -4684,7 +4684,7 @@
       "Step 3: Verify all details shown",
       "Step 4: Verify line items shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 369,
@@ -4697,7 +4697,7 @@
       "Step 3: Verify HTML file created",
       "Step 4: Verify valid HTML"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 370,
@@ -4710,7 +4710,7 @@
       "Step 3: Verify success message",
       "Step 4: Verify invoice gone"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 371,
@@ -4723,7 +4723,7 @@
       "Step 3: Create second invoice",
       "Step 4: Verify invoice number incremented"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 372,
@@ -4736,7 +4736,7 @@
       "Step 3: Create invoice",
       "Step 4: Verify amount is $1500"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 373,
@@ -4747,7 +4747,7 @@
       "Step 1: Run any command on fresh database",
       "Step 2: Verify invoices table exists"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 374,
@@ -4760,7 +4760,7 @@
       "Step 3: Verify export created",
       "Step 4: Verify week's data included"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 375,
@@ -4771,7 +4771,7 @@
       "Step 1: Run tt team export --from 2025-01-01 --to 2025-01-31",
       "Step 2: Verify date range applied"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 376,
@@ -4784,7 +4784,7 @@
       "Step 3: Open in browser",
       "Step 4: Verify formatted report"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 377,
@@ -4796,7 +4796,7 @@
       "Step 2: Verify valid JSON output",
       "Step 3: Verify all data present"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 378,
@@ -4808,7 +4808,7 @@
       "Step 2: Verify individual entries shown",
       "Step 3: Not just summaries"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 379,
@@ -5196,6 +5196,6 @@
       "Step 3: Verify command returns quickly",
       "Step 4: Verify webhook sent async"
     ],
-    "passes": false
+    "passes": true
   }
 ]

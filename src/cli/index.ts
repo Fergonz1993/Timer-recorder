@@ -1,4 +1,5 @@
 import { Command } from 'commander';
+import chalk from 'chalk';
 import { startCommand } from './commands/start.js';
 import { stopCommand } from './commands/stop.js';
 import { statusCommand } from './commands/status.js';
@@ -110,8 +111,23 @@ import {
 } from './commands/undo.js';
 import { completionsCommand, completionsInstallCommand } from './commands/completions.js';
 import { importJson, importCsv, importHelp } from './commands/import.js';
-import { invoiceCommand, invoicePreview } from './commands/invoice.js';
+import {
+  invoiceCommand,
+  invoicePreview,
+  invoiceCreateCommand,
+  invoiceListCommand,
+  invoiceShowCommand,
+  invoiceExportCommand,
+  invoiceDeleteCommand,
+} from './commands/invoice.js';
 import { scoreCommand, scoreTodayCommand, scoreWeekCommand } from './commands/score.js';
+import { teamExportCommand } from './commands/team.js';
+import {
+  webhooksListCommand,
+  webhooksAddCommand,
+  webhooksDeleteCommand,
+  webhooksLogsCommand,
+} from './commands/webhooks.js';
 
 export function createCLI(): Command {
   const program = new Command();
@@ -1062,24 +1078,67 @@ export function createCLI(): Command {
     importHelp();
   });
 
-  // Invoice command
-  program
+  // Invoice command group
+  const invoiceCmd = program
     .command('invoice')
-    .description('Generate invoice for billable hours')
+    .description('Manage invoices');
+
+  invoiceCmd
+    .command('create')
+    .description('Create a new invoice')
     .option('-p, --project <project>', 'Project to invoice')
     .option('--from <date>', 'Start date (YYYY-MM-DD)')
     .option('--to <date>', 'End date (YYYY-MM-DD)')
+    .option('--month <month>', 'Invoice for a month (YYYY-MM)')
     .option('-r, --rate <rate>', 'Hourly rate')
-    .option('-o, --output <file>', 'Output file path')
-    .option('-f, --format <format>', 'Format (text or html)', 'text')
-    .option('--preview', 'Preview invoice summary')
     .action((options) => {
-      if (options.preview) {
-        invoicePreview(options);
-      } else {
-        invoiceCommand(options);
-      }
+      invoiceCreateCommand(options);
     });
+
+  invoiceCmd
+    .command('list')
+    .description('List all invoices')
+    .action(() => {
+      invoiceListCommand();
+    });
+
+  invoiceCmd
+    .command('show <id>')
+    .description('Show invoice details')
+    .action((id) => {
+      invoiceShowCommand(id);
+    });
+
+  invoiceCmd
+    .command('export <id>')
+    .description('Export invoice to file')
+    .option('-f, --format <format>', 'Format (html or text)', 'html')
+    .option('-o, --output <file>', 'Output file path')
+    .action((id, options) => {
+      invoiceExportCommand(id, options);
+    });
+
+  invoiceCmd
+    .command('delete <id>')
+    .description('Delete an invoice')
+    .action((id) => {
+      invoiceDeleteCommand(id);
+    });
+
+  invoiceCmd
+    .command('preview')
+    .description('Preview invoice summary')
+    .option('-p, --project <project>', 'Project to preview')
+    .option('--from <date>', 'Start date (YYYY-MM-DD)')
+    .option('--to <date>', 'End date (YYYY-MM-DD)')
+    .action((options) => {
+      invoicePreview(options);
+    });
+
+  // Default action for invoice command (no subcommand)
+  invoiceCmd.action(() => {
+    invoiceListCommand();
+  });
 
   // Productivity score command
   const score = program
@@ -1103,6 +1162,75 @@ export function createCLI(): Command {
   // Default: show today's score if no subcommand
   score.action(() => {
     scoreCommand();
+  });
+
+  // Team export command
+  const team = program
+    .command('team')
+    .description('Team collaboration features');
+
+  team
+    .command('export')
+    .description('Export time data for team sharing')
+    .option('--from <date>', 'Start date (YYYY-MM-DD)')
+    .option('--to <date>', 'End date (YYYY-MM-DD)')
+    .option('-f, --format <format>', 'Format (text, json, html)', 'text')
+    .option('-o, --output <file>', 'Output file path')
+    .option('-d, --detailed', 'Include individual entries')
+    .action((options) => {
+      teamExportCommand(options);
+    });
+
+  // Default: show export help
+  team.action(() => {
+    console.log();
+    console.log(chalk.bold('Team Commands'));
+    console.log();
+    console.log('  tt team export            Export time data for team sharing');
+    console.log('  tt team export --help     Show export options');
+    console.log();
+  });
+
+  // Webhook commands
+  const webhook = program
+    .command('webhook')
+    .description('Manage webhooks for integrations');
+
+  webhook
+    .command('list')
+    .description('List all webhooks')
+    .action(() => {
+      webhooksListCommand();
+    });
+
+  webhook
+    .command('add <name> <url>')
+    .description('Add a new webhook')
+    .option('-e, --events <events>', 'Event types (comma-separated)', '*')
+    .option('-s, --secret <secret>', 'Webhook secret')
+    .action((name, url, options) => {
+      webhooksAddCommand(name, url, options);
+    });
+
+  webhook
+    .command('delete <nameOrId>')
+    .description('Delete a webhook')
+    .action((nameOrId) => {
+      webhooksDeleteCommand(nameOrId);
+    });
+
+  webhook
+    .command('logs')
+    .description('Show webhook logs')
+    .option('-n, --limit <number>', 'Number of logs to show', '20')
+    .option('-w, --webhook-id <id>', 'Filter by webhook ID')
+    .action((options) => {
+      webhooksLogsCommand(options);
+    });
+
+  // Default: show webhook list
+  webhook.action(() => {
+    webhooksListCommand();
   });
 
   // Default action: show status
