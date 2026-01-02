@@ -19,16 +19,18 @@
 - Implemented `tt project` command (list, add, remove, show, edit, default, clients)
 - Implemented `tt tag` command (list, add, remove, edit, attach, detach, show, summary)
 - Added --project and --tags options to `tt start` and `tt log`
+- Added --project and --tag filters to `tt today` and `tt week`
 - Auto-create tags when attaching
 - Default project auto-assignment
+- CASCADE delete for entry_tags
 
-**Test Status:** 228/410 features passing
+**Test Status:** 240/410 features passing
 - v1.0: 210/210 complete
-- v2.0 Phase 1: 18/30 complete (projects + tags)
+- v2.0 Phase 1: 30/30 complete (projects + tags)
 - v2.0 remaining: 0/170 pending
 
 **v2.0 Feature Phases:**
-1. **Phase 1**: Projects, Tags, Notes (IDs 211-240) - **IN PROGRESS**
+1. **Phase 1**: Projects, Tags (IDs 211-240) - **COMPLETE**
 2. **Phase 2**: Pomodoro, Notifications, Focus, Templates (IDs 241-280)
 3. **Phase 3**: Dashboard, Score, Predictions (IDs 281-315)
 4. **Phase 4**: Calendar, Jira/GitHub, Import, Webhooks (IDs 316-365)
@@ -42,8 +44,9 @@
 - entry_tags (junction table)
 
 **Next Session Should:**
-- Complete Phase 1: Implement enhanced notes with search (IDs 229-240)
-- Begin Phase 2: Pomodoro timer mode
+- Begin Phase 2: Pomodoro timer mode (IDs 241-255)
+- Add notifications system (IDs 256-265)
+- Implement focus mode (IDs 266-275)
 
 ---
 

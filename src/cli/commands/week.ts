@@ -3,18 +3,60 @@ import Table from 'cli-table3';
 import asciichart from 'asciichart';
 import {
   getCategorySummary,
+  getCategorySummaryFiltered,
   getDailyTotals,
   getHourlyBreakdown,
   getWeekRange,
+  type FilterOptions,
 } from '../../storage/repositories/entries.js';
+import { getProjectByName } from '../../storage/repositories/projects.js';
+import { getTagByName } from '../../storage/repositories/tags.js';
 import { formatDuration, formatCategory, formatBar } from '../utils/format.js';
 
-export function weekCommand(options?: { weeksAgo?: number }): void {
-  const weeksAgo = options?.weeksAgo || 0;
+interface WeekOptions {
+  weeksAgo?: number;
+  previous?: string;
+  project?: string;
+  tag?: string;
+  tags?: string;
+}
+
+export function weekCommand(options?: WeekOptions): void {
+  const weeksAgo = options?.weeksAgo || (options?.previous ? parseInt(options.previous, 10) : 0);
   const { start, end } = getWeekRange(weeksAgo);
 
-  const summary = getCategorySummary(start, end);
-  const dailyTotals = getDailyTotals(start, end);
+  // Build filters
+  const filters: FilterOptions = {};
+  let filterDescription = '';
+
+  if (options?.project) {
+    const project = getProjectByName(options.project);
+    if (project) {
+      filters.projectId = project.id;
+      filterDescription += ` [project: ${project.name}]`;
+    }
+  }
+
+  if (options?.tag || options?.tags) {
+    const tagString = options.tag || options.tags || '';
+    const tagNames = tagString.split(',').map(t => t.trim()).filter(t => t);
+    const tagIds: number[] = [];
+    for (const name of tagNames) {
+      const tag = getTagByName(name);
+      if (tag) tagIds.push(tag.id);
+    }
+    if (tagIds.length > 0) {
+      filters.tagIds = tagIds;
+      filterDescription += ` [tags: ${tagNames.join(', ')}]`;
+    }
+  }
+
+  const hasFilters = filters.projectId || (filters.tagIds && filters.tagIds.length > 0);
+
+  const summary = hasFilters
+    ? getCategorySummaryFiltered(start, end, filters)
+    : getCategorySummary(start, end);
+  const dailyTotals = getDailyTotals(start, end);  // Note: daily/hourly charts don't filter
   const hourlyData = getHourlyBreakdown(start, end);
 
   // Calculate total seconds
@@ -26,7 +68,7 @@ export function weekCommand(options?: { weeksAgo?: number }): void {
   const dateRange = `${startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
 
   console.log();
-  console.log(chalk.bold('Weekly Summary'));
+  console.log(chalk.bold('Weekly Summary') + (filterDescription ? chalk.dim(filterDescription) : ''));
   console.log(chalk.dim(dateRange));
   console.log();
 

@@ -1,20 +1,74 @@
 import chalk from 'chalk';
 import Table from 'cli-table3';
-import { getTodaySummary, getTodayTotalSeconds } from '../../storage/repositories/entries.js';
+import {
+  getTodaySummary,
+  getTodayTotalSeconds,
+  getCategorySummaryFiltered,
+  getTotalSecondsFiltered,
+  type FilterOptions,
+} from '../../storage/repositories/entries.js';
 import { getTimerStatus, getActiveDuration } from '../../core/timer.js';
+import { getProjectByName } from '../../storage/repositories/projects.js';
+import { getTagByName } from '../../storage/repositories/tags.js';
 import { formatDuration, formatCategory, formatBar } from '../utils/format.js';
 
-export function todayCommand(): void {
-  const summary = getTodaySummary();
+interface TodayOptions {
+  project?: string;
+  tag?: string;
+  tags?: string;
+}
+
+export function todayCommand(options?: TodayOptions): void {
+  const today = new Date().toISOString().split('T')[0];
+
+  // Build filters
+  const filters: FilterOptions = {};
+  let filterDescription = '';
+
+  if (options?.project) {
+    const project = getProjectByName(options.project);
+    if (project) {
+      filters.projectId = project.id;
+      filterDescription += ` [project: ${project.name}]`;
+    }
+  }
+
+  if (options?.tag || options?.tags) {
+    const tagString = options.tag || options.tags || '';
+    const tagNames = tagString.split(',').map(t => t.trim()).filter(t => t);
+    const tagIds: number[] = [];
+    for (const name of tagNames) {
+      const tag = getTagByName(name);
+      if (tag) tagIds.push(tag.id);
+    }
+    if (tagIds.length > 0) {
+      filters.tagIds = tagIds;
+      filterDescription += ` [tags: ${tagNames.join(', ')}]`;
+    }
+  }
+
+  const hasFilters = filters.projectId || (filters.tagIds && filters.tagIds.length > 0);
+
+  // Get summary (with or without filters)
+  const summary = hasFilters
+    ? getCategorySummaryFiltered(today, today, filters)
+    : getTodaySummary();
+
   const active = getTimerStatus();
   const activeDuration = active ? getActiveDuration() : 0;
 
-  // Calculate total (including active timer)
-  let totalSeconds = getTodayTotalSeconds();
-  totalSeconds += activeDuration;
+  // Calculate total (including active timer if no filters)
+  let totalSeconds = hasFilters
+    ? getTotalSecondsFiltered(today, today, filters)
+    : getTodayTotalSeconds();
 
-  const today = new Date();
-  const dateStr = today.toLocaleDateString('en-US', {
+  // Only include active timer in total if no filters applied
+  if (!hasFilters) {
+    totalSeconds += activeDuration;
+  }
+
+  const todayDate = new Date();
+  const dateStr = todayDate.toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
@@ -22,7 +76,7 @@ export function todayCommand(): void {
   });
 
   console.log();
-  console.log(chalk.bold(`Today's Summary`));
+  console.log(chalk.bold(`Today's Summary`) + (filterDescription ? chalk.dim(filterDescription) : ''));
   console.log(chalk.dim(dateStr));
   console.log();
 

@@ -146,17 +146,23 @@ export function createCLI(): Command {
   program
     .command('today')
     .description("Show today's time breakdown")
-    .action(() => {
-      todayCommand();
+    .option('-p, --project <project>', 'Filter by project')
+    .option('--tag <tag>', 'Filter by tag')
+    .option('--tags <tags>', 'Filter by tags (comma-separated)')
+    .action((options) => {
+      todayCommand(options);
     });
 
   // Weekly summary
   program
     .command('week')
     .description('Show weekly summary with charts')
-    .option('-p, --previous <weeks>', 'Show previous week (1 = last week)', '0')
+    .option('--previous <weeks>', 'Show previous week (1 = last week)', '0')
+    .option('-p, --project <project>', 'Filter by project')
+    .option('--tag <tag>', 'Filter by tag')
+    .option('--tags <tags>', 'Filter by tags (comma-separated)')
     .action((options) => {
-      weekCommand({ weeksAgo: parseInt(options.previous, 10) });
+      weekCommand(options);
     });
 
   // Monthly summary

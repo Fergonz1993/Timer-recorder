@@ -127,6 +127,97 @@ export function getTodaySummary(): CategorySummary[] {
   return getCategorySummary(today, today);
 }
 
+// Filter options for queries
+export interface FilterOptions {
+  projectId?: number;
+  tagIds?: number[];
+}
+
+// Get summary by category with filters
+export function getCategorySummaryFiltered(
+  startDate: string,
+  endDate: string,
+  filters?: FilterOptions
+): CategorySummary[] {
+  const db = getDatabase();
+
+  let sql = `
+    SELECT
+      COALESCE(c.name, 'uncategorized') as category,
+      c.color,
+      COALESCE(SUM(e.duration_seconds), 0) as total_seconds,
+      COUNT(DISTINCT e.id) as entry_count
+    FROM time_entries e
+    LEFT JOIN categories c ON e.category_id = c.id
+  `;
+
+  const params: (string | number)[] = [];
+  const conditions: string[] = [
+    "date(e.start_time) >= date(?)",
+    "date(e.start_time) <= date(?)",
+    "e.duration_seconds IS NOT NULL"
+  ];
+  params.push(startDate, endDate);
+
+  // Add tag filter (join with entry_tags)
+  if (filters?.tagIds && filters.tagIds.length > 0) {
+    sql += ` JOIN entry_tags et ON e.id = et.entry_id`;
+    conditions.push(`et.tag_id IN (${filters.tagIds.map(() => '?').join(',')})`);
+    params.push(...filters.tagIds);
+  }
+
+  // Add project filter
+  if (filters?.projectId) {
+    conditions.push("e.project_id = ?");
+    params.push(filters.projectId);
+  }
+
+  sql += ` WHERE ${conditions.join(' AND ')}`;
+  sql += ` GROUP BY c.id ORDER BY total_seconds DESC`;
+
+  return db.prepare(sql).all(...params) as CategorySummary[];
+}
+
+// Get total seconds with filters
+export function getTotalSecondsFiltered(
+  startDate: string,
+  endDate: string,
+  filters?: FilterOptions
+): number {
+  const db = getDatabase();
+
+  let sql = `
+    SELECT COALESCE(SUM(e.duration_seconds), 0) as total
+    FROM time_entries e
+  `;
+
+  const params: (string | number)[] = [];
+  const conditions: string[] = [
+    "date(e.start_time) >= date(?)",
+    "date(e.start_time) <= date(?)",
+    "e.duration_seconds IS NOT NULL"
+  ];
+  params.push(startDate, endDate);
+
+  // Add tag filter
+  if (filters?.tagIds && filters.tagIds.length > 0) {
+    sql += ` JOIN entry_tags et ON e.id = et.entry_id`;
+    conditions.push(`et.tag_id IN (${filters.tagIds.map(() => '?').join(',')})`);
+    params.push(...filters.tagIds);
+  }
+
+  // Add project filter
+  if (filters?.projectId) {
+    conditions.push("e.project_id = ?");
+    params.push(filters.projectId);
+  }
+
+  sql += ` WHERE ${conditions.join(' AND ')}`;
+
+  const result = db.prepare(sql).get(...params) as { total: number };
+  return result.total;
+}
+
 // Get total time for today
 export function getTodayTotalSeconds(): number {
   const db = getDatabase();
