@@ -2682,7 +2682,6 @@
     ],
     "passes": true
   },
-
   {
     "id": 211,
     "category": "functional",
@@ -2895,7 +2894,6 @@
     ],
     "passes": true
   },
-
   {
     "id": 227,
     "category": "functional",
@@ -3076,7 +3074,6 @@
     ],
     "passes": true
   },
-
   {
     "id": 241,
     "category": "functional",
@@ -3089,7 +3086,7 @@
       "Step 4: Run tt status",
       "Step 5: Verify note is shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 242,
@@ -3101,7 +3098,7 @@
       "Step 2: Run tt note 'Some note'",
       "Step 3: Verify error 'No active timer'"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 243,
@@ -3114,7 +3111,7 @@
       "Step 3: Run tt status",
       "Step 4: Verify both notes present"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 244,
@@ -3127,7 +3124,7 @@
       "Step 3: Verify success message",
       "Step 4: Verify entry has new note"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 245,
@@ -3140,7 +3137,7 @@
       "Step 3: Verify entries with 'authentication' in notes returned",
       "Step 4: Verify search is case-insensitive"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 246,
@@ -3151,7 +3148,7 @@
       "Step 1: Run tt search 'nonexistent-xyz-123'",
       "Step 2: Verify 'No entries found' message"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 247,
@@ -3163,7 +3160,7 @@
       "Step 2: Run tt entries --search 'bug fix'",
       "Step 3: Verify only matching entries shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 248,
@@ -3175,9 +3172,8 @@
       "Step 2: Run tt export json",
       "Step 3: Verify notes field in exported entries"
     ],
-    "passes": false
+    "passes": true
   },
-
   {
     "id": 249,
     "category": "functional",
@@ -3189,7 +3185,7 @@
       "Step 3: Verify '25:00' or configured time shown",
       "Step 4: Verify category is set"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 250,
@@ -3200,7 +3196,7 @@
       "Step 1: Run tt pomo start programming",
       "Step 2: Verify same behavior as tt pomodoro start"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 251,
@@ -3212,7 +3208,7 @@
       "Step 2: Verify countdown starts at 45:00",
       "Step 3: Verify database records 45 minutes"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 252,
@@ -3224,7 +3220,7 @@
       "Step 2: Complete the work session",
       "Step 3: Verify break countdown is 10:00"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 253,
@@ -3236,7 +3232,7 @@
       "Step 2: Run tt pomodoro start programming --project Website",
       "Step 3: Verify session linked to project"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 254,
@@ -3249,7 +3245,7 @@
       "Step 3: Verify remaining time shown",
       "Step 4: Verify session type (work/break) shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 255,
@@ -3261,7 +3257,7 @@
       "Step 2: Run tt pomodoro status",
       "Step 3: Verify 'No active pomodoro' message"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 256,
@@ -3274,7 +3270,7 @@
       "Step 3: Verify session marked incomplete",
       "Step 4: Verify partial time logged"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 257,
@@ -3287,7 +3283,7 @@
       "Step 3: Verify break ended",
       "Step 4: Verify next work session ready"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 258,
@@ -3300,7 +3296,7 @@
       "Step 3: Verify notification sent",
       "Step 4: Verify break countdown starts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 259,
@@ -3312,7 +3308,7 @@
       "Step 2: Complete 2 pomodoros",
       "Step 3: Verify 3rd break is long break (15 min default)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 260,
@@ -3326,7 +3322,7 @@
       "Step 4: Verify completion rate shown",
       "Step 5: Verify average focus time shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 261,
@@ -3338,7 +3334,7 @@
       "Step 2: Run tt pomodoro stats --week",
       "Step 3: Verify weekly breakdown shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 262,
@@ -3351,7 +3347,7 @@
       "Step 3: Verify list of recent sessions",
       "Step 4: Verify completed/incomplete status shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 263,
@@ -3363,7 +3359,7 @@
       "Step 2: Run tt today",
       "Step 3: Verify time entry created for the session"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 264,
@@ -3375,7 +3371,7 @@
       "Step 2: Start a pomodoro",
       "Step 3: Verify default work time is 30 minutes"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 265,
@@ -3386,9 +3382,8 @@
       "Step 1: Run any command on fresh database",
       "Step 2: Verify pomodoro_sessions table exists"
     ],
-    "passes": false
+    "passes": true
   },
-
   {
     "id": 266,
     "category": "functional",
@@ -3399,7 +3394,7 @@
       "Step 2: Verify success message",
       "Step 3: Verify config updated"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 267,
@@ -3411,7 +3406,7 @@
       "Step 2: Verify success message",
       "Step 3: Verify no notifications sent on events"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 268,
@@ -3423,7 +3418,7 @@
       "Step 2: Verify macOS notification appears",
       "Step 3: Verify notification has title and message"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 269,
@@ -3435,7 +3430,7 @@
       "Step 2: Run tt notify list",
       "Step 3: Verify recent notifications shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 270,
@@ -3448,7 +3443,7 @@
       "Step 3: Run tt notify list",
       "Step 4: Verify history is empty"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 271,
@@ -3460,7 +3455,7 @@
       "Step 2: Run tt start programming",
       "Step 3: Verify notification appears"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 272,
@@ -3472,7 +3467,7 @@
       "Step 2: Start and stop timer",
       "Step 3: Verify notification appears with duration"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 273,
@@ -3485,7 +3480,7 @@
       "Step 3: Log 10 minutes",
       "Step 4: Verify goal reached notification"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 274,
@@ -3497,7 +3492,7 @@
       "Step 2: Trigger a notification event",
       "Step 3: Verify no notification appears"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 275,
@@ -3510,9 +3505,8 @@
       "Step 3: Verify no timer notification",
       "Step 4: Run tt config set notify.timer true"
     ],
-    "passes": false
+    "passes": true
   },
-
   {
     "id": 276,
     "category": "functional",
@@ -3524,7 +3518,7 @@
       "Step 3: Verify countdown shown",
       "Step 4: Verify focus mode active"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 277,
@@ -3535,7 +3529,7 @@
       "Step 1: Run tt focus start 90m",
       "Step 2: Verify focus ends after 90 minutes"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 278,
@@ -3546,7 +3540,7 @@
       "Step 1: Run tt focus start --until 17:00",
       "Step 2: Verify focus ends at 5 PM"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 279,
@@ -3557,7 +3551,7 @@
       "Step 1: Run tt focus start 1h --category programming",
       "Step 2: Verify category recorded"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 280,
@@ -3570,7 +3564,7 @@
       "Step 3: Verify session ended",
       "Step 4: Verify stats recorded"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 281,
@@ -3583,7 +3577,7 @@
       "Step 3: Verify remaining time shown",
       "Step 4: Verify interruption count shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 282,
@@ -3595,7 +3589,7 @@
       "Step 2: Run tt focus status",
       "Step 3: Verify 'No active focus session' message"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 283,
@@ -3608,7 +3602,7 @@
       "Step 3: Run tt focus list",
       "Step 4: Verify Slack in blocklist"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 284,
@@ -3621,7 +3615,7 @@
       "Step 3: Run tt focus list",
       "Step 4: Verify both in blocklist"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 285,
@@ -3634,7 +3628,7 @@
       "Step 3: Verify success message",
       "Step 4: Verify Slack removed from blocklist"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 286,
@@ -3647,7 +3641,7 @@
       "Step 3: Verify blocked apps section",
       "Step 4: Verify format is clear"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 287,
@@ -3661,7 +3655,7 @@
       "Step 4: Verify warning notification",
       "Step 5: Verify interruption counted"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 288,
@@ -3675,7 +3669,7 @@
       "Step 4: Verify average session length",
       "Step 5: Verify interruption stats"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 289,
@@ -3688,7 +3682,7 @@
       "Step 3: Verify list of sessions",
       "Step 4: Verify duration and interruptions shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 290,
@@ -3699,9 +3693,8 @@
       "Step 1: Run any command on fresh database",
       "Step 2: Verify focus_sessions table exists"
     ],
-    "passes": false
+    "passes": true
   },
-
   {
     "id": 291,
     "category": "functional",
@@ -3712,7 +3705,7 @@
       "Step 2: Verify table with Name, Category, Project, Tags columns",
       "Step 3: Verify message if no templates exist"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 292,
@@ -3725,7 +3718,7 @@
       "Step 3: Run tt templates list",
       "Step 4: Verify template appears"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 293,
@@ -3738,7 +3731,7 @@
       "Step 3: Run tt templates show 'standup'",
       "Step 4: Verify all fields set"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 294,
@@ -3750,7 +3743,7 @@
       "Step 2: Run tt templates add 'test' again",
       "Step 3: Verify error 'Template already exists'"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 295,
@@ -3762,7 +3755,7 @@
       "Step 2: Run tt templates show 'template-name'",
       "Step 3: Verify all fields displayed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 296,
@@ -3776,7 +3769,7 @@
       "Step 4: Verify category matches template",
       "Step 5: Verify tags applied"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 297,
@@ -3790,7 +3783,7 @@
       "Step 4: Run tt templates show 'template'",
       "Step 5: Verify tags updated"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 298,
@@ -3804,7 +3797,7 @@
       "Step 4: Run tt templates list",
       "Step 5: Verify template gone"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 299,
@@ -3815,9 +3808,8 @@
       "Step 1: Run any command on fresh database",
       "Step 2: Verify templates table exists"
     ],
-    "passes": false
+    "passes": true
   },
-
   {
     "id": 300,
     "category": "functional",
@@ -3830,7 +3822,7 @@
       "Step 4: Access http://localhost:3847",
       "Step 5: Verify page loads"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 301,
@@ -3842,7 +3834,7 @@
       "Step 2: Verify server starts on port 8080",
       "Step 3: Access http://localhost:8080"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 302,
@@ -3855,7 +3847,7 @@
       "Step 3: Verify server stopped",
       "Step 4: Verify port is free"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 303,
@@ -3869,7 +3861,7 @@
       "Step 4: Run tt dashboard status",
       "Step 5: Verify 'Dashboard not running' shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 304,
@@ -3882,7 +3874,7 @@
       "Step 3: Verify today's total shown",
       "Step 4: Verify category breakdown visible"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 305,
@@ -3895,7 +3887,7 @@
       "Step 3: Verify current timer shown",
       "Step 4: Verify live countdown updates"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 306,
@@ -3908,7 +3900,7 @@
       "Step 3: Verify Chart.js chart rendered",
       "Step 4: Verify all days shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 307,
@@ -3921,7 +3913,7 @@
       "Step 3: Select custom date range",
       "Step 4: Verify filtered data displayed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 308,
@@ -3934,7 +3926,7 @@
       "Step 3: Verify project list shown",
       "Step 4: Verify total hours per project"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 309,
@@ -3947,7 +3939,7 @@
       "Step 3: Verify goal progress bars",
       "Step 4: Verify percentage shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 310,
@@ -3960,7 +3952,7 @@
       "Step 3: Verify JSON response",
       "Step 4: Verify timer info present"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 311,
@@ -3973,7 +3965,7 @@
       "Step 3: Verify JSON response",
       "Step 4: Verify entries present"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 312,
@@ -3986,7 +3978,7 @@
       "Step 3: Verify JSON response",
       "Step 4: Verify daily totals present"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 313,
@@ -3998,7 +3990,7 @@
       "Step 2: Verify timer started",
       "Step 3: Run tt status to confirm"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 314,
@@ -4011,7 +4003,7 @@
       "Step 3: Verify timer stopped",
       "Step 4: Verify entry created"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 315,
@@ -4024,7 +4016,7 @@
       "Step 3: Verify dark colors applied",
       "Step 4: Verify readable text"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 316,
@@ -4037,9 +4029,8 @@
       "Step 3: Verify layout adapts",
       "Step 4: Verify no horizontal scroll"
     ],
-    "passes": false
+    "passes": true
   },
-
   {
     "id": 317,
     "category": "functional",
@@ -4051,7 +4042,7 @@
       "Step 3: Verify score 0-100 shown",
       "Step 4: Verify visual indicator"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 318,
@@ -4064,7 +4055,7 @@
       "Step 3: Verify weekly average shown",
       "Step 4: Verify trend indicator"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 319,
@@ -4075,7 +4066,7 @@
       "Step 1: Run tt score --month",
       "Step 2: Verify monthly average shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 320,
@@ -4089,7 +4080,7 @@
       "Step 4: Verify focus time component",
       "Step 5: Verify context switching component"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 321,
@@ -4101,7 +4092,7 @@
       "Step 2: Log more hours",
       "Step 3: Verify score increased"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 322,
@@ -4114,7 +4105,7 @@
       "Step 3: Complete the goal",
       "Step 4: Verify score increased"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 323,
@@ -4127,9 +4118,8 @@
       "Step 3: Verify personalized insights shown",
       "Step 4: Verify actionable suggestions"
     ],
-    "passes": false
+    "passes": true
   },
-
   {
     "id": 324,
     "category": "functional",
@@ -4141,7 +4131,7 @@
       "Step 3: Verify prediction shown",
       "Step 4: Verify confidence indicator"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 325,
@@ -4154,7 +4144,7 @@
       "Step 3: Verify likelihood percentage",
       "Step 4: Verify suggested daily target"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 326,
@@ -4167,9 +4157,8 @@
       "Step 3: Verify suggested hours to track",
       "Step 4: Verify based on patterns"
     ],
-    "passes": false
+    "passes": true
   },
-
   {
     "id": 327,
     "category": "functional",
@@ -4181,7 +4170,7 @@
       "Step 3: Verify .ics file created",
       "Step 4: Verify valid iCal format"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 328,
@@ -4193,7 +4182,7 @@
       "Step 2: Run tt calendar export --from 2025-01-01 --to 2025-01-31",
       "Step 3: Verify only entries in range exported"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 329,
@@ -4204,7 +4193,7 @@
       "Step 1: Run tt calendar export -o work-time.ics",
       "Step 2: Verify file created at specified path"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 330,
@@ -4217,7 +4206,7 @@
       "Step 3: Verify entries created from events",
       "Step 4: Verify times match"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 331,
@@ -4230,7 +4219,7 @@
       "Step 3: Verify calendar grid displayed",
       "Step 4: Verify entries marked"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 332,
@@ -4242,7 +4231,7 @@
       "Step 2: Verify full month displayed",
       "Step 3: Verify days with entries marked"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 333,
@@ -4254,9 +4243,8 @@
       "Step 2: Open file in macOS Calendar",
       "Step 3: Verify events display correctly"
     ],
-    "passes": false
+    "passes": true
   },
-
   {
     "id": 334,
     "category": "functional",
@@ -4267,7 +4255,7 @@
       "Step 2: Verify credentials saved",
       "Step 3: Verify connection tested"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 335,
@@ -4279,7 +4267,7 @@
       "Step 2: Verify token saved",
       "Step 3: Verify connection tested"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 336,
@@ -4292,7 +4280,7 @@
       "Step 3: Verify issue linked to entry",
       "Step 4: Verify issue title fetched"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 337,
@@ -4305,7 +4293,7 @@
       "Step 3: Verify issue linked to entry",
       "Step 4: Verify issue title fetched"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 338,
@@ -4318,7 +4306,7 @@
       "Step 3: Verify Jira status shown",
       "Step 4: Verify GitHub status shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 339,
@@ -4330,9 +4318,8 @@
       "Step 2: Run tt today",
       "Step 3: Verify issue references shown"
     ],
-    "passes": false
+    "passes": true
   },
-
   {
     "id": 340,
     "category": "functional",
@@ -4344,7 +4331,7 @@
       "Step 3: Verify entries created",
       "Step 4: Verify times correct"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 341,
@@ -4356,7 +4343,7 @@
       "Step 2: Run tt import clockify export.csv",
       "Step 3: Verify entries created"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 342,
@@ -4368,7 +4355,7 @@
       "Step 2: Run tt import csv data.csv",
       "Step 3: Verify entries created"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 343,
@@ -4380,7 +4367,7 @@
       "Step 2: Run tt import csv data.csv --mapping map.json",
       "Step 3: Verify columns mapped correctly"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 344,
@@ -4392,7 +4379,7 @@
       "Step 2: Verify entries shown but not created",
       "Step 3: Verify count of entries shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 345,
@@ -4405,7 +4392,7 @@
       "Step 3: Verify import record shown",
       "Step 4: Verify count and date shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 346,
@@ -4417,9 +4404,8 @@
       "Step 2: Verify category auto-created",
       "Step 3: Verify entries assigned to it"
     ],
-    "passes": false
+    "passes": true
   },
-
   {
     "id": 347,
     "category": "functional",
@@ -4431,7 +4417,7 @@
       "Step 3: Run tt webhooks list",
       "Step 4: Verify webhook appears"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 348,
@@ -4444,7 +4430,7 @@
       "Step 3: Verify all webhooks shown",
       "Step 4: Verify URL, events, status shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 349,
@@ -4457,7 +4443,7 @@
       "Step 3: Verify all details shown",
       "Step 4: Verify recent calls shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 350,
@@ -4470,7 +4456,7 @@
       "Step 3: Verify test payload sent",
       "Step 4: Verify response shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 351,
@@ -4482,7 +4468,7 @@
       "Step 2: Run tt webhooks enable <id>",
       "Step 3: Verify webhook is active"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 352,
@@ -4495,7 +4481,7 @@
       "Step 3: Trigger event",
       "Step 4: Verify no call made"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 353,
@@ -4509,7 +4495,7 @@
       "Step 4: Run tt webhooks list",
       "Step 5: Verify webhook gone"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 354,
@@ -4522,7 +4508,7 @@
       "Step 3: Verify recent calls shown",
       "Step 4: Verify status codes shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 355,
@@ -4535,7 +4521,7 @@
       "Step 3: Verify webhook called",
       "Step 4: Verify payload contains timer info"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 356,
@@ -4548,7 +4534,7 @@
       "Step 3: Verify webhook called",
       "Step 4: Verify payload contains duration"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 357,
@@ -4587,7 +4573,6 @@
     ],
     "passes": false
   },
-
   {
     "id": 360,
     "category": "functional",
@@ -4650,7 +4635,6 @@
     ],
     "passes": false
   },
-
   {
     "id": 365,
     "category": "functional",
@@ -4765,7 +4749,6 @@
     ],
     "passes": false
   },
-
   {
     "id": 374,
     "category": "functional",
@@ -4827,7 +4810,6 @@
     ],
     "passes": false
   },
-
   {
     "id": 379,
     "category": "functional",
@@ -4913,7 +4895,6 @@
     ],
     "passes": false
   },
-
   {
     "id": 386,
     "category": "functional",
@@ -4996,7 +4977,6 @@
     ],
     "passes": false
   },
-
   {
     "id": 393,
     "category": "functional",
@@ -5106,7 +5086,6 @@
     ],
     "passes": false
   },
-
   {
     "id": 402,
     "category": "style",
@@ -5170,7 +5149,6 @@
     ],
     "passes": false
   },
-
   {
     "id": 407,
     "category": "performance",

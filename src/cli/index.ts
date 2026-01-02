@@ -61,6 +61,55 @@ import {
   showEntryTags,
   showTagSummary,
 } from './commands/tags.js';
+import { noteCommand } from './commands/note.js';
+import { searchCommand } from './commands/search.js';
+import {
+  pomodoroStart,
+  pomodoroStatus,
+  pomodoroPause,
+  pomodoroResume,
+  pomodoroNext,
+  pomodoroStop,
+  pomodoroSkip,
+  pomodoroConfig,
+} from './commands/pomodoro.js';
+import {
+  notificationsStatus,
+  notificationsEnable,
+  notificationsDisable,
+  notificationsConfigure,
+  notificationsTest,
+} from './commands/notifications.js';
+import {
+  focusStart,
+  focusStatus,
+  focusEnd,
+  focusConfig,
+} from './commands/focus.js';
+import {
+  listTemplates,
+  addTemplate,
+  removeTemplate,
+  useTemplate,
+  favoriteTemplate,
+  editTemplate,
+  showTemplate,
+} from './commands/templates.js';
+import {
+  dashboardStart,
+  dashboardStop,
+  dashboardStatus,
+  dashboardOpen,
+} from './commands/dashboard.js';
+import {
+  undoCommand,
+  undoHistoryCommand,
+  undoClearCommand,
+} from './commands/undo.js';
+import { completionsCommand } from './commands/completions.js';
+import { importJson, importCsv, importHelp } from './commands/import.js';
+import { invoiceCommand, invoicePreview } from './commands/invoice.js';
+import { scoreCommand, scoreTodayCommand, scoreWeekCommand } from './commands/score.js';
 
 export function createCLI(): Command {
   const program = new Command();
@@ -140,6 +189,24 @@ export function createCLI(): Command {
     .description('Show current tracking status')
     .action(() => {
       statusCommand();
+    });
+
+  // Add note to timer
+  program
+    .command('note <text>')
+    .description('Add note to active timer or specific entry')
+    .option('-e, --entry <id>', 'Add note to specific entry by ID')
+    .action((text, options) => {
+      noteCommand(text, options);
+    });
+
+  // Search entries
+  program
+    .command('search <query>')
+    .description('Search entries by note content')
+    .option('-n, --limit <number>', 'Maximum results to show', '20')
+    .action((query, options) => {
+      searchCommand(query, options);
     });
 
   // Today's summary
@@ -383,6 +450,277 @@ export function createCLI(): Command {
     listTags();
   });
 
+  // Pomodoro timer
+  const pomodoro = program
+    .command('pomodoro')
+    .alias('pomo')
+    .description('Pomodoro timer for focused work sessions');
+
+  pomodoro
+    .command('start')
+    .description('Start a pomodoro session')
+    .option('-c, --category <category>', 'Category to track')
+    .option('-n, --notes <notes>', 'Session notes')
+    .option('-w, --work <minutes>', 'Work duration in minutes')
+    .option('-b, --break <minutes>', 'Break duration in minutes')
+    .option('-p, --project <project>', 'Project to track')
+    .action((options) => {
+      pomodoroStart(options);
+    });
+
+  pomodoro
+    .command('status')
+    .description('Show current pomodoro status')
+    .action(() => {
+      pomodoroStatus();
+    });
+
+  pomodoro
+    .command('pause')
+    .description('Pause the current pomodoro')
+    .action(() => {
+      pomodoroPause();
+    });
+
+  pomodoro
+    .command('resume')
+    .description('Resume a paused pomodoro')
+    .action(() => {
+      pomodoroResume();
+    });
+
+  pomodoro
+    .command('next')
+    .description('Move to next phase (work/break)')
+    .action(() => {
+      pomodoroNext();
+    });
+
+  pomodoro
+    .command('stop')
+    .description('Stop the pomodoro session')
+    .action(() => {
+      pomodoroStop();
+    });
+
+  pomodoro
+    .command('skip')
+    .description('Skip current phase')
+    .action(() => {
+      pomodoroSkip();
+    });
+
+  pomodoro
+    .command('config')
+    .description('Configure pomodoro settings')
+    .option('-w, --work <minutes>', 'Work duration in minutes')
+    .option('-b, --break <minutes>', 'Break duration in minutes')
+    .option('-l, --long-break <minutes>', 'Long break duration in minutes')
+    .option('-s, --sessions <count>', 'Sessions until long break')
+    .option('--auto-break', 'Auto-start breaks')
+    .option('--no-auto-break', 'Disable auto-start breaks')
+    .option('--auto-work', 'Auto-start work after break')
+    .option('--no-auto-work', 'Disable auto-start work')
+    .action((options) => {
+      pomodoroConfig({
+        work: options.work,
+        break: options.break,
+        longBreak: options.longBreak,
+        sessions: options.sessions,
+        autoBreak: options.autoBreak,
+        autoWork: options.autoWork,
+      });
+    });
+
+  // Default: show pomodoro status if no subcommand
+  pomodoro.action(() => {
+    pomodoroStatus();
+  });
+
+  // Notifications management
+  const notify = program
+    .command('notify')
+    .alias('notifications')
+    .description('Manage desktop notifications');
+
+  notify
+    .command('status')
+    .description('Show notification settings')
+    .action(() => {
+      notificationsStatus();
+    });
+
+  notify
+    .command('enable')
+    .description('Enable notifications')
+    .action(() => {
+      notificationsEnable();
+    });
+
+  notify
+    .command('disable')
+    .description('Disable notifications')
+    .action(() => {
+      notificationsDisable();
+    });
+
+  notify
+    .command('config')
+    .description('Configure notification settings')
+    .option('--sound', 'Enable sound')
+    .option('--no-sound', 'Disable sound')
+    .option('--goals', 'Enable goal reminders')
+    .option('--no-goals', 'Disable goal reminders')
+    .option('--pomodoro', 'Enable pomodoro alerts')
+    .option('--no-pomodoro', 'Disable pomodoro alerts')
+    .option('--idle', 'Enable idle reminders')
+    .option('--no-idle', 'Disable idle reminders')
+    .option('--idle-minutes <minutes>', 'Idle threshold in minutes')
+    .action((options) => {
+      notificationsConfigure({
+        sound: options.sound,
+        goals: options.goals,
+        pomodoro: options.pomodoro,
+        idle: options.idle,
+        idleMinutes: options.idleMinutes,
+      });
+    });
+
+  notify
+    .command('test')
+    .description('Send a test notification')
+    .action(() => {
+      notificationsTest();
+    });
+
+  // Default: show notification status if no subcommand
+  notify.action(() => {
+    notificationsStatus();
+  });
+
+  // Focus mode
+  const focus = program
+    .command('focus')
+    .description('Distraction-free focus mode');
+
+  focus
+    .command('start [category]')
+    .description('Start focus mode')
+    .option('-d, --duration <duration>', 'Focus duration (e.g., "60", "1h", "90m")')
+    .option('-n, --notes <notes>', 'Session notes')
+    .action((category, options) => {
+      focusStart({ category, ...options });
+    });
+
+  focus
+    .command('status')
+    .description('Show focus mode status')
+    .action(() => {
+      focusStatus();
+    });
+
+  focus
+    .command('end')
+    .alias('stop')
+    .description('End focus session')
+    .action(() => {
+      focusEnd();
+    });
+
+  focus
+    .command('config')
+    .description('Configure focus mode settings')
+    .option('-d, --duration <minutes>', 'Default focus duration')
+    .option('--show-timer', 'Show timer during focus')
+    .option('--no-show-timer', 'Hide timer during focus')
+    .option('--auto-stop', 'Auto-stop when duration reached')
+    .option('--no-auto-stop', 'Continue after duration')
+    .action((options) => {
+      focusConfig({
+        duration: options.duration,
+        showTimer: options.showTimer,
+        autoStop: options.autoStop,
+      });
+    });
+
+  // Default: show focus status if no subcommand
+  focus.action(() => {
+    focusStatus();
+  });
+
+  // Templates management
+  const template = program
+    .command('template')
+    .alias('templates')
+    .description('Manage timer templates');
+
+  template
+    .command('list')
+    .description('List all templates')
+    .option('-f, --favorites', 'Show only favorites')
+    .action((options) => {
+      listTemplates(options);
+    });
+
+  template
+    .command('add <name>')
+    .description('Create a new template')
+    .requiredOption('-c, --category <category>', 'Category for the template')
+    .option('-p, --project <project>', 'Project for the template')
+    .option('-t, --tags <tags>', 'Tags (comma-separated)')
+    .option('-n, --notes <notes>', 'Default notes')
+    .action((name, options) => {
+      addTemplate(name, options);
+    });
+
+  template
+    .command('remove <name>')
+    .description('Remove a template')
+    .action((name) => {
+      removeTemplate(name);
+    });
+
+  template
+    .command('use <name>')
+    .description('Start timer from template')
+    .action((name) => {
+      useTemplate(name);
+    });
+
+  template
+    .command('favorite <name>')
+    .description('Toggle favorite status')
+    .action((name) => {
+      favoriteTemplate(name);
+    });
+
+  template
+    .command('edit <name>')
+    .description('Edit a template')
+    .option('--rename <newName>', 'Rename the template')
+    .option('-c, --category <category>', 'Change category')
+    .option('-p, --project <project>', 'Change project')
+    .option('-t, --tags <tags>', 'Change tags')
+    .option('-n, --notes <notes>', 'Change notes')
+    .option('--clear-project', 'Remove project')
+    .option('--clear-tags', 'Remove tags')
+    .option('--clear-notes', 'Remove notes')
+    .action((name, options) => {
+      editTemplate(name, options);
+    });
+
+  template
+    .command('show <name>')
+    .description('Show template details')
+    .action((name) => {
+      showTemplate(name);
+    });
+
+  // Default: show templates list if no subcommand
+  template.action(() => {
+    listTemplates();
+  });
+
   // Export commands
   const exportCmd = program
     .command('export')
@@ -599,6 +937,149 @@ export function createCLI(): Command {
         detectCommand();
       }
     });
+
+  // Dashboard commands
+  const dashboard = program
+    .command('dashboard')
+    .alias('dash')
+    .description('Web dashboard for time tracking');
+
+  dashboard
+    .command('start')
+    .description('Start the dashboard server')
+    .option('-p, --port <port>', 'Port number (default: 3000)')
+    .action((options) => {
+      dashboardStart(options);
+    });
+
+  dashboard
+    .command('stop')
+    .description('Stop the dashboard server')
+    .action(() => {
+      dashboardStop();
+    });
+
+  dashboard
+    .command('status')
+    .description('Show dashboard server status')
+    .action(() => {
+      dashboardStatus();
+    });
+
+  dashboard
+    .command('open')
+    .description('Open dashboard in browser')
+    .action(() => {
+      dashboardOpen();
+    });
+
+  // Default: show dashboard status if no subcommand
+  dashboard.action(() => {
+    dashboardStatus();
+  });
+
+  // Undo command
+  program
+    .command('undo')
+    .description('Undo the last action')
+    .action(() => {
+      undoCommand();
+    });
+
+  // Undo history
+  program
+    .command('history')
+    .description('Show undo history')
+    .option('-n, --limit <number>', 'Number of entries to show', '10')
+    .action((options) => {
+      undoHistoryCommand(options);
+    });
+
+  // Clear undo history
+  program
+    .command('undo-clear')
+    .description('Clear undo history')
+    .action(() => {
+      undoClearCommand();
+    });
+
+  // Shell completions
+  program
+    .command('completions')
+    .description('Generate shell completions')
+    .option('-s, --shell <shell>', 'Shell type (bash, zsh, fish)')
+    .action((options) => {
+      completionsCommand(options);
+    });
+
+  // Import commands
+  const importCmd = program
+    .command('import')
+    .description('Import time entries');
+
+  importCmd
+    .command('json <file>')
+    .description('Import from JSON file')
+    .option('--dry-run', 'Preview without importing')
+    .action((file, options) => {
+      importJson(file, options);
+    });
+
+  importCmd
+    .command('csv <file>')
+    .description('Import from CSV file')
+    .option('--dry-run', 'Preview without importing')
+    .action((file, options) => {
+      importCsv(file, options);
+    });
+
+  // Default: show import help if no subcommand
+  importCmd.action(() => {
+    importHelp();
+  });
+
+  // Invoice command
+  program
+    .command('invoice')
+    .description('Generate invoice for billable hours')
+    .option('-p, --project <project>', 'Project to invoice')
+    .option('--from <date>', 'Start date (YYYY-MM-DD)')
+    .option('--to <date>', 'End date (YYYY-MM-DD)')
+    .option('-r, --rate <rate>', 'Hourly rate')
+    .option('-o, --output <file>', 'Output file path')
+    .option('-f, --format <format>', 'Format (text or html)', 'text')
+    .option('--preview', 'Preview invoice summary')
+    .action((options) => {
+      if (options.preview) {
+        invoicePreview(options);
+      } else {
+        invoiceCommand(options);
+      }
+    });
+
+  // Productivity score command
+  const score = program
+    .command('score')
+    .description('Show productivity score');
+
+  score
+    .command('today')
+    .description("Show today's productivity score")
+    .action(() => {
+      scoreTodayCommand();
+    });
+
+  score
+    .command('week')
+    .description('Show weekly productivity score')
+    .action(() => {
+      scoreWeekCommand();
+    });
+
+  // Default: show today's score if no subcommand
+  score.action(() => {
+    scoreCommand();
+  });
 
   // Default action: show status
   program.action(() => {

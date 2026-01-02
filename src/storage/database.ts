@@ -182,6 +182,44 @@ function runMigrations(database: Database.Database): void {
         CREATE INDEX IF NOT EXISTS idx_entry_tags_tag ON entry_tags(tag_id);
       `,
     },
+    {
+      name: '006_pomodoro',
+      sql: `
+        -- Pomodoro sessions table
+        CREATE TABLE IF NOT EXISTS pomodoro_sessions (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          entry_id INTEGER REFERENCES time_entries(id) ON DELETE SET NULL,
+          category_id INTEGER REFERENCES categories(id),
+          work_duration INTEGER NOT NULL DEFAULT 1500,
+          break_duration INTEGER NOT NULL DEFAULT 300,
+          long_break_duration INTEGER NOT NULL DEFAULT 900,
+          sessions_until_long_break INTEGER NOT NULL DEFAULT 4,
+          current_session INTEGER NOT NULL DEFAULT 1,
+          state TEXT NOT NULL DEFAULT 'work' CHECK (state IN ('work', 'break', 'long_break', 'paused', 'completed')),
+          started_at TEXT NOT NULL,
+          paused_at TEXT,
+          completed_at TEXT,
+          notes TEXT,
+          created_at TEXT DEFAULT (datetime('now'))
+        );
+
+        -- Pomodoro settings table
+        CREATE TABLE IF NOT EXISTS pomodoro_settings (
+          key TEXT PRIMARY KEY,
+          value TEXT,
+          updated_at TEXT DEFAULT (datetime('now'))
+        );
+
+        -- Default pomodoro settings
+        INSERT OR IGNORE INTO pomodoro_settings (key, value) VALUES
+          ('work_duration', '25'),
+          ('break_duration', '5'),
+          ('long_break_duration', '15'),
+          ('sessions_until_long_break', '4'),
+          ('auto_start_breaks', 'false'),
+          ('auto_start_work', 'false');
+      `,
+    },
   ];
 
   // Check which migrations have been applied
