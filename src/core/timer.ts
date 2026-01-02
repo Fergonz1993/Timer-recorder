@@ -3,9 +3,10 @@ import {
   getActiveEntry,
   stopActiveEntry,
 } from '../storage/repositories/entries.js';
-import { getCategoryByName } from '../storage/repositories/categories.js';
+import { getCategoryByName, getCategoryById } from '../storage/repositories/categories.js';
 import { getProjectByName, getDefaultProject } from '../storage/repositories/projects.js';
 import { parseAndGetTags, attachTagsToEntry } from '../storage/repositories/tags.js';
+import { getGoalsForCategory } from '../storage/repositories/goals.js';
 import { pushUndoAction } from './undo.js';
 import { triggerWebhooks } from '../storage/repositories/webhooks.js';
 import type { TimeEntry, ActiveSession } from '../types/index.js';
@@ -117,9 +118,46 @@ export function stopTimer(): TimeEntry | null {
     }).catch(() => {
       // Silently ignore webhook errors - they're logged internally
     });
+
+    // Check if any goals were reached for this category
+    if (entry.category_id) {
+      checkAndTriggerGoalReached(entry.category_id, entry.duration_seconds || 0);
+    }
   }
 
   return entry ?? null;
+}
+
+// Check if any goals were just reached and trigger webhook
+function checkAndTriggerGoalReached(categoryId: number, addedSeconds: number): void {
+  try {
+    const goals = getGoalsForCategory(categoryId);
+    const category = getCategoryById(categoryId);
+
+    for (const goal of goals) {
+      // Check if goal was just reached (percentage is now >= 100% but wasn't before this entry)
+      const previousSeconds = goal.current_seconds - addedSeconds;
+      const wasReached = previousSeconds >= goal.target_seconds;
+      const isNowReached = goal.current_seconds >= goal.target_seconds;
+
+      if (isNowReached && !wasReached) {
+        // Goal was just reached! Trigger webhook
+        triggerWebhooks('goal.reached', {
+          goal_id: goal.id,
+          category_id: categoryId,
+          category_name: category?.name || 'unknown',
+          period: goal.period,
+          target_seconds: goal.target_seconds,
+          current_seconds: goal.current_seconds,
+          percentage: goal.percentage,
+        }).catch(() => {
+          // Silently ignore webhook errors - they're logged internally
+        });
+      }
+    }
+  } catch {
+    // Silently ignore errors in goal checking
+  }
 }
 
 // Get current timer status
