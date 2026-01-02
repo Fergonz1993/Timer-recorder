@@ -256,7 +256,8 @@ export function startDashboard(port: number = 3000): { port: number } {
   }
 
   server = createServer(handleRequest);
-  server.listen(port, () => {
+  // Bind to localhost only for privacy - dashboard is not accessible from network
+  server.listen(port, '127.0.0.1', () => {
     serverPort = port;
   });
 
