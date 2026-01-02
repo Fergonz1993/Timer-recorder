@@ -1,7 +1,7 @@
 {
   "name": "timer-record",
   "version": "1.0.0",
-  "description": "CLI work time tracker with auto-detection",
+  "description": "A powerful CLI work time tracker with automatic activity detection, goals, invoicing, and more. Supports macOS and Linux.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -16,15 +16,45 @@
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src --ext .ts",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build && npm run test:run"
   },
   "keywords": [
     "time-tracker",
     "cli",
-    "productivity"
+    "productivity",
+    "pomodoro",
+    "timer",
+    "work",
+    "tracking",
+    "timesheet",
+    "invoice",
+    "goals",
+    "macos",
+    "linux"
   ],
-  "author": "",
+  "author": "Fernando Gonzalez",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fergonz1993/Timer-recorder.git"
+  },
+  "homepage": "https://github.com/Fergonz1993/Timer-recorder#readme",
+  "bugs": {
+    "url": "https://github.com/Fergonz1993/Timer-recorder/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "os": [
+    "darwin",
+    "linux"
+  ],
   "dependencies": {
     "asciichart": "^1.5.25",
     "better-sqlite3": "^11.6.0",
