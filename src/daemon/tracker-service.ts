@@ -3,19 +3,10 @@ import { getIdleTime } from '../detection/idle.js';
 import { categorize, getCategoryIdByName } from '../categorization/rules.js';
 import { createEntry, getActiveEntry, stopActiveEntry } from '../storage/repositories/entries.js';
 import { getDatabase } from '../storage/database.js';
-import type { WindowInfo, ActiveSession } from '../types/index.js';
+import { loadConfig, DEFAULT_CONFIG } from '../config/settings.js';
+import type { WindowInfo, ActiveSession, Config } from '../types/index.js';
 
-export interface TrackerConfig {
-  pollInterval: number;      // Seconds between checks (default: 5)
-  idleThreshold: number;     // Seconds before considered idle (default: 300)
-  minEntryDuration: number;  // Minimum entry duration in seconds (default: 30)
-}
-
-const DEFAULT_CONFIG: TrackerConfig = {
-  pollInterval: 5,
-  idleThreshold: 300, // 5 minutes
-  minEntryDuration: 30,
-};
+export type TrackerConfig = Pick<Config, 'pollInterval' | 'idleThreshold' | 'minEntryDuration'>;
 
 export class TrackerService {
   private config: TrackerConfig;
@@ -25,7 +16,13 @@ export class TrackerService {
   private currentEntryId: number | null = null;
 
   constructor(config: Partial<TrackerConfig> = {}) {
-    this.config = { ...DEFAULT_CONFIG, ...config };
+    // Load config from file, then apply any overrides
+    const fileConfig = loadConfig();
+    this.config = {
+      pollInterval: config.pollInterval ?? fileConfig.pollInterval ?? DEFAULT_CONFIG.pollInterval,
+      idleThreshold: config.idleThreshold ?? fileConfig.idleThreshold ?? DEFAULT_CONFIG.idleThreshold,
+      minEntryDuration: config.minEntryDuration ?? fileConfig.minEntryDuration ?? DEFAULT_CONFIG.minEntryDuration,
+    };
   }
 
   // Start the tracking service

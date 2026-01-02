@@ -18,6 +18,29 @@ import {
   daemonStatusFull,
 } from './commands/daemon.js';
 import { detectCommand, detectWatch } from './commands/detect.js';
+import {
+  configListCommand,
+  configGetCommand,
+  configSetCommand,
+  configResetCommand,
+  configPathCommand,
+} from './commands/config.js';
+import {
+  listCommand,
+  editCommand,
+  deleteCommand,
+} from './commands/entries.js';
+import {
+  monthCommand,
+  compareCommand,
+  statsCommand,
+} from './commands/analytics.js';
+import {
+  goalsSetCommand,
+  goalsListCommand,
+  goalsProgressCommand,
+  goalsRemoveCommand,
+} from './commands/goals.js';
 
 export function createCLI(): Command {
   const program = new Command();
@@ -56,6 +79,37 @@ export function createCLI(): Command {
       logCommand(options);
     });
 
+  // List recent entries
+  program
+    .command('list')
+    .description('Show recent time entries with IDs')
+    .option('-n, --limit <number>', 'Number of entries to show', '20')
+    .action((options) => {
+      listCommand(options);
+    });
+
+  // Edit entry
+  program
+    .command('edit <id>')
+    .description('Edit a time entry')
+    .option('-c, --category <category>', 'Change category')
+    .option('-d, --duration <duration>', 'Change duration (e.g., "2h", "30m")')
+    .option('-s, --start <time>', 'Change start time')
+    .option('-e, --end <time>', 'Change end time')
+    .option('-n, --notes <notes>', 'Change notes')
+    .action((id, options) => {
+      editCommand(id, options);
+    });
+
+  // Delete entry
+  program
+    .command('delete <id>')
+    .description('Delete a time entry')
+    .option('-f, --force', 'Skip confirmation')
+    .action((id, options) => {
+      deleteCommand(id, options);
+    });
+
   // Status
   program
     .command('status')
@@ -80,6 +134,72 @@ export function createCLI(): Command {
     .action((options) => {
       weekCommand({ weeksAgo: parseInt(options.previous, 10) });
     });
+
+  // Monthly summary
+  program
+    .command('month')
+    .description('Show monthly summary with charts')
+    .option('-p, --previous <months>', 'Show previous month (1 = last month)', '0')
+    .action((options) => {
+      monthCommand({ monthsAgo: parseInt(options.previous, 10) });
+    });
+
+  // Period comparison
+  program
+    .command('compare')
+    .description('Compare time periods (week-over-week or month-over-month)')
+    .option('-t, --type <type>', 'Comparison type (week/month)', 'week')
+    .option('-n, --periods <number>', 'Number of periods to compare', '4')
+    .action((options) => {
+      compareCommand(options);
+    });
+
+  // Overall statistics
+  program
+    .command('stats')
+    .description('Show overall statistics (averages, streaks, productivity)')
+    .action(() => {
+      statsCommand();
+    });
+
+  // Goals management
+  const goals = program
+    .command('goals')
+    .description('Manage time tracking goals');
+
+  goals
+    .command('set <category> <target>')
+    .description('Set a goal (e.g., "programming 40h/week")')
+    .action((category, target) => {
+      goalsSetCommand(category, target);
+    });
+
+  goals
+    .command('list')
+    .description('List all goals')
+    .action(() => {
+      goalsListCommand();
+    });
+
+  goals
+    .command('progress')
+    .description('Show progress toward goals')
+    .action(() => {
+      goalsProgressCommand();
+    });
+
+  goals
+    .command('remove <category>')
+    .description('Remove a goal')
+    .option('-p, --period <period>', 'Goal period (daily/weekly/monthly)', 'weekly')
+    .action((category, options) => {
+      goalsRemoveCommand(category, options);
+    });
+
+  // Default: show progress if no subcommand
+  goals.action(() => {
+    goalsProgressCommand();
+  });
 
   // Export commands
   const exportCmd = program
@@ -238,6 +358,51 @@ export function createCLI(): Command {
   // Default: show daemon status if no subcommand
   daemon.action(() => {
     daemonStatusFull();
+  });
+
+  // Configuration management
+  const config = program
+    .command('config')
+    .description('Manage configuration settings');
+
+  config
+    .command('list')
+    .description('Show all configuration values')
+    .action(() => {
+      configListCommand();
+    });
+
+  config
+    .command('get <key>')
+    .description('Get a configuration value')
+    .action((key) => {
+      configGetCommand(key);
+    });
+
+  config
+    .command('set <key> <value>')
+    .description('Set a configuration value')
+    .action((key, value) => {
+      configSetCommand(key, value);
+    });
+
+  config
+    .command('reset')
+    .description('Reset configuration to defaults')
+    .action(() => {
+      configResetCommand();
+    });
+
+  config
+    .command('path')
+    .description('Show configuration file path')
+    .action(() => {
+      configPathCommand();
+    });
+
+  // Default: show config list if no subcommand
+  config.action(() => {
+    configListCommand();
   });
 
   // Detection debug command

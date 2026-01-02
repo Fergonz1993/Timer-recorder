@@ -113,6 +113,25 @@ function runMigrations(database: Database.Database): void {
           ('uncategorized', '#5C6370', 'Unmatched activities', 0);
       `,
     },
+    {
+      name: '003_goals',
+      sql: `
+        -- Goals table for time tracking targets
+        CREATE TABLE IF NOT EXISTS goals (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          category_id INTEGER REFERENCES categories(id) ON DELETE CASCADE,
+          target_seconds INTEGER NOT NULL,
+          period TEXT NOT NULL CHECK (period IN ('daily', 'weekly', 'monthly')),
+          is_active INTEGER DEFAULT 1,
+          created_at TEXT DEFAULT (datetime('now')),
+          updated_at TEXT DEFAULT (datetime('now'))
+        );
+
+        -- Only one active goal per category/period combination
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_goals_category_period
+        ON goals(category_id, period) WHERE is_active = 1;
+      `,
+    },
   ];
 
   // Check which migrations have been applied

@@ -71,7 +71,30 @@ export interface DailySummary {
 
 // Config settings
 export interface Config {
-  pollInterval: number;      // seconds between detection checks
-  idleThreshold: number;     // seconds before considered idle
-  minEntryDuration: number;  // minimum entry duration in seconds
+  pollInterval: number;        // seconds between detection checks
+  idleThreshold: number;       // seconds before considered idle
+  minEntryDuration: number;    // minimum entry duration in seconds
+  defaultCategory: string | null; // default category for uncategorized entries
+}
+
+// Goal periods
+export type GoalPeriod = 'daily' | 'weekly' | 'monthly';
+
+// Goal definition
+export interface Goal {
+  id: number;
+  category_id: number;
+  target_seconds: number;
+  period: GoalPeriod;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Goal with progress information
+export interface GoalWithProgress extends Goal {
+  category_name: string;
+  category_color: string | null;
+  current_seconds: number;
+  percentage: number;
 }
