@@ -76,6 +76,10 @@ export interface Config {
   idleThreshold: number;       // seconds before considered idle
   minEntryDuration: number;    // minimum entry duration in seconds
   defaultCategory: string | null; // default category for uncategorized entries
+  'pomodoro.work': number;     // pomodoro work duration in minutes
+  'pomodoro.break': number;    // pomodoro break duration in minutes
+  'pomodoro.longBreak': number; // pomodoro long break duration in minutes
+  'pomodoro.sessionsBeforeLongBreak': number; // sessions before long break
 }
 
 // Goal periods

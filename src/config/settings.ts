@@ -11,10 +11,23 @@ export const DEFAULT_CONFIG: Config = {
   idleThreshold: 300,        // 5 minutes before considered idle
   minEntryDuration: 30,      // 30 seconds minimum entry duration
   defaultCategory: null,     // null = uncategorized
+  'pomodoro.work': 25,       // 25 minutes work duration
+  'pomodoro.break': 5,       // 5 minutes break duration
+  'pomodoro.longBreak': 15,  // 15 minutes long break
+  'pomodoro.sessionsBeforeLongBreak': 4, // 4 sessions before long break
 };
 
 // Valid config keys for validation
-export const CONFIG_KEYS = ['pollInterval', 'idleThreshold', 'minEntryDuration', 'defaultCategory'] as const;
+export const CONFIG_KEYS = [
+  'pollInterval',
+  'idleThreshold',
+  'minEntryDuration',
+  'defaultCategory',
+  'pomodoro.work',
+  'pomodoro.break',
+  'pomodoro.longBreak',
+  'pomodoro.sessionsBeforeLongBreak',
+] as const;
 export type ConfigKey = (typeof CONFIG_KEYS)[number];
 
 /**
@@ -116,6 +129,29 @@ export function parseConfigValue(key: ConfigKey, value: string): Config[ConfigKe
       }
       return num;
     }
+    case 'pomodoro.work':
+    case 'pomodoro.break':
+    case 'pomodoro.longBreak':
+    case 'pomodoro.sessionsBeforeLongBreak': {
+      const num = parseInt(value, 10);
+      if (isNaN(num) || num < 1) {
+        throw new Error(`${key} must be a positive integer`);
+      }
+      // Reasonable limits for pomodoro
+      if (key === 'pomodoro.work' && (num < 1 || num > 120)) {
+        throw new Error('pomodoro.work must be between 1 and 120 minutes');
+      }
+      if (key === 'pomodoro.break' && (num < 1 || num > 60)) {
+        throw new Error('pomodoro.break must be between 1 and 60 minutes');
+      }
+      if (key === 'pomodoro.longBreak' && (num < 1 || num > 120)) {
+        throw new Error('pomodoro.longBreak must be between 1 and 120 minutes');
+      }
+      if (key === 'pomodoro.sessionsBeforeLongBreak' && (num < 1 || num > 10)) {
+        throw new Error('pomodoro.sessionsBeforeLongBreak must be between 1 and 10');
+      }
+      return num;
+    }
     case 'defaultCategory':
       // Empty string or "null" means no default category
       if (value === '' || value.toLowerCase() === 'null') {
@@ -143,6 +179,12 @@ export function formatConfigValue(key: ConfigKey, value: Config[ConfigKey]): str
         return `${value} seconds (${Math.floor(value / 60)} min)`;
       case 'minEntryDuration':
         return `${value} seconds`;
+      case 'pomodoro.work':
+      case 'pomodoro.break':
+      case 'pomodoro.longBreak':
+        return `${value} minutes`;
+      case 'pomodoro.sessionsBeforeLongBreak':
+        return `${value} sessions`;
       default:
         return String(value);
     }

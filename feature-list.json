@@ -4905,7 +4905,7 @@
       "Step 2: Verify bash completion script output",
       "Step 3: Verify valid bash syntax"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 387,
@@ -4917,7 +4917,7 @@
       "Step 2: Verify zsh completion script output",
       "Step 3: Verify valid zsh syntax"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 388,
@@ -4928,7 +4928,7 @@
       "Step 1: Run tt completions fish",
       "Step 2: Verify fish completion script output"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 389,
@@ -4940,7 +4940,7 @@
       "Step 2: Verify source line added to .bashrc",
       "Step 3: Verify completions file created"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 390,
@@ -4951,7 +4951,7 @@
       "Step 1: Run tt completions install zsh",
       "Step 2: Verify source line added to .zshrc"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 391,
@@ -4987,7 +4987,7 @@
       "Step 2: Verify all config sections shown",
       "Step 3: Verify values displayed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 394,
@@ -4998,7 +4998,7 @@
       "Step 1: Run tt config get pomodoro.work",
       "Step 2: Verify value displayed (25 by default)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 395,
@@ -5011,7 +5011,7 @@
       "Step 3: Run tt config get pomodoro.work",
       "Step 4: Verify value is 30"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 396,
@@ -5022,7 +5022,7 @@
       "Step 1: Run tt config set pomodoro.work 'invalid'",
       "Step 2: Verify error about invalid type"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 397,
@@ -5036,7 +5036,7 @@
       "Step 4: Confirm reset",
       "Step 5: Verify default values restored"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 398,
@@ -5048,7 +5048,7 @@
       "Step 2: Run tt config reset pomodoro.work",
       "Step 3: Verify value reset to 25"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 399,
@@ -5060,7 +5060,7 @@
       "Step 2: Verify path shown",
       "Step 3: Verify path is ~/.config/timer-record/config.json or similar"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 400,
@@ -5072,7 +5072,7 @@
       "Step 2: Run tt config edit",
       "Step 3: Verify editor opens with config file"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 401,
@@ -5084,7 +5084,7 @@
       "Step 2: Run any command",
       "Step 3: Verify default config created"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 402,
@@ -5097,7 +5097,7 @@
       "Step 3: Verify columns aligned",
       "Step 4: Verify colors applied"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 403,
@@ -5109,7 +5109,7 @@
       "Step 2: Run tt tags list",
       "Step 3: Verify tags colored appropriately"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 404,
@@ -5122,7 +5122,7 @@
       "Step 3: Verify large/bold time display",
       "Step 4: Verify progress indicator"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 405,
@@ -5147,7 +5147,7 @@
       "Step 2: Verify score has visual bar/gauge",
       "Step 3: Verify color indicates good/bad"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 407,

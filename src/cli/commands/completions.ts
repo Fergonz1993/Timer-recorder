@@ -1,4 +1,7 @@
 import chalk from 'chalk';
+import { existsSync, appendFileSync, writeFileSync, mkdirSync, readFileSync } from 'fs';
+import { homedir } from 'os';
+import { join, dirname } from 'path';
 import { getAllCategories } from '../../storage/repositories/categories.js';
 import { getAllProjects } from '../../storage/repositories/projects.js';
 import { getAllTags } from '../../storage/repositories/tags.js';
@@ -297,5 +300,89 @@ export function completionsCommand(options?: { shell?: string }): void {
       console.log('  Zsh:   tt completions --shell zsh >> ~/.zshrc');
       console.log('  Fish:  tt completions --shell fish > ~/.config/fish/completions/tt.fish');
       console.log();
+  }
+}
+
+// Install completions to shell config
+export function completionsInstallCommand(shell: string): void {
+  const home = homedir();
+
+  switch (shell.toLowerCase()) {
+    case 'bash': {
+      const bashrc = join(home, '.bashrc');
+      const completionsFile = join(home, '.config', 'timer-record', 'tt-completions.bash');
+      const completionsDir = dirname(completionsFile);
+
+      // Create completions directory
+      if (!existsSync(completionsDir)) {
+        mkdirSync(completionsDir, { recursive: true });
+      }
+
+      // Write completions file
+      writeFileSync(completionsFile, generateBashCompletions());
+
+      // Add source line to bashrc if not already present
+      const sourceLine = `\n# Timer Record completions\nsource "${completionsFile}"\n`;
+      const bashrcContent = existsSync(bashrc) ? readFileSync(bashrc, 'utf-8') : '';
+
+      if (!bashrcContent.includes('tt-completions.bash')) {
+        appendFileSync(bashrc, sourceLine);
+        success(`Added completions to ${bashrc}`);
+      } else {
+        info('Completions already installed in .bashrc');
+      }
+
+      success(`Completions file created at ${completionsFile}`);
+      info('Restart your shell or run: source ~/.bashrc');
+      break;
+    }
+    case 'zsh': {
+      const zshrc = join(home, '.zshrc');
+      const completionsFile = join(home, '.config', 'timer-record', '_tt');
+      const completionsDir = dirname(completionsFile);
+
+      // Create completions directory
+      if (!existsSync(completionsDir)) {
+        mkdirSync(completionsDir, { recursive: true });
+      }
+
+      // Write completions file
+      writeFileSync(completionsFile, generateZshCompletions());
+
+      // Add fpath and source to zshrc
+      const fpathLine = `\n# Timer Record completions\nfpath=(${completionsDir} $fpath)\nautoload -Uz compinit && compinit\n`;
+      const zshrcContent = existsSync(zshrc) ? readFileSync(zshrc, 'utf-8') : '';
+
+      if (!zshrcContent.includes('timer-record')) {
+        appendFileSync(zshrc, fpathLine);
+        success(`Added completions to ${zshrc}`);
+      } else {
+        info('Completions already installed in .zshrc');
+      }
+
+      success(`Completions file created at ${completionsFile}`);
+      info('Restart your shell or run: source ~/.zshrc');
+      break;
+    }
+    case 'fish': {
+      const completionsFile = join(home, '.config', 'fish', 'completions', 'tt.fish');
+      const completionsDir = dirname(completionsFile);
+
+      // Create completions directory
+      if (!existsSync(completionsDir)) {
+        mkdirSync(completionsDir, { recursive: true });
+      }
+
+      // Write completions file
+      writeFileSync(completionsFile, generateFishCompletions());
+
+      success(`Completions installed to ${completionsFile}`);
+      info('Completions will be available in new fish shells');
+      break;
+    }
+    default:
+      console.log('Supported shells: bash, zsh, fish');
+      console.log();
+      console.log('Usage: tt completions install <shell>');
   }
 }

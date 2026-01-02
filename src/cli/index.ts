@@ -24,6 +24,7 @@ import {
   configSetCommand,
   configResetCommand,
   configPathCommand,
+  configEditCommand,
 } from './commands/config.js';
 import {
   listCommand,
@@ -106,7 +107,7 @@ import {
   undoHistoryCommand,
   undoClearCommand,
 } from './commands/undo.js';
-import { completionsCommand } from './commands/completions.js';
+import { completionsCommand, completionsInstallCommand } from './commands/completions.js';
 import { importJson, importCsv, importHelp } from './commands/import.js';
 import { invoiceCommand, invoicePreview } from './commands/invoice.js';
 import { scoreCommand, scoreTodayCommand, scoreWeekCommand } from './commands/score.js';
@@ -907,10 +908,10 @@ export function createCLI(): Command {
     });
 
   config
-    .command('reset')
-    .description('Reset configuration to defaults')
-    .action(() => {
-      configResetCommand();
+    .command('reset [key]')
+    .description('Reset configuration to defaults (optionally just one key)')
+    .action((key) => {
+      configResetCommand(key);
     });
 
   config
@@ -918,6 +919,13 @@ export function createCLI(): Command {
     .description('Show configuration file path')
     .action(() => {
       configPathCommand();
+    });
+
+  config
+    .command('edit')
+    .description('Open configuration file in editor')
+    .action(() => {
+      configEditCommand();
     });
 
   // Default: show config list if no subcommand
@@ -1004,12 +1012,19 @@ export function createCLI(): Command {
     });
 
   // Shell completions
-  program
-    .command('completions')
+  const completions = program
+    .command('completions [shell]')
     .description('Generate shell completions')
     .option('-s, --shell <shell>', 'Shell type (bash, zsh, fish)')
-    .action((options) => {
-      completionsCommand(options);
+    .action((shell, options) => {
+      completionsCommand({ shell: shell || options.shell });
+    });
+
+  completions
+    .command('install <shell>')
+    .description('Install completions to shell config file')
+    .action((shell) => {
+      completionsInstallCommand(shell);
     });
 
   // Import commands

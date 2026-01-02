@@ -85,10 +85,23 @@ export function configSetCommand(key: string, value: string): void {
 /**
  * Reset configuration to defaults
  */
-export function configResetCommand(): void {
-  resetConfig();
-  success('Configuration reset to defaults');
-  configListCommand();
+export function configResetCommand(key?: string): void {
+  if (key) {
+    // Reset a specific key
+    if (!isValidConfigKey(key)) {
+      error(`Unknown configuration key: ${key}`);
+      console.log(`\nValid keys: ${CONFIG_KEYS.join(', ')}`);
+      process.exit(1);
+    }
+    const defaultValue = DEFAULT_CONFIG[key];
+    setConfigValue(key, defaultValue);
+    success(`Reset ${key} to default: ${formatConfigValue(key, defaultValue)}`);
+  } else {
+    // Reset all
+    resetConfig();
+    success('Configuration reset to defaults');
+    configListCommand();
+  }
 }
 
 /**
@@ -96,4 +109,17 @@ export function configResetCommand(): void {
  */
 export function configPathCommand(): void {
   console.log(getConfigPath());
+}
+
+/**
+ * Open configuration file in editor
+ */
+export function configEditCommand(): void {
+  const editor = process.env.EDITOR || process.env.VISUAL || 'nano';
+  const configPath = getConfigPath();
+
+  console.log(`Opening ${configPath} in ${editor}...`);
+
+  const { spawn } = require('child_process');
+  spawn(editor, [configPath], { stdio: 'inherit' });
 }
