@@ -2,17 +2,25 @@ import { spawn, execSync } from 'child_process';
 import { existsSync, readFileSync, unlinkSync, createWriteStream } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { platform } from 'os';
 import chalk from 'chalk';
 import { success, error, warn, info } from '../utils/format.js';
 import {
   checkAccessibilityPermission,
   getPermissionInstructions,
-} from '../../detection/macos.js';
+} from '../../detection/index.js';
 import {
   installLaunchd,
   uninstallLaunchd,
   getLaunchdStatus,
 } from '../../daemon/launchd.js';
+import {
+  installSystemd,
+  uninstallSystemd,
+  getSystemdStatus,
+} from '../../daemon/systemd.js';
+
+const currentPlatform = platform();
 
 const PID_FILE = '/tmp/timer-record.pid';
 const LOG_FILE = '/tmp/timer-record.log';
@@ -168,7 +176,7 @@ export function daemonInstall(): void {
   // Check accessibility permission first
   if (!checkAccessibilityPermission()) {
     console.log(chalk.yellow(getPermissionInstructions()));
-    warn('Please grant Accessibility permission before installing.');
+    warn('Please grant permission before installing.');
     return;
   }
 
@@ -176,7 +184,8 @@ export function daemonInstall(): void {
   info('Installing Timer Record as a system service...');
   console.log();
 
-  const result = installLaunchd();
+  // Use platform-appropriate service manager
+  const result = currentPlatform === 'linux' ? installSystemd() : installLaunchd();
 
   if (result.success) {
     success('Service installed!');
@@ -197,7 +206,8 @@ export function daemonUninstall(): void {
   info('Uninstalling Timer Record service...');
   console.log();
 
-  const result = uninstallLaunchd();
+  // Use platform-appropriate service manager
+  const result = currentPlatform === 'linux' ? uninstallSystemd() : uninstallLaunchd();
 
   if (result.success) {
     success(result.message);
@@ -207,10 +217,11 @@ export function daemonUninstall(): void {
   console.log();
 }
 
-// Enhanced status with launchd info
+// Enhanced status with service manager info
 export function daemonStatusFull(): void {
   const { running, pid } = isDaemonRunning();
-  const launchd = getLaunchdStatus();
+  const serviceStatus = currentPlatform === 'linux' ? getSystemdStatus() : getLaunchdStatus();
+  const serviceName = currentPlatform === 'linux' ? 'systemd' : 'launchd';
 
   console.log();
   console.log(chalk.bold('Daemon Status'));
@@ -227,11 +238,11 @@ export function daemonStatusFull(): void {
 
   console.log();
 
-  // Launchd status
-  if (launchd.installed) {
+  // Service manager status
+  if (serviceStatus.installed) {
     console.log(chalk.green('● Auto-start: Enabled'));
-    if (launchd.running) {
-      console.log(chalk.dim('  (managed by launchd)'));
+    if (serviceStatus.running) {
+      console.log(chalk.dim(`  (managed by ${serviceName})`));
     }
   } else {
     console.log(chalk.dim('○ Auto-start: Disabled'));

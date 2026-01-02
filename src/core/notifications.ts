@@ -1,5 +1,36 @@
 import notifier from 'node-notifier';
+import { execSync } from 'child_process';
+import { platform } from 'os';
 import { getDatabase } from '../storage/database.js';
+
+const currentPlatform = platform();
+
+// Check if notify-send is available on Linux
+function isNotifySendAvailable(): boolean {
+  if (currentPlatform !== 'linux') return false;
+  try {
+    execSync('which notify-send', { encoding: 'utf-8', stdio: 'pipe' });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Send notification using notify-send on Linux
+function sendLinuxNotification(title: string, message: string): void {
+  try {
+    // Escape quotes in message for shell
+    const escapedTitle = title.replace(/"/g, '\\"');
+    const escapedMessage = message.replace(/"/g, '\\"');
+    execSync(`notify-send "${escapedTitle}" "${escapedMessage}"`, {
+      encoding: 'utf-8',
+      stdio: 'pipe',
+    });
+  } catch {
+    // Fall back to node-notifier if notify-send fails
+    notifier.notify({ title, message });
+  }
+}
 
 export interface NotificationSettings {
   enabled: boolean;
@@ -57,6 +88,13 @@ export function sendNotification(options: {
     return;
   }
 
+  // Use notify-send on Linux if available
+  if (currentPlatform === 'linux' && isNotifySendAvailable()) {
+    sendLinuxNotification(options.title, options.message);
+    return;
+  }
+
+  // Use node-notifier for macOS and fallback
   notifier.notify({
     title: options.title,
     message: options.message,

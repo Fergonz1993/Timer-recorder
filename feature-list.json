@@ -4584,7 +4584,7 @@
       "Step 3: Verify app name detected",
       "Step 4: Verify window title detected"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 361,
@@ -4597,7 +4597,7 @@
       "Step 3: Verify systemd user service created",
       "Step 4: Verify service starts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 362,
@@ -4609,7 +4609,7 @@
       "Step 2: Run tt daemon uninstall",
       "Step 3: Verify service removed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 363,
@@ -4621,7 +4621,7 @@
       "Step 2: Run tt notify test",
       "Step 3: Verify notification appears"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 364,
@@ -4963,7 +4963,7 @@
       "Step 2: Type 'tt sta' and press TAB",
       "Step 3: Verify 'start' and 'status' suggested"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 392,
@@ -4975,7 +4975,7 @@
       "Step 2: Type 'tt start pro' and press TAB",
       "Step 3: Verify 'programming' suggested"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 393,

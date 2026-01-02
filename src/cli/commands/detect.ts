@@ -3,8 +3,8 @@ import {
   getActiveWindow,
   checkAccessibilityPermission,
   getPermissionInstructions,
-} from '../../detection/macos.js';
-import { getIdleTime } from '../../detection/idle.js';
+  getIdleTime,
+} from '../../detection/index.js';
 import { categorize } from '../../categorization/rules.js';
 import { formatCategory } from '../utils/format.js';
 import { getCategoryByName } from '../../storage/repositories/categories.js';
