@@ -7,6 +7,7 @@ import { getCategoryByName } from '../storage/repositories/categories.js';
 import { getProjectByName, getDefaultProject } from '../storage/repositories/projects.js';
 import { parseAndGetTags, attachTagsToEntry } from '../storage/repositories/tags.js';
 import { pushUndoAction } from './undo.js';
+import { triggerWebhooks } from '../storage/repositories/webhooks.js';
 import type { TimeEntry, ActiveSession } from '../types/index.js';
 
 export interface StartTimerOptions {
@@ -77,6 +78,17 @@ export function startTimer(options: StartTimerOptions = {}): TimeEntry {
     }
   }
 
+  // Trigger webhooks asynchronously (non-blocking)
+  triggerWebhooks('timer.start', {
+    entry_id: entry.id,
+    category: options.category || null,
+    project: options.project || null,
+    start_time: entry.start_time,
+    tags: options.tags || null,
+  }).catch(() => {
+    // Silently ignore webhook errors - they're logged internally
+  });
+
   return entry;
 }
 
@@ -92,6 +104,18 @@ export function stopTimer(): TimeEntry | null {
       entityId: entry.id,
       oldData: { ...entry, end_time: null, duration_seconds: null },
       newData: entry,
+    });
+
+    // Trigger webhooks asynchronously (non-blocking)
+    triggerWebhooks('timer.stop', {
+      entry_id: entry.id,
+      category_id: entry.category_id,
+      project_id: entry.project_id,
+      start_time: entry.start_time,
+      end_time: entry.end_time,
+      duration_seconds: entry.duration_seconds,
+    }).catch(() => {
+      // Silently ignore webhook errors - they're logged internally
     });
   }
 

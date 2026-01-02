@@ -11,7 +11,7 @@ interface NoteOptions {
 }
 
 // Helper function to append note to existing notes
-function appendNote(existing: string | undefined, note: string): string {
+function appendNote(existing: string | null | undefined, note: string): string {
   return existing ? `${existing}\n${note}` : note;
 }
 

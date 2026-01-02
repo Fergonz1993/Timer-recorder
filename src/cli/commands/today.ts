@@ -128,7 +128,7 @@ export function todayCommand(options?: TodayOptions): void {
   );
 
   // Add active timer to summary only if it matches filters
-  if (shouldIncludeActive) {
+  if (shouldIncludeActive && active) {
     const categoryName = active.category_name || 'uncategorized';
     if (summaryMap.has(categoryName)) {
       const existing = summaryMap.get(categoryName)!;
