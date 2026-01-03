@@ -601,9 +601,14 @@ npm run dev
 # Run tests
 npm test
 
+# Run tests with coverage
+npm run test:coverage
+
 # Run the CLI
 node dist/bin/tt.js <command>
 ```
+
+Coverage reports are generated in the `coverage/` directory. This directory is excluded from version control. In CI (GitHub Actions), coverage reports are automatically uploaded to Codecov and available as build artifacts.
 
 ## Tech Stack
 

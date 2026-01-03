@@ -22,6 +22,9 @@ npm-debug.log*
 .env
 .env.local
 
+# Test coverage
+coverage/
+
 # Session files (Claude conversation logs)
 *.txt
 
