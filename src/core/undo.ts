@@ -61,13 +61,14 @@ export function pushUndoAction(action: {
     action.newData ? JSON.stringify(action.newData) : null
   );
 
-  // Keep only last 50 undo actions
-  db.prepare(`
-    DELETE FROM undo_stack
-    WHERE id NOT IN (
-      SELECT id FROM undo_stack ORDER BY id DESC LIMIT 50
-    )
-  `).run();
+  // Keep only last 50 undo actions - use efficient cutoff query
+  const cutoffResult = db.prepare(`
+    SELECT id FROM undo_stack ORDER BY id DESC LIMIT 1 OFFSET 49
+  `).get() as { id: number } | undefined;
+
+  if (cutoffResult) {
+    db.prepare('DELETE FROM undo_stack WHERE id < ?').run(cutoffResult.id);
+  }
 }
 
 // Get the last undo action
@@ -89,7 +90,8 @@ export function popAndExecuteUndo(): { success: boolean; message: string } {
     return { success: false, message: 'Nothing to undo' };
   }
 
-  try {
+  // Wrap the entire undo operation in a transaction
+  const undoTransaction = db.transaction(() => {
     switch (action.action_type) {
       case 'create_entry': {
         // Undo create by deleting the entry
@@ -189,7 +191,11 @@ export function popAndExecuteUndo(): { success: boolean; message: string } {
 
     // Remove the action from the stack
     db.prepare('DELETE FROM undo_stack WHERE id = ?').run(action.id);
+  });
 
+  try {
+    undoTransaction();
+    
     // Generate message
     let message = 'Undid ';
     switch (action.action_type) {

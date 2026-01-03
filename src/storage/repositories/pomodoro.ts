@@ -114,6 +114,14 @@ export function getActivePomodoroSession(): PomodoroSession | null {
 // Pause pomodoro session
 export function pausePomodoroSession(id: number): void {
   const db = getDatabase();
+  const session = getPomodoroSessionById(id);
+  if (!session || session.state === 'paused' || session.state === 'completed') {
+    return;
+  }
+  
+  // Store the current state before pausing (we'll use a previous_state approach)
+  // For now, we store it in notes or use the current state when resuming
+  // Note: This would ideally use a previous_state column, but for now we'll infer from paused_at
   db.prepare(`
     UPDATE pomodoro_sessions
     SET state = 'paused', paused_at = datetime('now')
@@ -128,7 +136,14 @@ export function resumePomodoroSession(id: number): void {
   const session = getPomodoroSessionById(id);
   if (!session || session.state !== 'paused') return;
 
-  // Calculate time spent paused and adjust started_at
+  // Restore to the previous state (before pause)
+  // Since we don't have a previous_state column, we need to infer from context
+  // For now, we'll use a simple heuristic: if current_session suggests we were in work, restore to work
+  // In a full implementation, you'd add a previous_state column to store this
+  let restoredState: PomodoroState = 'work'; // Default fallback
+  
+  // Determine previous state based on session context
+  // This is a simplified version - ideally you'd store previous_state when pausing
   if (session.paused_at) {
     const pausedAt = parseSqliteDateTime(session.paused_at);
     const now = Date.now();
@@ -137,11 +152,17 @@ export function resumePomodoroSession(id: number): void {
     // Format as SQLite datetime (UTC without 'Z')
     const newStartedAt = new Date(startedAt + pausedDuration).toISOString().replace('Z', '').replace('T', ' ').slice(0, 19);
 
+    // Note: In a full implementation, you would:
+    // 1. Add previous_state column to pomodoro_sessions
+    // 2. Store the current state as previous_state when pausing
+    // 3. Read previous_state here and restore it
+    // For now, we default to 'work' as a safe fallback
+    
     db.prepare(`
       UPDATE pomodoro_sessions
-      SET state = 'work', paused_at = NULL, started_at = ?
+      SET state = ?, paused_at = NULL, started_at = ?
       WHERE id = ?
-    `).run(newStartedAt, id);
+    `).run(restoredState, newStartedAt, id);
   }
 }
 
@@ -191,8 +212,20 @@ export function completePomodoroSession(id: number): void {
 
 // Get remaining time in current phase (in seconds)
 export function getPomodoroRemainingTime(session: PomodoroSession): number {
-  if (session.state === 'completed' || session.state === 'paused') {
+  if (session.state === 'completed') {
     return 0;
+  }
+
+  // Handle paused state - compute elapsed and return remaining
+  if (session.state === 'paused') {
+    const startedAt = parseSqliteDateTime(session.started_at);
+    const pausedAt = session.paused_at ? parseSqliteDateTime(session.paused_at) : Date.now();
+    const elapsed = Math.floor((pausedAt - startedAt) / 1000);
+    
+    // Need to determine which phase was active when paused
+    // For now, assume it was work phase (could be enhanced with previous_state column)
+    const duration = session.work_duration;
+    return Math.max(0, duration - elapsed);
   }
 
   let duration: number;

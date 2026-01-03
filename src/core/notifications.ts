@@ -180,17 +180,32 @@ export function notifyIdle(idleMinutes: number): void {
 
 // Timer notifications
 export function notifyTimerStarted(category: string): void {
+  const settings = getNotificationSettings();
+  
+  // Check if timer notifications are enabled (use a timer-specific setting if available)
+  // For now, check the general notification enabled setting
+  if (!settings.enabled) {
+    return;
+  }
+
   sendNotification({
     title: '▶️ Timer Started',
     message: `Tracking time for ${category}`,
-    sound: false,
+    sound: settings.sound, // Respect sound setting
   });
 }
 
 export function notifyTimerStopped(category: string, duration: string): void {
+  const settings = getNotificationSettings();
+  
+  // Check if timer notifications are enabled
+  if (!settings.enabled) {
+    return;
+  }
+
   sendNotification({
     title: '⏹️ Timer Stopped',
     message: `${category}: ${duration}`,
-    sound: false,
+    sound: settings.sound, // Respect sound setting
   });
 }

@@ -1,0 +1,261 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #1a1a2e;
+  color: #eee;
+  font-size: 13px;
+  user-select: none;
+  overflow: hidden;
+}
+
+.container {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* Timer Status */
+.timer-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.timer-status.active {
+  background: rgba(76, 175, 80, 0.15);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.status-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.timer-status.active .status-icon {
+  background: #4CAF50;
+}
+
+.pulse {
+  display: none;
+}
+
+.timer-status.active .pulse {
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #4CAF50;
+  animation: pulse 2s ease-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.timer-info {
+  flex: 1;
+}
+
+.category-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.timer-duration {
+  font-size: 24px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #4CAF50;
+}
+
+.timer-status:not(.active) .timer-duration {
+  color: #666;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.btn-start {
+  background: #4CAF50;
+  color: white;
+}
+
+.btn-start:hover {
+  background: #43A047;
+}
+
+.btn-stop {
+  background: #f44336;
+  color: white;
+}
+
+.btn-stop:hover {
+  background: #e53935;
+}
+
+/* Category Selector */
+.category-selector {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.selector-header {
+  padding: 8px 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.category-list {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.category-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.1s;
+}
+
+.category-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.category-color {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.category-name-item {
+  font-size: 13px;
+}
+
+/* Summary */
+.summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+}
+
+.summary-label {
+  color: #888;
+  font-size: 12px;
+}
+
+.summary-value {
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding-top: 4px;
+}
+
+.hint {
+  font-size: 11px;
+  color: #555;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}

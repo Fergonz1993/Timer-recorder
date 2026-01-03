@@ -1,7 +1,9 @@
-import { writeFileSync } from 'fs';
+import { writeFileSync, existsSync, readFileSync } from 'fs';
 import chalk from 'chalk';
 import { getDatabase } from '../../storage/database.js';
 import { success, error, info, formatDuration } from '../utils/format.js';
+import * as path from 'path';
+import * as os from 'os';
 
 interface TeamEntry {
   date: string;
@@ -330,7 +332,7 @@ export function teamExportCommand(options: {
   detailed?: boolean;
 }): void {
   let data: TeamExportData | null;
-  
+
   try {
     data = generateTeamExportData({
       from: options.from,
@@ -385,4 +387,356 @@ export function teamExportCommand(options: {
     }
     console.log();
   }
+}
+
+// ============================================================================
+// Team Member Management
+// ============================================================================
+
+interface TeamMember {
+  id: string;
+  name: string;
+  email?: string;
+  role: 'admin' | 'member';
+  joinedAt: string;
+  lastActive?: string;
+}
+
+interface TeamConfig {
+  name: string;
+  members: TeamMember[];
+  syncPath?: string;
+  createdAt: string;
+}
+
+function getTeamConfigPath(): string {
+  const db = getDatabase();
+  const configDir = path.dirname(db.name);
+  return path.join(configDir, 'team-config.json');
+}
+
+function loadTeamConfig(): TeamConfig | null {
+  const configPath = getTeamConfigPath();
+  if (!existsSync(configPath)) {
+    return null;
+  }
+  try {
+    const content = readFileSync(configPath, 'utf-8');
+    return JSON.parse(content) as TeamConfig;
+  } catch {
+    return null;
+  }
+}
+
+function saveTeamConfig(config: TeamConfig): void {
+  const configPath = getTeamConfigPath();
+  writeFileSync(configPath, JSON.stringify(config, null, 2));
+}
+
+// Initialize team
+export function teamInitCommand(name: string, options: { syncPath?: string }): void {
+  console.log();
+
+  const existing = loadTeamConfig();
+  if (existing) {
+    error(`Team "${existing.name}" already exists. Use 'tt team reset' to start fresh.`);
+    console.log();
+    return;
+  }
+
+  const config: TeamConfig = {
+    name,
+    members: [{
+      id: generateMemberId(),
+      name: os.userInfo().username || 'Admin',
+      role: 'admin',
+      joinedAt: new Date().toISOString(),
+    }],
+    syncPath: options.syncPath,
+    createdAt: new Date().toISOString(),
+  };
+
+  saveTeamConfig(config);
+
+  success(`Team "${name}" created!`);
+  console.log();
+  console.log(`  You are the admin.`);
+  if (options.syncPath) {
+    console.log(`  Sync path: ${options.syncPath}`);
+  }
+  console.log();
+  console.log(`  Add members with: ${chalk.cyan('tt team add <name> --email <email>')}`);
+  console.log();
+}
+
+// Add team member
+export function teamAddCommand(name: string, options: { email?: string; role?: string }): void {
+  console.log();
+
+  const config = loadTeamConfig();
+  if (!config) {
+    error('No team configured. Run: tt team init <name>');
+    console.log();
+    return;
+  }
+
+  const member: TeamMember = {
+    id: generateMemberId(),
+    name,
+    email: options.email,
+    role: options.role === 'admin' ? 'admin' : 'member',
+    joinedAt: new Date().toISOString(),
+  };
+
+  config.members.push(member);
+  saveTeamConfig(config);
+
+  success(`Added ${name} to team "${config.name}"`);
+  console.log();
+}
+
+// Remove team member
+export function teamRemoveCommand(nameOrId: string): void {
+  console.log();
+
+  const config = loadTeamConfig();
+  if (!config) {
+    error('No team configured.');
+    console.log();
+    return;
+  }
+
+  const memberIndex = config.members.findIndex(
+    m => m.name.toLowerCase() === nameOrId.toLowerCase() || m.id === nameOrId
+  );
+
+  if (memberIndex === -1) {
+    error(`Member "${nameOrId}" not found`);
+    console.log();
+    return;
+  }
+
+  const removed = config.members.splice(memberIndex, 1)[0];
+  saveTeamConfig(config);
+
+  success(`Removed ${removed.name} from team`);
+  console.log();
+}
+
+// List team members
+export function teamListCommand(): void {
+  console.log();
+
+  const config = loadTeamConfig();
+  if (!config) {
+    info('No team configured.');
+    console.log();
+    console.log(`  Create a team with: ${chalk.cyan('tt team init <name>')}`);
+    console.log();
+    return;
+  }
+
+  console.log(chalk.bold(`Team: ${config.name}`));
+  console.log(chalk.dim(`Created: ${new Date(config.createdAt).toLocaleDateString()}`));
+  console.log();
+
+  console.log(chalk.bold('Members:'));
+  console.log();
+
+  for (const member of config.members) {
+    const roleIcon = member.role === 'admin' ? chalk.yellow('★') : chalk.dim('●');
+    const emailPart = member.email ? chalk.dim(` <${member.email}>`) : '';
+    console.log(`  ${roleIcon} ${member.name}${emailPart}`);
+    console.log(`    ${chalk.dim(`ID: ${member.id.slice(0, 8)}... | Joined: ${new Date(member.joinedAt).toLocaleDateString()}`)}`);
+  }
+
+  console.log();
+}
+
+// Team summary - show aggregate stats
+export function teamSummaryCommand(options: { from?: string; to?: string }): void {
+  console.log();
+
+  const config = loadTeamConfig();
+  if (!config) {
+    info('No team configured.');
+    console.log();
+    return;
+  }
+
+  console.log(chalk.bold(`Team Summary: ${config.name}`));
+  console.log();
+
+  // Get data for this user
+  const data = generateTeamExportData({
+    from: options.from,
+    to: options.to,
+    detailed: false,
+  });
+
+  if (!data) {
+    info('No time entries found in the specified period');
+    console.log();
+    return;
+  }
+
+  console.log(`  ${chalk.bold('Period:')}        ${data.period}`);
+  console.log(`  ${chalk.bold('Total Hours:')}   ${chalk.cyan(data.totalHours.toFixed(2))}`);
+  console.log(`  ${chalk.bold('Team Size:')}     ${config.members.length} members`);
+  console.log();
+
+  // Top categories
+  console.log(chalk.bold('Top Categories:'));
+  const sortedCats = Object.entries(data.byCategory).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  for (const [cat, hours] of sortedCats) {
+    const bar = getBar(hours, data.totalHours);
+    console.log(`  ${cat.padEnd(20)} ${bar} ${hours.toFixed(1)}h`);
+  }
+  console.log();
+
+  // Top projects
+  console.log(chalk.bold('Top Projects:'));
+  const sortedProjects = Object.entries(data.byProject).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  for (const [proj, hours] of sortedProjects) {
+    const bar = getBar(hours, data.totalHours);
+    console.log(`  ${proj.padEnd(20)} ${bar} ${hours.toFixed(1)}h`);
+  }
+  console.log();
+}
+
+// Team comparison - compare periods
+export function teamCompareCommand(options: { periods?: string }): void {
+  console.log();
+
+  console.log(chalk.bold('Team Time Comparison'));
+  console.log();
+
+  const numPeriods = parseInt(options.periods || '4', 10);
+
+  // Get weekly data for the last N weeks
+  const weeks: Array<{ label: string; hours: number }> = [];
+  const now = new Date();
+
+  for (let i = 0; i < numPeriods; i++) {
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - (7 * i) - now.getDay() + 1);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+
+    const from = weekStart.toISOString().split('T')[0];
+    const to = weekEnd.toISOString().split('T')[0];
+
+    const data = generateTeamExportData({ from, to, detailed: false });
+    const label = i === 0 ? 'This Week' : i === 1 ? 'Last Week' : `${i} weeks ago`;
+
+    weeks.push({
+      label,
+      hours: data?.totalHours || 0,
+    });
+  }
+
+  // Find max for scaling
+  const maxHours = Math.max(...weeks.map(w => w.hours), 1);
+
+  // Display
+  for (const week of weeks.reverse()) {
+    const bar = getBar(week.hours, maxHours, 30);
+    console.log(`  ${week.label.padEnd(15)} ${bar} ${week.hours.toFixed(1)}h`);
+  }
+
+  // Calculate trend
+  if (weeks.length >= 2) {
+    const recent = weeks[weeks.length - 1].hours;
+    const previous = weeks[weeks.length - 2].hours;
+    const change = previous > 0 ? ((recent - previous) / previous) * 100 : 0;
+
+    console.log();
+    if (change > 10) {
+      console.log(`  ${chalk.green('↑')} ${chalk.green(`${change.toFixed(0)}% increase`)} from last week`);
+    } else if (change < -10) {
+      console.log(`  ${chalk.red('↓')} ${chalk.red(`${Math.abs(change).toFixed(0)}% decrease`)} from last week`);
+    } else {
+      console.log(`  ${chalk.dim('→')} ${chalk.dim('Similar to last week')}`);
+    }
+  }
+
+  console.log();
+}
+
+// Team leaderboard (simulated for single user - for actual teams via sync)
+export function teamLeaderboardCommand(options: { metric?: string }): void {
+  console.log();
+
+  const config = loadTeamConfig();
+  if (!config) {
+    info('No team configured.');
+    console.log();
+    return;
+  }
+
+  console.log(chalk.bold('Team Leaderboard'));
+  console.log(chalk.dim('This week'));
+  console.log();
+
+  // For now, just show current user's stats
+  // In a full implementation, this would aggregate from sync files
+
+  const weekRange = getCurrentWeekRange();
+  const data = generateTeamExportData({
+    from: weekRange.from,
+    to: weekRange.to,
+    detailed: false,
+  });
+
+  const username = os.userInfo().username || 'You';
+  const hours = data?.totalHours || 0;
+  const categories = data ? Object.keys(data.byCategory).length : 0;
+
+  console.log(`  ${chalk.yellow('🥇')} ${username.padEnd(20)} ${hours.toFixed(1)}h  ${categories} categories`);
+  console.log();
+
+  if (config.members.length > 1) {
+    console.log(chalk.dim('  Other members will appear here when sync is configured.'));
+    console.log();
+    console.log(`  Set up sync: ${chalk.cyan('tt sync enable --path <folder>')}`);
+    console.log();
+  }
+}
+
+// Team reset
+export function teamResetCommand(options: { confirm?: boolean }): void {
+  console.log();
+
+  const config = loadTeamConfig();
+  if (!config) {
+    info('No team configured.');
+    console.log();
+    return;
+  }
+
+  if (!options.confirm) {
+    error(`This will delete team "${config.name}" and all member data.`);
+    console.log();
+    console.log(`  Run with ${chalk.cyan('--confirm')} to proceed.`);
+    console.log();
+    return;
+  }
+
+  const configPath = getTeamConfigPath();
+  writeFileSync(configPath, '');
+  require('fs').unlinkSync(configPath);
+
+  success(`Team "${config.name}" has been deleted.`);
+  console.log();
+}
+
+// Helper functions
+function generateMemberId(): string {
+  return 'tm-' + Math.random().toString(36).substring(2, 15);
+}
+
+function getBar(value: number, max: number, width: number = 15): string {
+  const filled = Math.round((value / max) * width);
+  const empty = width - filled;
+  return chalk.cyan('█'.repeat(filled)) + chalk.dim('░'.repeat(empty));
 }

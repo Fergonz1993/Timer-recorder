@@ -121,7 +121,17 @@ import {
   invoiceDeleteCommand,
 } from './commands/invoice.js';
 import { scoreCommand, scoreTodayCommand, scoreWeekCommand } from './commands/score.js';
-import { teamExportCommand } from './commands/team.js';
+import {
+  teamExportCommand,
+  teamInitCommand,
+  teamAddCommand,
+  teamRemoveCommand,
+  teamListCommand,
+  teamSummaryCommand,
+  teamCompareCommand,
+  teamLeaderboardCommand,
+  teamResetCommand,
+} from './commands/team.js';
 import {
   webhooksListCommand,
   webhooksAddCommand,
@@ -141,6 +151,42 @@ import {
   privacyRestoreCommand,
   privacyDashboardCommand,
 } from './commands/privacy.js';
+import {
+  githubConfigCommand,
+  githubIssuesCommand,
+  githubLogCommand,
+  jiraConfigCommand,
+  jiraIssuesCommand,
+  jiraLogCommand,
+  integrateStatusCommand,
+} from './commands/integrate.js';
+import { setupWizard, quickSetupCommand } from './commands/setup.js';
+import {
+  syncStatusCommand,
+  syncEnableCommand,
+  syncDisableCommand,
+  syncNowCommand,
+  syncConfigCommand,
+} from './commands/sync.js';
+import {
+  predictTodayCommand,
+  predictWeekCommand,
+  insightsCommand,
+  suggestCommand,
+  estimateCommand,
+  focusRecsCommand,
+  patternsCommand,
+} from './commands/predict.js';
+import {
+  encryptionStatusCommand,
+  encryptionInitCommand,
+  encryptionUnlockCommand,
+  encryptionLockCommand,
+  encryptionChangePasswordCommand,
+  encryptionDisableCommand,
+  encryptionConfigCommand,
+  encryptDataCommand,
+} from './commands/encryption.js';
 
 export function createCLI(): Command {
   const program = new Command();
@@ -220,6 +266,20 @@ export function createCLI(): Command {
     .description('Show current tracking status')
     .action(() => {
       statusCommand();
+    });
+
+  // Setup wizard
+  program
+    .command('setup')
+    .description('Interactive setup wizard for new users')
+    .option('-f, --force', 'Run setup even if already completed')
+    .option('-q, --quick', 'Quick non-interactive setup')
+    .action((options) => {
+      if (options.quick) {
+        quickSetupCommand();
+      } else {
+        setupWizard(options);
+      }
     });
 
   // Add note to timer
@@ -1177,10 +1237,66 @@ export function createCLI(): Command {
     scoreCommand();
   });
 
-  // Team export command
+  // Team commands
   const team = program
     .command('team')
     .description('Team collaboration features');
+
+  team
+    .command('init <name>')
+    .description('Initialize a new team')
+    .option('-p, --sync-path <path>', 'Shared folder path for sync')
+    .action((name, options) => {
+      teamInitCommand(name, options);
+    });
+
+  team
+    .command('list')
+    .description('List team members')
+    .action(() => {
+      teamListCommand();
+    });
+
+  team
+    .command('add <name>')
+    .description('Add a team member')
+    .option('-e, --email <email>', 'Member email')
+    .option('-r, --role <role>', 'Role (admin or member)', 'member')
+    .action((name, options) => {
+      teamAddCommand(name, options);
+    });
+
+  team
+    .command('remove <nameOrId>')
+    .description('Remove a team member')
+    .action((nameOrId) => {
+      teamRemoveCommand(nameOrId);
+    });
+
+  team
+    .command('summary')
+    .description('Show team summary')
+    .option('--from <date>', 'Start date (YYYY-MM-DD)')
+    .option('--to <date>', 'End date (YYYY-MM-DD)')
+    .action((options) => {
+      teamSummaryCommand(options);
+    });
+
+  team
+    .command('compare')
+    .description('Compare team performance over periods')
+    .option('-p, --periods <number>', 'Number of periods to compare', '4')
+    .action((options) => {
+      teamCompareCommand(options);
+    });
+
+  team
+    .command('leaderboard')
+    .description('Show team leaderboard')
+    .option('-m, --metric <metric>', 'Metric to rank by (hours, productive)')
+    .action((options) => {
+      teamLeaderboardCommand(options);
+    });
 
   team
     .command('export')
@@ -1194,14 +1310,17 @@ export function createCLI(): Command {
       teamExportCommand(options);
     });
 
-  // Default: show export help
+  team
+    .command('reset')
+    .description('Delete team configuration')
+    .option('--confirm', 'Confirm deletion')
+    .action((options) => {
+      teamResetCommand(options);
+    });
+
+  // Default: show team list
   team.action(() => {
-    console.log();
-    console.log(chalk.bold('Team Commands'));
-    console.log();
-    console.log('  tt team export            Export time data for team sharing');
-    console.log('  tt team export --help     Show export options');
-    console.log();
+    teamListCommand();
   });
 
   // Webhook commands
@@ -1244,6 +1363,101 @@ export function createCLI(): Command {
   // Default: show webhook list
   webhook.action(() => {
     webhooksListCommand();
+  });
+
+  // Integration commands (GitHub, Jira)
+  const integrate = program
+    .command('integrate')
+    .description('External integrations (GitHub, Jira)');
+
+  integrate
+    .command('status')
+    .description('Show integration status')
+    .action(() => {
+      integrateStatusCommand();
+    });
+
+  // GitHub subcommands
+  const github = integrate
+    .command('github')
+    .description('GitHub integration');
+
+  github
+    .command('config')
+    .description('Configure GitHub integration')
+    .option('-t, --token <token>', 'Personal access token')
+    .option('-o, --owner <owner>', 'Repository owner')
+    .option('-r, --repo <repo>', 'Repository name')
+    .option('--clear', 'Clear configuration')
+    .action((options) => {
+      githubConfigCommand(options);
+    });
+
+  github
+    .command('issues')
+    .description('List GitHub issues')
+    .option('-s, --state <state>', 'Issue state (open, closed, all)', 'open')
+    .option('-l, --labels <labels>', 'Filter by labels')
+    .action((options) => {
+      githubIssuesCommand(options);
+    });
+
+  github
+    .command('log <issue>')
+    .description('Log time to a GitHub issue')
+    .option('-h, --hours <hours>', 'Hours to log')
+    .option('-m, --message <message>', 'Comment message')
+    .action((issue, options) => {
+      githubLogCommand(issue, options);
+    });
+
+  // Default: show github config
+  github.action(() => {
+    githubConfigCommand({});
+  });
+
+  // Jira subcommands
+  const jira = integrate
+    .command('jira')
+    .description('Jira integration');
+
+  jira
+    .command('config')
+    .description('Configure Jira integration')
+    .option('-d, --domain <domain>', 'Jira domain (e.g., company.atlassian.net)')
+    .option('-e, --email <email>', 'Your email')
+    .option('-t, --token <token>', 'API token')
+    .option('--clear', 'Clear configuration')
+    .action((options) => {
+      jiraConfigCommand(options);
+    });
+
+  jira
+    .command('issues')
+    .description('List Jira issues')
+    .option('-j, --jql <jql>', 'JQL query')
+    .option('-m, --mine', 'Show my issues only')
+    .action((options) => {
+      jiraIssuesCommand(options);
+    });
+
+  jira
+    .command('log <issue>')
+    .description('Log time to a Jira issue')
+    .option('-h, --hours <hours>', 'Hours to log')
+    .option('-m, --message <message>', 'Work description')
+    .action((issue, options) => {
+      jiraLogCommand(issue, options);
+    });
+
+  // Default: show jira config
+  jira.action(() => {
+    jiraConfigCommand({});
+  });
+
+  // Default: show integration status
+  integrate.action(() => {
+    integrateStatusCommand();
   });
 
   // Privacy commands
@@ -1335,6 +1549,191 @@ export function createCLI(): Command {
   // Default: show privacy status
   privacy.action(() => {
     privacyStatusCommand();
+  });
+
+  // Sync commands (multi-device synchronization)
+  const sync = program
+    .command('sync')
+    .description('Multi-device synchronization');
+
+  sync
+    .command('status')
+    .description('Show sync status')
+    .action(() => {
+      syncStatusCommand();
+    });
+
+  sync
+    .command('enable')
+    .description('Enable synchronization')
+    .option('-p, --path <path>', 'Sync folder path (iCloud, Dropbox, etc.)')
+    .option('-s, --server <url>', 'Sync server URL')
+    .option('-k, --api-key <key>', 'API key for server sync')
+    .option('-i, --interval <minutes>', 'Sync interval in minutes')
+    .option('-c, --conflict <mode>', 'Conflict resolution (local, remote, newest)')
+    .action((options) => {
+      syncEnableCommand(options);
+    });
+
+  sync
+    .command('disable')
+    .description('Disable synchronization')
+    .action(() => {
+      syncDisableCommand();
+    });
+
+  sync
+    .command('now')
+    .description('Sync immediately')
+    .action(async () => {
+      await syncNowCommand();
+    });
+
+  sync
+    .command('config')
+    .description('Configure sync settings')
+    .option('-i, --interval <minutes>', 'Sync interval in minutes')
+    .option('-c, --conflict <mode>', 'Conflict resolution (local, remote, newest)')
+    .option('-a, --auto-sync <bool>', 'Enable/disable auto-sync')
+    .action((options) => {
+      syncConfigCommand(options);
+    });
+
+  // Default: show sync status
+  sync.action(() => {
+    syncStatusCommand();
+  });
+
+  // ML Predictions commands
+  const predict = program
+    .command('predict')
+    .alias('ml')
+    .description('ML-powered predictions and insights');
+
+  predict
+    .command('today')
+    .description('Show predictions for today')
+    .action(() => {
+      predictTodayCommand();
+    });
+
+  predict
+    .command('week')
+    .description('Show predictions for the week')
+    .action(() => {
+      predictWeekCommand();
+    });
+
+  predict
+    .command('insights')
+    .description('Get productivity insights')
+    .action(() => {
+      insightsCommand();
+    });
+
+  predict
+    .command('suggest')
+    .description('Get a suggestion for what to work on')
+    .action(() => {
+      suggestCommand();
+    });
+
+  predict
+    .command('estimate <category>')
+    .description('Estimate time needed for a category')
+    .option('-t, --target <duration>', 'Target duration (e.g., "2h", "90m")')
+    .action((category, options) => {
+      estimateCommand(category, options);
+    });
+
+  predict
+    .command('focus')
+    .description('Get focus time recommendations')
+    .action(() => {
+      focusRecsCommand();
+    });
+
+  predict
+    .command('patterns')
+    .description('Show work patterns heatmap')
+    .action(() => {
+      patternsCommand();
+    });
+
+  // Default: show today's predictions
+  predict.action(() => {
+    predictTodayCommand();
+  });
+
+  // Encryption commands (E2E encryption for enterprise)
+  const encrypt = program
+    .command('encrypt')
+    .alias('encryption')
+    .description('End-to-end encryption for enterprise data security');
+
+  encrypt
+    .command('status')
+    .description('Show encryption status')
+    .action(() => {
+      encryptionStatusCommand();
+    });
+
+  encrypt
+    .command('init')
+    .description('Initialize encryption with a password')
+    .action(async () => {
+      await encryptionInitCommand();
+    });
+
+  encrypt
+    .command('unlock')
+    .description('Unlock encryption with your password')
+    .action(async () => {
+      await encryptionUnlockCommand();
+    });
+
+  encrypt
+    .command('lock')
+    .description('Lock encryption (clear key from memory)')
+    .action(() => {
+      encryptionLockCommand();
+    });
+
+  encrypt
+    .command('change-password')
+    .description('Change encryption password')
+    .action(async () => {
+      await encryptionChangePasswordCommand();
+    });
+
+  encrypt
+    .command('disable')
+    .description('Disable encryption and decrypt all data')
+    .option('--confirm', 'Confirm disabling encryption')
+    .action(async (options) => {
+      await encryptionDisableCommand(options);
+    });
+
+  encrypt
+    .command('config')
+    .description('Configure what to encrypt')
+    .option('--notes <bool>', 'Encrypt notes (true/false)')
+    .option('--projects <bool>', 'Encrypt project names (true/false)')
+    .option('--sync <bool>', 'Encrypt sync data (true/false)')
+    .action((options) => {
+      encryptionConfigCommand(options);
+    });
+
+  encrypt
+    .command('encrypt-data')
+    .description('Encrypt existing unencrypted data')
+    .action(async () => {
+      await encryptDataCommand();
+    });
+
+  // Default: show encryption status
+  encrypt.action(() => {
+    encryptionStatusCommand();
   });
 
   // Default action: show status

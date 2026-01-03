@@ -1,0 +1,39 @@
+{
+  "name": "timer-record-menubar",
+  "version": "1.0.0",
+  "description": "Menubar widget for Timer Record",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --mac",
+    "dev": "NODE_ENV=development electron ."
+  },
+  "author": "Timer Record",
+  "license": "MIT",
+  "dependencies": {
+    "menubar": "^9.4.0",
+    "better-sqlite3": "^9.4.3"
+  },
+  "devDependencies": {
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1",
+    "electron-rebuild": "^3.2.9"
+  },
+  "build": {
+    "appId": "com.timer-record.menubar",
+    "productName": "Timer Record",
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "build/icon.icns",
+      "target": ["dmg", "zip"]
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "styles.css",
+      "renderer.js",
+      "build/**/*"
+    ]
+  }
+}

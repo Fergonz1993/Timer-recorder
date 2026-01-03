@@ -1,0 +1,186 @@
+openapi: 3.0.3
+info:
+  title: Timer Record API
+  description: REST API for Timer Record CLI time tracking tool
+  version: 1.0.0
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  contact:
+    name: Timer Record
+    url: https://github.com/Fergonz1993/Timer-recorder
+
+servers:
+  - url: http://localhost:3000
+    description: Local dashboard server (default port)
+  - url: http://localhost:{port}
+    description: Local dashboard server (custom port)
+    variables:
+      port:
+        default: '3000'
+        description: Custom port number
+
+paths:
+  /api/status:
+    get:
+      summary: Get server status
+      description: Check if the dashboard server is running
+      operationId: getStatus
+      responses:
+        '200':
+          description: Server is running
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerStatus'
+
+  /api/data:
+    get:
+      summary: Get dashboard data
+      description: Returns complete dashboard data including active timer, today's summary, and weekly statistics
+      operationId: getDashboardData
+      responses:
+        '200':
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardData'
+
+  /:
+    get:
+      summary: Get HTML dashboard
+      description: Returns the HTML dashboard page with auto-refresh
+      operationId: getHtmlDashboard
+      responses:
+        '200':
+          description: HTML dashboard page
+          content:
+            text/html:
+              schema:
+                type: string
+
+components:
+  schemas:
+    ServerStatus:
+      type: object
+      required:
+        - status
+        - port
+      properties:
+        status:
+          type: string
+          enum: [running]
+          example: running
+        port:
+          type: integer
+          example: 3000
+
+    DashboardData:
+      type: object
+      required:
+        - activeTimer
+        - today
+        - week
+      properties:
+        activeTimer:
+          $ref: '#/components/schemas/ActiveTimer'
+        today:
+          $ref: '#/components/schemas/TodaySummary'
+        week:
+          $ref: '#/components/schemas/WeekSummary'
+
+    ActiveTimer:
+      type: object
+      required:
+        - running
+        - category
+        - duration
+        - startTime
+      properties:
+        running:
+          type: boolean
+          description: Whether a timer is currently active
+          example: true
+        category:
+          type: string
+          nullable: true
+          description: Category name of the active timer
+          example: programming
+        duration:
+          type: integer
+          description: Duration in seconds since timer started
+          example: 3600
+        startTime:
+          type: string
+          nullable: true
+          description: ISO timestamp when timer started
+          example: "2026-01-03 10:00:00"
+
+    TodaySummary:
+      type: object
+      required:
+        - totalSeconds
+        - categories
+      properties:
+        totalSeconds:
+          type: integer
+          description: Total seconds tracked today
+          example: 14400
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategorySummary'
+
+    CategorySummary:
+      type: object
+      required:
+        - name
+        - seconds
+        - color
+      properties:
+        name:
+          type: string
+          description: Category name
+          example: programming
+        seconds:
+          type: integer
+          description: Total seconds tracked for this category
+          example: 10800
+        color:
+          type: string
+          nullable: true
+          description: Hex color code for the category
+          example: "#61AFEF"
+
+    WeekSummary:
+      type: object
+      required:
+        - days
+      properties:
+        days:
+          type: array
+          items:
+            $ref: '#/components/schemas/DayStats'
+          minItems: 7
+          maxItems: 7
+
+    DayStats:
+      type: object
+      required:
+        - date
+        - seconds
+      properties:
+        date:
+          type: string
+          format: date
+          description: Date in YYYY-MM-DD format
+          example: "2026-01-03"
+        seconds:
+          type: integer
+          description: Total seconds tracked on this day
+          example: 28800
+
+tags:
+  - name: Dashboard
+    description: Dashboard API endpoints

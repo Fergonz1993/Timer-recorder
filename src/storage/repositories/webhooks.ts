@@ -1,5 +1,6 @@
 import { getDatabase } from '../database.js';
 import { loadConfig } from '../../config/settings.js';
+import { getLogger } from '../../utils/logger.js';
 
 export interface Webhook {
   id: number;
@@ -107,8 +108,7 @@ export function getActiveWebhooksForEvent(eventType: string): Webhook[] {
 export function deleteWebhook(id: number): boolean {
   ensureWebhooksTable();
   const db = getDatabase();
-  // Delete logs first
-  db.prepare('DELETE FROM webhook_logs WHERE webhook_id = ?').run(id);
+  // Rely on ON DELETE CASCADE - remove explicit log deletion
   const result = db.prepare('DELETE FROM webhooks WHERE id = ?').run(id);
   return result.changes > 0;
 }
@@ -170,10 +170,18 @@ export async function triggerWebhooks(eventType: string, payload: Record<string,
 
   const webhooks = getActiveWebhooksForEvent(eventType);
 
+  const logger = getLogger();
+  
   for (const webhook of webhooks) {
     // Fire and forget - don't await, to keep it non-blocking
     fireWebhook(webhook, eventType, payload).catch((err) => {
-      console.error(`Webhook ${webhook.name} failed:`, err.message);
+      // Use structured logging
+      const error = err instanceof Error ? err : new Error(String(err));
+      logger.error('Webhook invocation failed', error, {
+        webhookId: webhook.id,
+        webhookName: webhook.name,
+        eventType,
+      });
     });
   }
 }
@@ -216,10 +224,14 @@ async function fireWebhook(
       retries,
     });
 
+    // Only retry on transient failures (5xx) or network errors, not 4xx client errors
     if (!response.ok && retries < maxRetries) {
-      // Retry with exponential backoff
-      await new Promise(r => setTimeout(r, Math.pow(2, retries) * 1000));
-      return fireWebhook(webhook, eventType, payload, retries + 1);
+      if (response.status >= 500 && response.status < 600) {
+        // Server error - retry with exponential backoff
+        await new Promise(r => setTimeout(r, Math.pow(2, retries) * 1000));
+        return fireWebhook(webhook, eventType, payload, retries + 1);
+      }
+      // 4xx errors are permanent - don't retry
     }
   } catch (error) {
     logWebhookCall({
@@ -230,8 +242,8 @@ async function fireWebhook(
       retries,
     });
 
+    // Network/timeout errors - retry
     if (retries < maxRetries) {
-      // Retry with exponential backoff
       await new Promise(r => setTimeout(r, Math.pow(2, retries) * 1000));
       return fireWebhook(webhook, eventType, payload, retries + 1);
     }

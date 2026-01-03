@@ -68,23 +68,20 @@ export function ensureInvoicesTable(): void {
 export function getNextInvoiceNumber(): string {
   ensureInvoicesTable();
   const db = getDatabase();
+  
+  // Compute maximum numeric suffix directly instead of ordering by id
   const result = db.prepare(`
-    SELECT invoice_number FROM invoices
-    ORDER BY id DESC LIMIT 1
-  `).get() as { invoice_number: string } | undefined;
+    SELECT MAX(CAST(SUBSTR(invoice_number, 5) AS INTEGER)) AS maxNum
+    FROM invoices
+    WHERE invoice_number GLOB 'INV-[0-9][0-9][0-9]'
+  `).get() as { maxNum: number | null } | undefined;
 
-  if (!result) {
+  if (!result || result.maxNum === null) {
     return 'INV-001';
   }
 
-  // Extract number from invoice_number (e.g., INV-001 -> 1)
-  const match = result.invoice_number.match(/INV-(\d+)/);
-  if (match) {
-    const nextNum = parseInt(match[1], 10) + 1;
-    return `INV-${nextNum.toString().padStart(3, '0')}`;
-  }
-
-  return `INV-${Date.now()}`;
+  const nextNum = result.maxNum + 1;
+  return `INV-${nextNum.toString().padStart(3, '0')}`;
 }
 
 // Create a new invoice
@@ -111,46 +108,56 @@ export function createInvoice(data: {
   const db = getDatabase();
   const invoiceNumber = getNextInvoiceNumber();
 
-  const result = db.prepare(`
-    INSERT INTO invoices (
-      invoice_number, project_id, client, from_date, to_date,
-      total_hours, hourly_rate, total_amount, notes
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
-    invoiceNumber,
-    data.projectId,
-    data.client,
-    data.fromDate,
-    data.toDate,
-    data.totalHours,
-    data.hourlyRate,
-    data.totalAmount,
-    data.notes || null
-  );
-
-  const invoiceId = result.lastInsertRowid as number;
-
-  // Insert line items
-  const insertLineItem = db.prepare(`
-    INSERT INTO invoice_line_items (
-      invoice_id, entry_id, date, category, hours, rate, amount, notes
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `);
-
-  for (const item of data.lineItems) {
-    insertLineItem.run(
-      invoiceId,
-      item.entryId || null,
-      item.date,
-      item.category,
-      item.hours,
-      item.rate,
-      item.amount,
-      item.notes || null
+  // Wrap invoice creation and line items in a transaction
+  const createInvoiceTransaction = db.transaction(() => {
+    const result = db.prepare(`
+      INSERT INTO invoices (
+        invoice_number, project_id, client, from_date, to_date,
+        total_hours, hourly_rate, total_amount, notes
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      invoiceNumber,
+      data.projectId,
+      data.client,
+      data.fromDate,
+      data.toDate,
+      data.totalHours,
+      data.hourlyRate,
+      data.totalAmount,
+      data.notes || null
     );
-  }
 
-  return getInvoiceById(invoiceId)!;
+    const invoiceId = result.lastInsertRowid as number;
+
+    // Insert line items
+    const insertLineItem = db.prepare(`
+      INSERT INTO invoice_line_items (
+        invoice_id, entry_id, date, category, hours, rate, amount, notes
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    for (const item of data.lineItems) {
+      insertLineItem.run(
+        invoiceId,
+        item.entryId || null,
+        item.date,
+        item.category,
+        item.hours,
+        item.rate,
+        item.amount,
+        item.notes || null
+      );
+    }
+
+    return invoiceId;
+  });
+
+  const invoiceId = createInvoiceTransaction();
+  const invoice = getInvoiceById(invoiceId);
+  if (!invoice) {
+    throw new Error('Failed to retrieve created invoice');
+  }
+  return invoice;
 }
 
 // Get invoice by ID

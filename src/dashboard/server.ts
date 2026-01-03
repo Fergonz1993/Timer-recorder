@@ -2,7 +2,6 @@ import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { getDatabase } from '../storage/database.js';
 import { getTimerStatus, getActiveDuration } from '../core/timer.js';
 import { getTodayTotalSeconds, getCategorySummary } from '../storage/repositories/entries.js';
-import { getAllCategories } from '../storage/repositories/categories.js';
 
 let server: ReturnType<typeof createServer> | null = null;
 let serverPort: number | null = null;
@@ -23,6 +22,19 @@ interface DashboardData {
   };
 }
 
+// HTML escape function to prevent XSS
+function escapeHtml(text: string): string {
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+    '/': '&#x2F;',
+  };
+  return text.replace(/[&<>"'/]/g, (m) => map[m]);
+}
+
 // Get dashboard data
 function getDashboardData(): DashboardData {
   const active = getTimerStatus();
@@ -30,19 +42,36 @@ function getDashboardData(): DashboardData {
   const todayDate = new Date().toISOString().split('T')[0];
   const categorySummary = getCategorySummary(todayDate, todayDate);
 
-  // Get week data
+  // Get week data - use single query instead of N+1 pattern
+  const db = getDatabase();
+  const weekStart = new Date();
+  weekStart.setDate(weekStart.getDate() - 6);
+  weekStart.setHours(0, 0, 0, 0);
+  const weekEnd = new Date();
+  weekEnd.setHours(23, 59, 59, 999);
+  
+  const weekStartStr = weekStart.toISOString().split('T')[0];
+  const weekEndStr = weekEnd.toISOString().split('T')[0];
+  
+  const weekData = db.prepare(`
+    SELECT 
+      date(start_time) as date,
+      COALESCE(SUM(duration_seconds), 0) as total
+    FROM time_entries
+    WHERE date(start_time) >= date(?) AND date(start_time) <= date(?)
+    GROUP BY date(start_time)
+  `).all(weekStartStr, weekEndStr) as { date: string; total: number }[];
+  
+  // Create map for quick lookup
+  const weekDataMap = new Map(weekData.map(d => [d.date, d.total]));
+  
+  // Fill in all 7 days, including missing dates with 0
   const weekDays: { date: string; seconds: number }[] = [];
   for (let i = 6; i >= 0; i--) {
     const date = new Date();
     date.setDate(date.getDate() - i);
     const dateStr = date.toISOString().split('T')[0];
-    const db = getDatabase();
-    const result = db.prepare(`
-      SELECT COALESCE(SUM(duration_seconds), 0) as total
-      FROM time_entries
-      WHERE date(start_time) = ?
-    `).get(dateStr) as { total: number };
-    weekDays.push({ date: dateStr, seconds: result.total });
+    weekDays.push({ date: dateStr, seconds: weekDataMap.get(dateStr) || 0 });
   }
 
   return {
@@ -76,7 +105,7 @@ function generateHTML(data: DashboardData): string {
 
   const categoriesHTML = data.today.categories.map(c => `
     <div class="category-row">
-      <span class="category-name" style="color: ${c.color || '#888'}">${c.name}</span>
+      <span class="category-name" style="color: ${escapeHtml(c.color || '#888')}">${escapeHtml(c.name)}</span>
       <span class="category-time">${formatDuration(c.seconds)}</span>
     </div>
   `).join('');
@@ -203,7 +232,7 @@ function generateHTML(data: DashboardData): string {
         <div class="indicator"></div>
         <div>
           <div class="timer-time">${formatDuration(data.activeTimer.duration)}</div>
-          <div class="timer-category">${data.activeTimer.running ? data.activeTimer.category || 'uncategorized' : 'Not tracking'}</div>
+          <div class="timer-category">${data.activeTimer.running ? escapeHtml(data.activeTimer.category || 'uncategorized') : 'Not tracking'}</div>
         </div>
       </div>
     </div>
@@ -250,18 +279,28 @@ function handleRequest(req: IncomingMessage, res: ServerResponse): void {
 }
 
 // Start the dashboard server
-export function startDashboard(port: number = 3000): { port: number } {
-  if (server) {
-    return { port: serverPort! };
-  }
+export function startDashboard(port: number = 3000): Promise<{ port: number }> {
+  return new Promise((resolve, reject) => {
+    if (server) {
+      resolve({ port: serverPort! });
+      return;
+    }
 
-  server = createServer(handleRequest);
-  // Bind to localhost only for privacy - dashboard is not accessible from network
-  server.listen(port, '127.0.0.1', () => {
-    serverPort = port;
+    server = createServer(handleRequest);
+    
+    // Handle server errors
+    server.once('error', (err) => {
+      server = null;
+      serverPort = null;
+      reject(err);
+    });
+
+    // Bind to localhost only for privacy - dashboard is not accessible from network
+    server.listen(port, '127.0.0.1', () => {
+      serverPort = port;
+      resolve({ port });
+    });
   });
-
-  return { port };
 }
 
 // Stop the dashboard server

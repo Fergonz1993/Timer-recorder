@@ -17,7 +17,10 @@
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src --ext .ts",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run build && npm run test:run"
+    "prepublishOnly": "npm run build && npm run test:run",
+    "menubar": "cd menubar && npm start",
+    "menubar:install": "cd menubar && npm install && npx electron-rebuild",
+    "menubar:build": "cd menubar && npm run build"
   },
   "keywords": [
     "time-tracker",

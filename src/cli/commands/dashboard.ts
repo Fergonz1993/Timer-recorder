@@ -29,16 +29,22 @@ export function dashboardStart(options?: { port?: string }): void {
   }
 
   try {
-    startDashboard(port);
-    console.log();
-    success('Dashboard started');
-    console.log();
-    console.log(`  URL: ${chalk.cyan(`http://localhost:${port}`)}`);
-    console.log();
-    info('Stop with: tt dashboard stop');
-    console.log();
+    // startDashboard now returns a Promise
+    startDashboard(port).then(({ port: actualPort }) => {
+      console.log();
+      success('Dashboard started');
+      console.log();
+      console.log(`  URL: ${chalk.cyan(`http://localhost:${actualPort}`)}`);
+      console.log();
+      info('Stop with: tt dashboard stop');
+      console.log();
+    }).catch((err) => {
+      error(`Failed to start dashboard: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      process.exit(1);
+    });
   } catch (err) {
     error(`Failed to start dashboard: ${(err as Error).message}`);
+    process.exit(1);
   }
 }
 

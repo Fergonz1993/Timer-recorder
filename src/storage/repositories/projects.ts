@@ -62,10 +62,16 @@ export function getDefaultProject(): Project | undefined {
 // Set default project
 export function setDefaultProject(id: number): void {
   const db = getDatabase();
-  // Clear existing default
-  db.prepare('UPDATE projects SET is_default = 0').run();
-  // Set new default
-  db.prepare('UPDATE projects SET is_default = 1 WHERE id = ?').run(id);
+  
+  // Wrap both updates in a transaction for atomicity
+  const setDefaultTransaction = db.transaction(() => {
+    // Clear existing default
+    db.prepare('UPDATE projects SET is_default = 0').run();
+    // Set new default
+    db.prepare('UPDATE projects SET is_default = 1 WHERE id = ?').run(id);
+  });
+  
+  setDefaultTransaction();
 }
 
 // Clear default project
@@ -161,6 +167,7 @@ export function getProjectsWithStats(
       COUNT(e.id) as entry_count
     FROM projects p
     LEFT JOIN time_entries e ON p.id = e.project_id
+    WHERE p.is_active = 1
   `;
 
   const params: string[] = [];
@@ -170,7 +177,6 @@ export function getProjectsWithStats(
   }
 
   sql += `
-    WHERE p.is_active = 1
     GROUP BY p.id
     ORDER BY total_seconds DESC
   `;

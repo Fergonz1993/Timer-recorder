@@ -179,49 +179,254 @@ function generateTextInvoice(data: InvoiceData): string {
   return output;
 }
 
-// Generate HTML invoice
-function generateHtmlInvoice(data: InvoiceData): string {
+// Generate HTML invoice (professional template)
+function generateHtmlInvoice(data: InvoiceData, invoiceNumber?: string): string {
   const entriesHtml = data.entries.map(e => `
     <tr>
       <td>${e.date}</td>
       <td>${e.category}</td>
       <td class="number">${e.hours.toFixed(2)}</td>
+      <td class="number">$${e.rate.toFixed(2)}</td>
       <td class="number">$${e.amount.toFixed(2)}</td>
     </tr>
   `).join('');
+
+  const today = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  const invNumber = invoiceNumber || `INV-${Date.now()}`;
 
   return `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Invoice - ${data.project}</title>
+  <title>Invoice ${invNumber} - ${data.project}</title>
   <style>
-    body { font-family: -apple-system, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
-    h1 { color: #333; border-bottom: 2px solid #61AFEF; padding-bottom: 10px; }
-    .header { margin-bottom: 30px; }
-    .header p { margin: 5px 0; color: #666; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
-    th { background: #f5f5f5; }
-    .number { text-align: right; }
-    .total { font-weight: bold; background: #f0f0f0; }
-    .footer { margin-top: 40px; text-align: center; color: #999; font-size: 12px; }
+    @page { size: A4; margin: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      padding: 40px 50px;
+      max-width: 800px;
+      margin: 0 auto;
+      color: #333;
+      line-height: 1.5;
+      background: #fff;
+    }
+    .invoice-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid #2563eb;
+    }
+    .brand {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1e40af;
+      letter-spacing: -0.5px;
+    }
+    .brand-subtitle {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+    .invoice-meta {
+      text-align: right;
+    }
+    .invoice-number {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1e40af;
+    }
+    .invoice-date {
+      color: #6b7280;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+    .parties {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 40px;
+    }
+    .party {
+      flex: 1;
+    }
+    .party-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #9ca3af;
+      margin-bottom: 8px;
+    }
+    .party-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #111827;
+    }
+    .party-details {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+    .summary-box {
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      color: white;
+      padding: 24px 30px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .summary-item {
+      text-align: center;
+    }
+    .summary-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.8;
+    }
+    .summary-value {
+      font-size: 24px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .summary-total {
+      font-size: 32px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    th {
+      background: #f3f4f6;
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6b7280;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 14px;
+    }
+    tr:hover { background: #fafafa; }
+    .number { text-align: right; font-variant-numeric: tabular-nums; }
+    .total-row {
+      background: #f9fafb;
+      font-weight: 600;
+    }
+    .total-row td {
+      border-top: 2px solid #e5e7eb;
+      border-bottom: none;
+      padding: 16px;
+    }
+    .notes {
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 30px;
+    }
+    .notes-title {
+      font-weight: 600;
+      color: #92400e;
+      margin-bottom: 8px;
+    }
+    .notes-content {
+      font-size: 14px;
+      color: #78350f;
+    }
+    .payment-info {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .payment-title {
+      font-weight: 600;
+      color: #166534;
+      margin-bottom: 12px;
+    }
+    .payment-details {
+      font-size: 14px;
+      color: #15803d;
+    }
+    .footer {
+      text-align: center;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+      color: #9ca3af;
+      font-size: 12px;
+    }
+    .footer a {
+      color: #2563eb;
+      text-decoration: none;
+    }
+    @media print {
+      body { padding: 20px; }
+      .summary-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
   </style>
 </head>
 <body>
-  <h1>Invoice</h1>
-  <div class="header">
-    <p><strong>Project:</strong> ${data.project}</p>
-    ${data.client ? `<p><strong>Client:</strong> ${data.client}</p>` : ''}
-    <p><strong>Period:</strong> ${data.period}</p>
-    <p><strong>Rate:</strong> $${data.rate.toFixed(2)}/hour</p>
+  <div class="invoice-header">
+    <div>
+      <div class="brand">Timer Record</div>
+      <div class="brand-subtitle">Time Tracking & Invoicing</div>
+    </div>
+    <div class="invoice-meta">
+      <div class="invoice-number">${invNumber}</div>
+      <div class="invoice-date">${today}</div>
+    </div>
   </div>
+
+  <div class="parties">
+    <div class="party">
+      <div class="party-label">Bill To</div>
+      <div class="party-name">${data.client || 'Client'}</div>
+      <div class="party-details">${data.project}</div>
+    </div>
+    <div class="party" style="text-align: right;">
+      <div class="party-label">Period</div>
+      <div class="party-name">${data.period}</div>
+      <div class="party-details">Rate: $${data.rate.toFixed(2)}/hour</div>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div class="summary-item">
+      <div class="summary-label">Total Hours</div>
+      <div class="summary-value">${data.totalHours.toFixed(2)}</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Hourly Rate</div>
+      <div class="summary-value">$${data.rate.toFixed(2)}</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Amount Due</div>
+      <div class="summary-value summary-total">$${data.totalAmount.toFixed(2)}</div>
+    </div>
+  </div>
+
   <table>
     <thead>
       <tr>
         <th>Date</th>
-        <th>Category</th>
+        <th>Description</th>
         <th class="number">Hours</th>
+        <th class="number">Rate</th>
         <th class="number">Amount</th>
       </tr>
     </thead>
@@ -229,14 +434,27 @@ function generateHtmlInvoice(data: InvoiceData): string {
       ${entriesHtml}
     </tbody>
     <tfoot>
-      <tr class="total">
-        <td colspan="2">Total</td>
-        <td class="number">${data.totalHours.toFixed(2)}</td>
-        <td class="number">$${data.totalAmount.toFixed(2)}</td>
+      <tr class="total-row">
+        <td colspan="2"><strong>Total</strong></td>
+        <td class="number"><strong>${data.totalHours.toFixed(2)}</strong></td>
+        <td class="number"></td>
+        <td class="number"><strong>$${data.totalAmount.toFixed(2)}</strong></td>
       </tr>
     </tfoot>
   </table>
-  <div class="footer">${getFooterText()}</div>
+
+  <div class="payment-info">
+    <div class="payment-title">Payment Information</div>
+    <div class="payment-details">
+      Please remit payment within 30 days of invoice date.<br>
+      Thank you for your business!
+    </div>
+  </div>
+
+  <div class="footer">
+    ${getFooterText()}<br>
+    <a href="https://github.com/Fergonz1993/Timer-recorder">Timer Record</a> - Professional Time Tracking
+  </div>
 </body>
 </html>`;
 }
@@ -283,6 +501,7 @@ export function invoiceCommand(options: {
   let content: string;
 
   if (format === 'html') {
+    // Generate HTML invoice without invoice number for preview
     content = generateHtmlInvoice(data);
   } else {
     content = generateTextInvoice(data);
@@ -619,7 +838,7 @@ export function invoiceExportCommand(idOrNumber: string, options: {
   let content: string;
   let ext: string;
   if (format === 'html') {
-    content = generateHtmlInvoice(data);
+    content = generateHtmlInvoice(data, invoice.invoice_number);
     ext = 'html';
   } else {
     content = generateTextInvoice(data);
