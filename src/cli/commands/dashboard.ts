@@ -1,9 +1,20 @@
 import chalk from 'chalk';
 import { startDashboard, stopDashboard, isDashboardRunning } from '../../dashboard/server.js';
-import { success, error, info } from '../utils/format.js';
+import { loadConfig } from '../../config/settings.js';
+import { success, error, info, warn } from '../utils/format.js';
 
 // Start dashboard server
 export function dashboardStart(options?: { port?: string }): void {
+  // Check privacy lockdown
+  const config = loadConfig();
+  if (config.privacy_lockdown === true || config.dashboard_enabled === false) {
+    console.log();
+    warn('Dashboard is disabled in privacy lockdown mode');
+    console.log(chalk.dim('  Run "tt privacy lockdown disable" to enable dashboard'));
+    console.log();
+    return;
+  }
+
   const status = isDashboardRunning();
   if (status.running) {
     error('Dashboard already running');
@@ -66,6 +77,16 @@ export function dashboardStatus(): void {
 
 // Open dashboard in browser (just shows URL for now)
 export function dashboardOpen(): void {
+  // Check privacy lockdown
+  const config = loadConfig();
+  if (config.privacy_lockdown === true || config.dashboard_enabled === false) {
+    console.log();
+    warn('Dashboard is disabled in privacy lockdown mode');
+    console.log(chalk.dim('  Run "tt privacy lockdown disable" to enable dashboard'));
+    console.log();
+    return;
+  }
+
   const status = isDashboardRunning();
 
   if (!status.running) {

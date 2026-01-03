@@ -1,4 +1,5 @@
 import { getDatabase } from '../database.js';
+import { loadConfig } from '../../config/settings.js';
 
 export interface Webhook {
   id: number;
@@ -161,6 +162,12 @@ export function getWebhookLogs(webhookId?: number, limit = 50): WebhookLog[] {
 
 // Trigger webhooks for an event (async, non-blocking)
 export async function triggerWebhooks(eventType: string, payload: Record<string, unknown>): Promise<void> {
+  // Check privacy lockdown - don't send any webhooks if enabled
+  const config = loadConfig();
+  if (config.privacy_lockdown === true || config.webhooks_enabled === false) {
+    return; // Silently skip webhooks in privacy lockdown mode
+  }
+
   const webhooks = getActiveWebhooksForEvent(eventType);
 
   for (const webhook of webhooks) {
