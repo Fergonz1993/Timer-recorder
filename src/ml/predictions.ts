@@ -57,7 +57,7 @@ export function getTimePatterns(daysBack: number = 90): TimePattern[] {
       te.id,
       te.start_time,
       te.end_time,
-      te.duration_minutes,
+      te.duration_seconds / 60.0 as duration_minutes,
       c.name as category_name,
       c.is_productive
     FROM time_entries te
@@ -254,9 +254,9 @@ export function getProductivityInsights(): ProductivityInsight[] {
   const hourlyStats = db.prepare(`
     SELECT
       CAST(strftime('%H', start_time) AS INTEGER) as hour,
-      SUM(duration_minutes) as total_minutes,
+      SUM(duration_seconds / 60.0) as total_minutes,
       COUNT(*) as session_count,
-      AVG(duration_minutes) as avg_duration
+      AVG(duration_seconds / 60.0) as avg_duration
     FROM time_entries
     WHERE start_time >= ? AND end_time IS NOT NULL
     GROUP BY hour
@@ -283,7 +283,7 @@ export function getProductivityInsights(): ProductivityInsight[] {
   const dailyStats = db.prepare(`
     SELECT
       CAST(strftime('%w', start_time) AS INTEGER) as day_of_week,
-      SUM(duration_minutes) as total_minutes,
+      SUM(duration_seconds / 60.0) as total_minutes,
       COUNT(DISTINCT date(start_time)) as days_worked
     FROM time_entries
     WHERE start_time >= ? AND end_time IS NOT NULL
@@ -314,8 +314,8 @@ export function getProductivityInsights(): ProductivityInsight[] {
     SELECT
       c.name as category_name,
       c.is_productive,
-      SUM(te.duration_minutes) as total_minutes,
-      AVG(te.duration_minutes) as avg_session
+      SUM(te.duration_seconds / 60.0) as total_minutes,
+      AVG(te.duration_seconds / 60.0) as avg_session
     FROM time_entries te
     JOIN categories c ON te.category_id = c.id
     WHERE te.start_time >= ? AND te.end_time IS NOT NULL
@@ -348,7 +348,7 @@ export function getProductivityInsights(): ProductivityInsight[] {
   const weeklyHours = db.prepare(`
     SELECT
       strftime('%Y-%W', start_time) as week,
-      SUM(duration_minutes) / 60.0 as hours
+      SUM(duration_seconds / 60.0) / 60.0 as hours
     FROM time_entries
     WHERE start_time >= ? AND end_time IS NOT NULL
     GROUP BY week
@@ -453,9 +453,9 @@ export function estimateTimeNeeded(categoryName: string, targetMinutes?: number)
 
   const stats = db.prepare(`
     SELECT
-      AVG(duration_minutes) as avg_duration,
+      AVG(duration_seconds / 60.0) as avg_duration,
       COUNT(*) as session_count,
-      SUM(duration_minutes) as total_minutes
+      SUM(duration_seconds / 60.0) as total_minutes
     FROM time_entries te
     JOIN categories c ON te.category_id = c.id
     WHERE c.name = ? AND te.end_time IS NOT NULL
