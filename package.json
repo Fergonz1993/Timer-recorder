@@ -1,11 +1,12 @@
 {
   "name": "timer-record",
   "version": "1.0.0",
-  "description": "A powerful CLI work time tracker with automatic activity detection, goals, invoicing, and more. Supports macOS and Linux.",
+  "description": "A powerful CLI work time tracker with automatic activity detection, ML predictions, team sync, encryption, GitHub/Jira integration, and invoicing. Supports macOS, Linux, and Windows.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "tt": "./dist/bin/tt.js"
+    "tt": "./dist/bin/tt.js",
+    "timer-record": "./dist/bin/tt.js"
   },
   "scripts": {
     "build": "tsc",
@@ -18,12 +19,14 @@
     "lint": "eslint src --ext .ts",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build && npm run test:run",
+    "postinstall": "node -e \"console.log('\\n⏱️  Timer Record installed! Run: tt setup\\n')\"",
     "menubar": "cd menubar && npm start",
     "menubar:install": "cd menubar && npm install && npx electron-rebuild",
     "menubar:build": "cd menubar && npm run build"
   },
   "keywords": [
     "time-tracker",
+    "time-tracking",
     "cli",
     "productivity",
     "pomodoro",
@@ -32,11 +35,28 @@
     "tracking",
     "timesheet",
     "invoice",
+    "invoicing",
     "goals",
     "macos",
-    "linux"
+    "linux",
+    "windows",
+    "automation",
+    "activity-detection",
+    "team",
+    "sync",
+    "encryption",
+    "github",
+    "jira",
+    "ml",
+    "predictions",
+    "analytics",
+    "reports",
+    "dashboard"
   ],
-  "author": "Fernando Gonzalez",
+  "author": {
+    "name": "Fernando Gonzalez",
+    "url": "https://github.com/Fergonz1993"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -52,7 +72,8 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "docs"
   ],
   "os": [
     "darwin",

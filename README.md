@@ -1,110 +1,87 @@
-# Timer Record
+# ⏱️ Timer Record
 
-A powerful CLI work time tracker with automatic activity detection, goals, invoicing, and more.
+[![npm version](https://img.shields.io/npm/v/timer-record.svg)](https://www.npmjs.com/package/timer-record)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
+[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)]()
 
-**Supports macOS and Linux** | **410 Features** | **100% Test Coverage**
+**A powerful CLI work time tracker with automatic activity detection, ML predictions, team sync, and enterprise encryption.**
 
 ```
 $ tt today
 
 Today's Summary
-Friday, January 2, 2026
+Saturday, January 4, 2026
 
-  Total: 9h 05m
+  Total: 6h 45m
 
 ─────────────────────────────────────────────────────────────────────
  Category               Time         %
 ─────────────────────────────────────────────────────────────────────
- ● programming          5h 05m       55.9%    ███████████░░░░░░░░░
+ ● programming          4h 30m       66.7%    █████████████░░░░░░░
 ─────────────────────────────────────────────────────────────────────
-   debugging            2h 30m       27.5%    ██████░░░░░░░░░░░░░░
+   debugging            1h 15m       18.5%    ████░░░░░░░░░░░░░░░░
 ─────────────────────────────────────────────────────────────────────
-   testing              1h 30m       16.5%    ███░░░░░░░░░░░░░░░░░
+   meetings             1h 00m       14.8%    ███░░░░░░░░░░░░░░░░░
 ─────────────────────────────────────────────────────────────────────
 ```
 
-## Features
+## 🚀 Quick Install
+
+```bash
+# Install globally via npm
+npm install -g timer-record
+
+# Or with yarn
+yarn global add timer-record
+
+# Start tracking immediately
+tt start programming
+```
+
+## ✨ Features
 
 ### Core Tracking
-- **Manual time tracking** - Start/stop timers or log time retroactively
-- **Automatic tracking** - Background daemon detects active apps and categorizes time
-- **Smart categorization** - Auto-detects VS Code, Xcode, browsers, Slack, and more
-- **Projects & Tags** - Organize time by projects with tag filtering
-- **Search** - Full-text search across all entries
+- **Manual & Automatic Tracking** - Start/stop timers or let the daemon detect apps
+- **Smart Categorization** - Auto-detects VS Code, Xcode, browsers, Slack, and 50+ apps
+- **Projects & Tags** - Organize with projects, clients, and custom tags
+- **Pomodoro Timer** - Built-in technique with customizable work/break durations
+- **Goals** - Daily/weekly/monthly targets with progress tracking
+- **Undo/Redo** - Full history with unlimited undo
 
-### Productivity
-- **Pomodoro Timer** - Built-in Pomodoro technique with customizable durations
-- **Goals** - Set daily/weekly/monthly time targets per category
-- **Focus Mode** - Blocks distractions with Do Not Disturb integration
-- **Templates** - Save and reuse common timer configurations
-- **Undo/Redo** - Full history with unlimited undo/redo
+### 📊 Analytics & ML Predictions
+- **Beautiful Reports** - ASCII charts, progress bars, hourly heatmaps
+- **ML Predictions** - Predict work hours, peak productivity, and patterns
+- **Insights** - Burnout detection, weak days, productivity trends
+- **Compare Periods** - Week-over-week, month-over-month analysis
 
-### Reporting & Export
-- **Beautiful reports** - ASCII charts, progress bars, and hourly heatmaps
-- **Export data** - CSV and JSON export for analysis
-- **Team Export** - Export formatted reports (text, JSON, HTML)
-- **Web Dashboard** - Real-time dashboard at localhost:3000
-- **Compare periods** - Compare productivity across different time ranges
-
-### Business
-- **Invoices** - Create, manage, and export invoices from tracked time
+### 💼 Business & Team
+- **Invoicing** - Create professional HTML/PDF invoices from tracked time
+- **Team Dashboard** - Member management, leaderboards, comparisons
+- **GitHub/Jira Integration** - Log time directly to issues
 - **Webhooks** - Trigger external services on timer events
-- **Desktop Notifications** - Get notified on goal completion, Pomodoro breaks
 
-### Platform Support
-- **macOS** - Accessibility API, launchd, native notifications
-- **Linux** - X11/xdotool, systemd, notify-send
-- **Windows** - PowerShell detection, Task Scheduler, toast notifications
-- **Shell Completions** - bash, zsh, fish
+### 🔒 Privacy & Security
+- **100% Local** - All data stored locally in SQLite
+- **E2E Encryption** - AES-256-GCM encryption for enterprise
+- **Privacy Lockdown** - Disable all network features
+- **Encrypted Backups** - Secure your data with password protection
 
-## Installation
+### 🔄 Multi-Device Sync
+- **File-based Sync** - Works with iCloud, Dropbox, Google Drive
+- **Conflict Resolution** - Automatic merge with newest/local/remote strategies
+- **Server Sync** - Self-hosted server option (coming soon)
 
-```bash
-# Clone the repository
-git clone https://github.com/Fergonz1993/Timer-recorder.git
-cd Timer-recorder
+### 🖥️ Desktop Integration
+- **Menubar App** - Electron widget with global shortcuts
+- **Desktop Notifications** - Goals, Pomodoro, idle reminders
+- **Shell Completions** - bash, zsh, fish support
+- **System Service** - Auto-start on login
 
-# Install dependencies
-npm install
-
-# Build
-npm run build
-
-# Link globally (optional)
-npm link
-```
-
-### Linux Requirements
+## 📖 Quick Start
 
 ```bash
-# Install xdotool for window detection
-sudo apt install xdotool        # Ubuntu/Debian
-sudo dnf install xdotool        # Fedora
-sudo pacman -S xdotool          # Arch
-
-# Install notify-send for notifications (usually pre-installed)
-sudo apt install libnotify-bin  # Ubuntu/Debian
-```
-
-### Windows Requirements
-
-- Windows 10 or later
-- PowerShell (included with Windows)
-- Node.js 18+ installed and in PATH
-
-Window detection uses PowerShell to query the active window. No additional software required.
-
-### macOS Requirements
-
-Grant Accessibility permissions:
-1. Open **System Settings** > **Privacy & Security** > **Accessibility**
-2. Add your Terminal app (Terminal, iTerm, Warp, etc.)
-3. Toggle it **ON**
-
-## Quick Start
-
-```bash
-# Start tracking time manually
+# Start a timer
 tt start programming
 
 # Check status
@@ -116,483 +93,190 @@ tt stop
 # View today's summary
 tt today
 
-# Or let the daemon track automatically
+# View weekly report
+tt week
+
+# Start Pomodoro
+tt pomodoro start
+
+# Enable auto-tracking daemon
 tt daemon start
 ```
 
-## Commands Reference
+## 🔧 Commands Overview
 
-### Timer Commands
-
+### Timer
 ```bash
-# Start a timer
-tt start <category>
-tt start programming --project "my-app" --tags "frontend,react"
-tt start coding --notes "Working on auth feature"
-
-# Stop the current timer
-tt stop
-
-# Check current status
-tt status
-
-# Log time retroactively
-tt log -c programming -d 2h
-tt log -c debugging -d 30m -a "2pm" -n "Fixed login bug"
-
-# Add notes to current timer
-tt note "Switched to refactoring"
-tt note "Fixed bug" --entry 123  # Add to specific entry
+tt start <category>              # Start tracking
+tt stop                          # Stop current timer
+tt status                        # Show current status
+tt log -c coding -d 2h           # Log time retroactively
 ```
 
 ### Reports
-
 ```bash
-# Today's breakdown
-tt today
-tt today --project myproject
-tt today --tag frontend
-
-# Weekly summary
-tt week
-tt week --heatmap  # Show hourly activity heatmap
-
-# Monthly summary
-tt month
-
-# Compare periods
-tt compare --period week  # Compare this week vs last week
-
-# Statistics
-tt stats
-tt stats --category programming
+tt today                         # Today's breakdown
+tt week                          # Weekly summary
+tt month                         # Monthly summary
+tt stats                         # Overall statistics
 ```
 
-### Projects
-
+### ML Predictions
 ```bash
-# List projects
-tt project list
-
-# Add a project
-tt project add "my-app" --description "Main application"
-
-# Set default project
-tt project default my-app
-
-# Archive a project
-tt project archive old-project
-
-# View project details
-tt project show my-app
+tt predict today                 # Today's predictions
+tt predict week                  # Weekly forecast
+tt predict insights              # Productivity insights
+tt predict patterns              # Work patterns heatmap
+tt predict suggest               # Smart category suggestion
 ```
 
-### Tags
-
+### Projects & Tags
 ```bash
-# List tags
-tt tag list
-
-# Add a tag
-tt tag add frontend --color "#61DAFB"
-
-# Attach tags to entry
-tt tag attach 123 frontend,react
-
-# View tag summary
-tt tag summary frontend
+tt project list                  # List projects
+tt project add "my-app"          # Create project
+tt tag list                      # List tags
+tt tag add frontend              # Create tag
 ```
 
 ### Goals
+```bash
+tt goals set programming 4h/day  # Set daily goal
+tt goals progress                # View progress
+```
+
+### Pomodoro
+```bash
+tt pomodoro start                # Start session
+tt pomo status                   # Check timer
+tt pomo pause                    # Pause
+tt pomo skip                     # Skip break
+```
+
+### Team
+```bash
+tt team init "My Team"           # Create team
+tt team add "John" --email j@x   # Add member
+tt team summary                  # Team stats
+tt team leaderboard              # Rankings
+tt team export --format html     # Export report
+```
+
+### Integrations
+```bash
+tt integrate status              # Show integrations
+
+# GitHub
+tt integrate github config --token <token> --owner <owner> --repo <repo>
+tt integrate github issues       # List issues
+tt integrate github log 123 --hours 2  # Log time to issue
+
+# Jira
+tt integrate jira config --domain x.atlassian.net --email x --token <token>
+tt integrate jira issues         # List issues
+tt integrate jira log PROJ-123 --hours 1.5  # Log worklog
+```
+
+### Sync
+```bash
+tt sync enable --path ~/Dropbox/TimerRecord  # Enable sync
+tt sync now                      # Sync immediately
+tt sync status                   # Check sync status
+```
+
+### Encryption
+```bash
+tt encrypt init                  # Initialize with password
+tt encrypt unlock                # Unlock encryption
+tt encrypt lock                  # Lock (clear key)
+tt encrypt change-password       # Change password
+```
+
+### Privacy
+```bash
+tt privacy audit                 # See what data exists
+tt privacy lockdown enable       # Disable network features
+tt privacy backup --password x   # Encrypted backup
+tt privacy wipe --confirm        # Delete all data
+```
+
+### Dashboard
+```bash
+tt dashboard start               # Start web dashboard
+tt dashboard open                # Open in browser (localhost:3000)
+```
+
+### Daemon
+```bash
+tt daemon start                  # Start auto-tracking
+tt daemon install                # Auto-start on login
+tt daemon logs                   # View logs
+```
+
+## 🖥️ Platform Support
+
+| Platform | Detection | Notifications | Service |
+|----------|-----------|---------------|---------|
+| **macOS** | Accessibility API | Native | launchd |
+| **Linux** | xdotool/X11 | notify-send | systemd |
+| **Windows** | PowerShell | Toast | Task Scheduler |
+
+### macOS Setup
+```bash
+# Grant Accessibility permissions
+System Settings > Privacy & Security > Accessibility > Add Terminal
+```
+
+### Linux Setup
+```bash
+sudo apt install xdotool libnotify-bin  # Ubuntu/Debian
+sudo dnf install xdotool libnotify      # Fedora
+```
+
+## 📊 Default Categories
+
+| Category | Description |
+|----------|-------------|
+| `programming` | Coding & development |
+| `debugging` | Bug fixing |
+| `testing` | Writing/running tests |
+| `code-review` | PR reviews |
+| `research` | Documentation, learning |
+| `meetings` | Zoom, calendar |
+| `communication` | Slack, email |
+
+## 🗂️ Data Storage
+
+```
+~/.local/share/timer-record/
+├── timer-record.db      # SQLite database
+└── team-config.json     # Team configuration
+
+~/.config/timer-record/
+└── config.json          # User settings
+```
+
+## 🔌 REST API
+
+When the dashboard is running, a REST API is available:
 
 ```bash
-# Set a goal
-tt goals set programming --daily 4h
-tt goals set coding --weekly 20h
-tt goals set learning --monthly 40h
-
-# View goal progress
-tt goals list
-tt goals progress
-
-# Remove a goal
-tt goals remove programming --daily
+GET /api/status          # Server status
+GET /api/data            # Dashboard data (timer, today, week)
 ```
 
-### Pomodoro Timer
+See [docs/api.md](docs/api.md) for full API documentation.
+
+## 🛠️ Development
 
 ```bash
-# Start a pomodoro session
-tt pomodoro start
-tt pomo start programming  # With category
-
-# Check pomodoro status
-tt pomo status
-
-# Pause/resume
-tt pomo pause
-tt pomo resume
-
-# Skip break
-tt pomo skip
-
-# Configure durations
-tt pomo config --work 25 --break 5 --long-break 15
-```
-
-### Focus Mode
-
-```bash
-# Start focus mode (enables DND)
-tt focus start
-tt focus start --duration 2h
-
-# Check focus status
-tt focus status
-
-# End focus mode
-tt focus end
-
-# Configure focus settings
-tt focus config --block-notifications true
-```
-
-### Templates
-
-```bash
-# List templates
-tt template list
-
-# Create a template
-tt template add morning-coding --category programming --project work --tags "focus"
-
-# Use a template
-tt template use morning-coding
-
-# Set as favorite
-tt template favorite morning-coding
-
-# Edit a template
-tt template edit morning-coding --notes "Deep work session"
-```
-
-### Export
-
-```bash
-# Export to CSV
-tt export csv
-tt export csv --today
-tt export csv --from 2025-01-01 --to 2025-01-31
-
-# Export to JSON
-tt export json
-tt export json --project my-app
-```
-
-### Invoices
-
-```bash
-# Create an invoice
-tt invoice create --project my-app --from 2025-01-01 --to 2025-01-31 --rate 150
-
-# List invoices
-tt invoice list
-
-# Show invoice details
-tt invoice show INV-001
-
-# Export invoice
-tt invoice export INV-001 --format json
-
-# Delete invoice
-tt invoice delete INV-001
-```
-
-### Team Export
-
-```bash
-# Export team report
-tt team export --from 2025-01-01 --to 2025-01-31
-
-# Different formats
-tt team export --format json
-tt team export --format html
-```
-
-### Webhooks
-
-```bash
-# List webhooks
-tt webhook list
-
-# Add a webhook
-tt webhook add "Slack Notify" https://hooks.slack.com/... --events timer.start,timer.stop
-
-# View webhook logs
-tt webhook logs
-tt webhook logs --limit 50
-
-# Delete a webhook
-tt webhook delete 1
-```
-
-Webhook events:
-- `timer.start` - When a timer starts
-- `timer.stop` - When a timer stops
-- `goal.reached` - When a goal is achieved
-
-### Notifications
-
-```bash
-# Check notification status
-tt notify status
-
-# Enable/disable notifications
-tt notify enable
-tt notify disable
-
-# Send test notification
-tt notify test
-
-# Configure notifications
-tt notify config --sound true --goals true --pomodoro true
-```
-
-### Web Dashboard
-
-```bash
-# Start the dashboard
-tt dashboard start
-
-# Open in browser
-tt dashboard open  # Opens http://localhost:3000
-
-# Check status
-tt dashboard status
-
-# Stop the dashboard
-tt dashboard stop
-```
-
-### Background Daemon
-
-```bash
-# Start the daemon
-tt daemon start
-
-# Check if daemon is running
-tt daemon status
-
-# View tracking logs
-tt daemon logs
-tt daemon logs -n 50
-
-# Stop the daemon
-tt daemon stop
-
-# Install as system service (auto-start on login)
-tt daemon install   # Uses launchd on macOS, systemd on Linux
-
-# Remove system service
-tt daemon uninstall
-```
-
-### Detection
-
-```bash
-# See what app/window is currently detected
-tt detect
-
-# Watch mode (continuous monitoring)
-tt detect --watch
-```
-
-### Categories & Rules
-
-```bash
-# List categories
-tt categories list
-
-# Add a category
-tt categories add design --color "#FF6B6B" --description "UI/UX work"
-
-# List auto-categorization rules
-tt rules list
-
-# Add a rule
-tt rules add --app "Figma" -c design
-tt rules add --app "Chrome" --title "Jira" -c project-management
-
-# Show examples
-tt rules examples
-```
-
-### Configuration
-
-```bash
-# List all settings
-tt config list
-
-# Get a setting
-tt config get default_category
-
-# Set a setting
-tt config set default_category programming
-tt config set pomodoro_work_minutes 30
-
-# Reset to defaults
-tt config reset
-
-# Show config file path
-tt config path
-```
-
-### Shell Completions
-
-```bash
-# Generate completions
-tt completions bash > ~/.bash_completion.d/tt
-tt completions zsh > ~/.zsh/completions/_tt
-tt completions fish > ~/.config/fish/completions/tt.fish
-
-# Install completions (interactive)
-tt completions install
-```
-
-### Undo/Redo
-
-```bash
-# Undo last action
-tt undo
-
-# Redo last undone action
-tt redo
-
-# View action history
-tt history
-tt history --limit 20
-```
-
-### Search
-
-```bash
-# Search entries
-tt search "bug fix"
-tt search "auth" --category programming
-tt search "meeting" --from 2025-01-01
-```
-
-## Default Categories
-
-| Category           | Color  | Description                    |
-|--------------------|--------|--------------------------------|
-| programming        | Blue   | General coding and development |
-| debugging          | Red    | Bug fixing and troubleshooting |
-| testing            | Green  | Writing and running tests      |
-| code-review        | Purple | PR reviews and reading code    |
-| research           | Cyan   | Documentation, Stack Overflow  |
-| meetings           | Yellow | Zoom, calendar                 |
-| communication      | Orange | Slack, Teams, email            |
-| excel-modeling     | Teal   | Excel and financial models     |
-
-## Auto-Detection Patterns
-
-| App Type           | Examples                              | Category      |
-|--------------------|---------------------------------------|---------------|
-| Code Editors       | VS Code, Xcode, Cursor, IntelliJ      | programming   |
-| Terminals          | Terminal, iTerm, Warp, Hyper          | programming   |
-| Terminals (debug)  | gdb, lldb, pdb in title               | debugging     |
-| Terminals (test)   | jest, pytest, mocha in title          | testing       |
-| Spreadsheets       | Excel, Numbers, Google Sheets         | excel-modeling|
-| Communication      | Slack, Teams, Discord                 | communication |
-| Meetings           | Zoom, Google Meet, FaceTime           | meetings      |
-| Browsers + GitHub  | Chrome with "Pull Request"            | code-review   |
-| Browsers + Docs    | MDN, Stack Overflow                   | research      |
-
-## Privacy & Security
-
-Timer Record is designed to be **100% local and private**. No data is ever sent to external servers by default.
-
-### Privacy Audit
-
-```bash
-# See what data exists and where
-tt privacy audit
-
-# Check overall privacy status
-tt privacy
-```
-
-### Privacy Controls
-
-```bash
-# Enable privacy lockdown (disables all network features)
-tt privacy lockdown enable
-
-# Enable anonymous mode (don't store app/window names)
-tt privacy anonymous enable
-
-# Set data retention (auto-delete old entries)
-tt privacy retention --days 90
-tt privacy retention --cleanup  # Run cleanup now
-```
-
-### Data Export & Backup
-
-```bash
-# Export all your data (GDPR-style)
-tt privacy export
-
-# Create encrypted backup
-tt privacy backup --password "your-secret-password"
-
-# Restore from encrypted backup
-tt privacy restore backup.encrypted --password "your-secret-password"
-```
-
-### Secure Deletion
-
-```bash
-# Securely delete database (overwrites before deletion)
-tt privacy secure-delete --confirm
-
-# Complete data wipe (removes everything)
-tt privacy wipe --confirm
-tt privacy wipe --confirm --keep-config  # Preserve settings
-```
-
-### Security Features
-
-- **Localhost-only dashboard** - Web dashboard binds to 127.0.0.1
-- **No external resources** - Dashboard uses inline CSS, no external scripts/fonts
-- **No telemetry** - Zero tracking or analytics
-- **Encrypted backups** - AES-256-GCM encryption with scrypt key derivation
-- **Secure deletion** - Multi-pass overwrite before file deletion
-
-## Data Storage
-
-All data is stored locally in SQLite:
-```
-~/.local/share/timer-record/timer-record.db
-```
-
-Configuration:
-```
-~/.config/timer-record/config.json
-```
-
-Daemon logs:
-```
-/tmp/timer-record.log
-```
-
-## Development
-
-```bash
-# Install dependencies
+# Clone
+git clone https://github.com/Fergonz1993/Timer-recorder.git
+cd Timer-recorder
+
+# Install
 npm install
 
-# Build TypeScript
+# Build
 npm run build
 
 # Watch mode
@@ -601,28 +285,26 @@ npm run dev
 # Run tests
 npm test
 
-# Run tests with coverage
-npm run test:coverage
-
-# Run the CLI
-node dist/bin/tt.js <command>
+# Run CLI
+npm run tt status
 ```
 
-Coverage reports are generated in the `coverage/` directory. This directory is excluded from version control. In CI (GitHub Actions), coverage reports are automatically uploaded to Codecov and available as build artifacts.
+## 🤝 Contributing
 
-## Tech Stack
+Contributions are welcome! Please read our contributing guidelines before submitting PRs.
 
-- **TypeScript** - Type-safe development
-- **Node.js** - Runtime environment
-- **SQLite** (better-sqlite3) - Local database
-- **Commander.js** - CLI framework
-- **Chalk** - Terminal styling
-- **cli-table3** - ASCII tables
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing`)
+5. Open a Pull Request
 
-## License
+## 📄 License
 
-MIT
+MIT © [Fernando Gonzalez](https://github.com/Fergonz1993)
 
-## Contributing
+---
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+<p align="center">
+  Made with ❤️ for developers who value their time
+</p>
