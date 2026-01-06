@@ -12,6 +12,10 @@ export interface TimeEntry {
   is_manual: boolean;
   notes: string | null;
   created_at: string;
+  // Auto-pause fields
+  paused_at: string | null;
+  paused_duration_seconds: number | null;
+  auto_paused: boolean;
 }
 
 // Category definition
@@ -53,6 +57,10 @@ export interface ActiveSession {
   window_title: string | null;
   start_time: string;
   is_manual: boolean;
+  // Auto-pause fields
+  paused_at: string | null;
+  paused_duration_seconds: number | null;
+  auto_paused: boolean;
 }
 
 // Summary for reports
@@ -80,6 +88,8 @@ export interface Config {
   'pomodoro.break': number;    // pomodoro break duration in minutes
   'pomodoro.longBreak': number; // pomodoro long break duration in minutes
   'pomodoro.sessionsBeforeLongBreak': number; // sessions before long break
+  // Auto-pause settings
+  autoPauseEnabled?: boolean;   // enable auto-pause detection
   // Privacy settings (dynamic, not in CONFIG_KEYS for validation)
   privacy_lockdown?: boolean;           // disable all network features
   webhooks_enabled?: boolean;           // enable/disable webhooks globally

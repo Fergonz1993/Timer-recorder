@@ -50,7 +50,10 @@ export function getActiveEntry(): ActiveSession | undefined {
       e.app_name,
       e.window_title,
       e.start_time,
-      e.is_manual
+      e.is_manual,
+      e.paused_at,
+      e.paused_duration_seconds,
+      e.auto_paused
     FROM time_entries e
     LEFT JOIN categories c ON e.category_id = c.id
     WHERE e.end_time IS NULL
@@ -69,7 +72,22 @@ export function stopActiveEntry(): TimeEntry | undefined {
     UPDATE time_entries
     SET
       end_time = datetime('now', 'localtime'),
-      duration_seconds = CAST((julianday(datetime('now', 'localtime')) - julianday(start_time)) * 86400 AS INTEGER)
+      duration_seconds = CAST(
+        (julianday(datetime('now', 'localtime')) - julianday(start_time)) * 86400
+        - COALESCE(paused_duration_seconds, 0)
+        - CASE WHEN auto_paused = 1 AND paused_at IS NOT NULL
+          THEN (julianday(datetime('now', 'localtime')) - julianday(paused_at)) * 86400
+          ELSE 0
+        END
+        AS INTEGER
+      ),
+      paused_duration_seconds = COALESCE(paused_duration_seconds, 0) +
+        CASE WHEN auto_paused = 1 AND paused_at IS NOT NULL
+          THEN CAST((julianday(datetime('now', 'localtime')) - julianday(paused_at)) * 86400 AS INTEGER)
+          ELSE 0
+        END,
+      auto_paused = 0,
+      paused_at = NULL
     WHERE id = ?
   `).run(active.id);
 
@@ -339,6 +357,9 @@ export function updateEntry(
     endTime?: string;
     durationSeconds?: number;
     notes?: string | null;
+    pausedAt?: string | null;
+    pausedDurationSeconds?: number;
+    autoPaused?: boolean;
   }
 ): TimeEntry | undefined {
   const db = getDatabase();
@@ -364,6 +385,18 @@ export function updateEntry(
   if (updates.notes !== undefined) {
     fields.push('notes = ?');
     values.push(updates.notes);
+  }
+  if (updates.pausedAt !== undefined) {
+    fields.push('paused_at = ?');
+    values.push(updates.pausedAt);
+  }
+  if (updates.pausedDurationSeconds !== undefined) {
+    fields.push('paused_duration_seconds = ?');
+    values.push(updates.pausedDurationSeconds);
+  }
+  if (updates.autoPaused !== undefined) {
+    fields.push('auto_paused = ?');
+    values.push(updates.autoPaused ? 1 : 0);
   }
 
   if (fields.length === 0) return getEntryById(id);

@@ -8,6 +8,7 @@ import { getProjectByName, getProjectById, getDefaultProject } from '../storage/
 import { parseAndGetTags, attachTagsToEntry } from '../storage/repositories/tags.js';
 import { getGoalsForCategory } from '../storage/repositories/goals.js';
 import { pushUndoAction } from './undo.js';
+import { getEffectiveDuration } from './auto-pause.js';
 import { triggerWebhooks } from '../storage/repositories/webhooks.js';
 import type { TimeEntry, ActiveSession } from '../types/index.js';
 
@@ -184,10 +185,5 @@ export function getTimerStatus(): ActiveSession | null {
 
 // Calculate duration of active timer
 export function getActiveDuration(): number {
-  const active = getActiveEntry();
-  if (!active) return 0;
-
-  const startTime = new Date(active.start_time);
-  const now = new Date();
-  return Math.floor((now.getTime() - startTime.getTime()) / 1000);
+  return getEffectiveDuration();
 }

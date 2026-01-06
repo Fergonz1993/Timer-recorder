@@ -15,6 +15,7 @@ export const DEFAULT_CONFIG: Config = {
   'pomodoro.break': 5,       // 5 minutes break duration
   'pomodoro.longBreak': 15,  // 15 minutes long break
   'pomodoro.sessionsBeforeLongBreak': 4, // 4 sessions before long break
+  autoPauseEnabled: true,    // auto-pause on idle detection (default: true)
 };
 
 // Valid config keys for validation
@@ -27,6 +28,7 @@ export const CONFIG_KEYS = [
   'pomodoro.break',
   'pomodoro.longBreak',
   'pomodoro.sessionsBeforeLongBreak',
+  'autoPauseEnabled',
 ] as const;
 export type ConfigKey = (typeof CONFIG_KEYS)[number];
 
@@ -160,6 +162,16 @@ export function parseConfigValue(key: ConfigKey, value: string): Config[ConfigKe
         return null;
       }
       return value;
+    case 'autoPauseEnabled': {
+      const normalized = value.toLowerCase();
+      if (normalized === 'true' || normalized === '1' || normalized === 'yes') {
+        return true;
+      }
+      if (normalized === 'false' || normalized === '0' || normalized === 'no') {
+        return false;
+      }
+      throw new Error('autoPauseEnabled must be true or false');
+    }
     default:
       throw new Error(`Unknown config key: ${key}`);
   }

@@ -5,6 +5,7 @@ import { createEntry, getActiveEntry, stopActiveEntry } from '../storage/reposit
 import { getDatabase } from '../storage/database.js';
 import { loadConfig, DEFAULT_CONFIG } from '../config/settings.js';
 import { isAnonymousModeEnabled, anonymizeEntry } from '../privacy/index.js';
+import { checkAndHandleIdle } from '../core/auto-pause.js';
 import type { WindowInfo, ActiveSession, Config } from '../types/index.js';
 
 export type TrackerConfig = Pick<Config, 'pollInterval' | 'idleThreshold' | 'minEntryDuration'>;
@@ -78,10 +79,27 @@ export class TrackerService {
   // Main tick function
   private tick(): void {
     try {
-      // Check idle time
+      // Get idle time once per tick to avoid redundant shell calls
       const idleTime = getIdleTime();
+
+      // Check for auto-pause/resume based on idle detection
+      const pauseResult = checkAndHandleIdle(idleTime);
+
+      if (pauseResult.paused) {
+        if (pauseResult.action === 'paused') {
+          console.log(`[${new Date().toLocaleTimeString()}] Auto-paused (idle ${Math.floor(idleTime / 60)}m)`);
+        }
+        // Don't finalize daemon entry yet, just pause
+        return;
+      }
+
+      if (pauseResult.action === 'resumed' && pauseResult.entry) {
+        console.log(`[${new Date().toLocaleTimeString()}] Auto-resumed from pause`);
+      }
+
+      // Check idle time for daemon-created entries
       if (idleTime > this.config.idleThreshold) {
-        // User is idle - finalize current entry
+        // User is idle - finalize daemon entry
         if (this.currentEntryId) {
           this.finalizeCurrentEntry();
         }

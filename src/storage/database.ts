@@ -220,6 +220,18 @@ function runMigrations(database: Database.Database): void {
           ('auto_start_work', 'false');
       `,
     },
+    {
+      name: '007_auto_pause',
+      sql: `
+        -- Add auto-pause columns to time_entries
+        ALTER TABLE time_entries ADD COLUMN paused_at TEXT;
+        ALTER TABLE time_entries ADD COLUMN paused_duration_seconds INTEGER DEFAULT 0;
+        ALTER TABLE time_entries ADD COLUMN auto_paused INTEGER DEFAULT 0;
+
+        -- Create index for fast pause entry lookups
+        CREATE INDEX IF NOT EXISTS idx_entries_paused ON time_entries(auto_paused, paused_at);
+      `,
+    },
   ];
 
   // Check which migrations have been applied

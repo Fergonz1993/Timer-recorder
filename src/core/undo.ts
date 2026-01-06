@@ -109,9 +109,9 @@ export function popAndExecuteUndo(): { success: boolean; message: string } {
             INSERT INTO time_entries (
               id, category_id, app_name, app_bundle_id, window_title,
               start_time, end_time, duration_seconds, is_manual, notes,
-              project_id, created_at
+              project_id, created_at, paused_at, paused_duration_seconds, auto_paused
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `).run(
             data.id,
             data.category_id,
@@ -124,7 +124,10 @@ export function popAndExecuteUndo(): { success: boolean; message: string } {
             data.is_manual,
             data.notes,
             data.project_id,
-            data.created_at
+            data.created_at,
+            data.paused_at ?? null,
+            data.paused_duration_seconds ?? null,
+            data.auto_paused ? 1 : 0
           );
         }
         break;
@@ -141,7 +144,10 @@ export function popAndExecuteUndo(): { success: boolean; message: string } {
               end_time = ?,
               duration_seconds = ?,
               notes = ?,
-              project_id = ?
+              project_id = ?,
+              paused_at = ?,
+              paused_duration_seconds = ?,
+              auto_paused = ?
             WHERE id = ?
           `).run(
             data.category_id,
@@ -150,6 +156,9 @@ export function popAndExecuteUndo(): { success: boolean; message: string } {
             data.duration_seconds,
             data.notes,
             data.project_id,
+            data.paused_at ?? null,
+            data.paused_duration_seconds ?? null,
+            data.auto_paused ? 1 : 0,
             action.entity_id
           );
         }
@@ -259,9 +268,9 @@ export function popAndExecuteRedo(): { success: boolean; message: string } {
             INSERT OR REPLACE INTO time_entries (
               id, category_id, app_name, app_bundle_id, window_title,
               start_time, end_time, duration_seconds, is_manual, notes,
-              project_id, created_at
+              project_id, created_at, paused_at, paused_duration_seconds, auto_paused
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `).run(
             data.id,
             data.category_id,
@@ -274,7 +283,10 @@ export function popAndExecuteRedo(): { success: boolean; message: string } {
             data.is_manual ?? 1,
             data.notes || null,
             data.project_id || null,
-            data.created_at || new Date().toISOString()
+            data.created_at || new Date().toISOString(),
+            data.paused_at ?? null,
+            data.paused_duration_seconds ?? null,
+            data.auto_paused ? 1 : 0
           );
         }
         break;
@@ -299,7 +311,10 @@ export function popAndExecuteRedo(): { success: boolean; message: string } {
               end_time = ?,
               duration_seconds = ?,
               notes = ?,
-              project_id = ?
+              project_id = ?,
+              paused_at = ?,
+              paused_duration_seconds = ?,
+              auto_paused = ?
             WHERE id = ?
           `).run(
             data.category_id,
@@ -308,6 +323,9 @@ export function popAndExecuteRedo(): { success: boolean; message: string } {
             data.duration_seconds,
             data.notes,
             data.project_id,
+            data.paused_at ?? null,
+            data.paused_duration_seconds ?? null,
+            data.auto_paused ? 1 : 0,
             action.entity_id
           );
         }
