@@ -93,7 +93,10 @@
     "@types/better-sqlite3": "^7.6.11",
     "@types/node": "^22.10.2",
     "@types/node-notifier": "^8.0.5",
+    "@typescript-eslint/eslint-plugin": "^8.52.0",
+    "@typescript-eslint/parser": "^8.52.0",
     "@vitest/coverage-v8": "^4.0.16",
+    "eslint": "^9.39.2",
     "typescript": "^5.7.2",
     "vitest": "^4.0.16"
   }

@@ -44,6 +44,9 @@ npm run test:run
 
 # Run tests with coverage
 npm run test:coverage
+
+# Lint
+npm run lint
 ```
 
 ## Project Structure

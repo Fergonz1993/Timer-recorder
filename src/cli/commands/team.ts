@@ -1,4 +1,4 @@
-import { writeFileSync, existsSync, readFileSync } from 'fs';
+import { writeFileSync, existsSync, readFileSync, unlinkSync } from 'fs';
 import chalk from 'chalk';
 import { getDatabase } from '../../storage/database.js';
 import { success, error, info, formatDuration } from '../utils/format.js';
@@ -724,7 +724,7 @@ export function teamResetCommand(options: { confirm?: boolean }): void {
 
   const configPath = getTeamConfigPath();
   writeFileSync(configPath, '');
-  require('fs').unlinkSync(configPath);
+  unlinkSync(configPath);
 
   success(`Team "${config.name}" has been deleted.`);
   console.log();

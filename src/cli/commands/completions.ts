@@ -19,71 +19,71 @@ _tt_completions() {
 
   case "\${prev}" in
     start)
-      local categories=\$(tt categories list 2>/dev/null | grep -v "^$" | awk '{print \$1}')
-      COMPREPLY=( \$(compgen -W "\${categories}" -- \${cur}) )
+      local categories=$(tt categories list 2>/dev/null | grep -v "^$" | awk '{print $1}')
+      COMPREPLY=( $(compgen -W "\${categories}" -- \${cur}) )
       return 0
       ;;
     project)
-      COMPREPLY=( \$(compgen -W "list add remove show edit default clients" -- \${cur}) )
+      COMPREPLY=( $(compgen -W "list add remove show edit default clients" -- \${cur}) )
       return 0
       ;;
     tag)
-      COMPREPLY=( \$(compgen -W "list add remove edit attach detach show summary" -- \${cur}) )
+      COMPREPLY=( $(compgen -W "list add remove edit attach detach show summary" -- \${cur}) )
       return 0
       ;;
     pomodoro|pomo)
-      COMPREPLY=( \$(compgen -W "start stop status pause resume next skip config" -- \${cur}) )
+      COMPREPLY=( $(compgen -W "start stop status pause resume next skip config" -- \${cur}) )
       return 0
       ;;
     goals)
-      COMPREPLY=( \$(compgen -W "set list progress remove" -- \${cur}) )
+      COMPREPLY=( $(compgen -W "set list progress remove" -- \${cur}) )
       return 0
       ;;
     template)
-      COMPREPLY=( \$(compgen -W "list add remove use favorite edit show" -- \${cur}) )
+      COMPREPLY=( $(compgen -W "list add remove use favorite edit show" -- \${cur}) )
       return 0
       ;;
     focus)
-      COMPREPLY=( \$(compgen -W "start status end config" -- \${cur}) )
+      COMPREPLY=( $(compgen -W "start status end config" -- \${cur}) )
       return 0
       ;;
     notify)
-      COMPREPLY=( \$(compgen -W "status enable disable config test" -- \${cur}) )
+      COMPREPLY=( $(compgen -W "status enable disable config test" -- \${cur}) )
       return 0
       ;;
     export)
-      COMPREPLY=( \$(compgen -W "csv json" -- \${cur}) )
+      COMPREPLY=( $(compgen -W "csv json" -- \${cur}) )
       return 0
       ;;
     dashboard)
-      COMPREPLY=( \$(compgen -W "start stop status open" -- \${cur}) )
+      COMPREPLY=( $(compgen -W "start stop status open" -- \${cur}) )
       return 0
       ;;
     daemon)
-      COMPREPLY=( \$(compgen -W "start stop status logs install uninstall" -- \${cur}) )
+      COMPREPLY=( $(compgen -W "start stop status logs install uninstall" -- \${cur}) )
       return 0
       ;;
     config)
-      COMPREPLY=( \$(compgen -W "list get set reset path" -- \${cur}) )
+      COMPREPLY=( $(compgen -W "list get set reset path" -- \${cur}) )
       return 0
       ;;
     categories)
-      COMPREPLY=( \$(compgen -W "list add remove" -- \${cur}) )
+      COMPREPLY=( $(compgen -W "list add remove" -- \${cur}) )
       return 0
       ;;
     rules)
-      COMPREPLY=( \$(compgen -W "list add remove examples" -- \${cur}) )
+      COMPREPLY=( $(compgen -W "list add remove examples" -- \${cur}) )
       return 0
       ;;
     tt)
-      COMPREPLY=( \$(compgen -W "\${commands}" -- \${cur}) )
+      COMPREPLY=( $(compgen -W "\${commands}" -- \${cur}) )
       return 0
       ;;
     *)
       ;;
   esac
 
-  COMPREPLY=( \$(compgen -W "\${commands}" -- \${cur}) )
+  COMPREPLY=( $(compgen -W "\${commands}" -- \${cur}) )
 }
 
 complete -F _tt_completions tt
@@ -142,7 +142,7 @@ _tt() {
     args)
       case $words[1] in
         start)
-          _values 'category' \$(tt categories list 2>/dev/null | grep -v "^$" | awk '{print \$1}')
+          _values 'category' $(tt categories list 2>/dev/null | grep -v "^$" | awk '{print $1}')
           ;;
         project)
           _values 'subcommand' list add remove show edit default clients
